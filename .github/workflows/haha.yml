@@ -2,14 +2,18 @@ name: gitleaks
 on: [workflow_dispatch]
 
 jobs:
-  scan:
-    name: gitleaks
-    runs-on: ubuntu-latest
+  live-deploy:
+    if: contains(github.ref, 'master')
+    runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Setup Java JDK 11
+        uses: actions/setup-java@v1
         with:
-          fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE}}
+          java-version: 11
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+        shell: bash
