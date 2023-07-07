@@ -26,6 +26,6 @@ jobs:
         shell: bash
 
       - name: Make zip file
-        run: zip -qq -r ./$GITHUB_SHA.zip ./build/libs/* appspec.yml deploy.sh
+        run: zip -qq -r ./$GITHUB_SHA.zip ./pocketpt/build/libs/* appspec.yml deploy.sh
         shell: bash
             
