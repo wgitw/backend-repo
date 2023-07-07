@@ -29,3 +29,8 @@ jobs:
         run: zip -qq -r ./$GITHUB_SHA.zip ./pocketpt/build/libs/* appspec.yml deploy.sh
         shell: bash
             
+      - name: save report as pipeline artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: $GITHUB_SHA.zip
+          path: $GITHUB_SHA.zip
