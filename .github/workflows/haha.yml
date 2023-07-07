@@ -18,11 +18,11 @@ jobs:
           distribution: 'temurin'
 
       - name: Grant execute permission for gradlew
-        run: cd backend-repo && chmod +x ./gradlew
+        run: cd pocketpt && ls
         shell: bash
       
       - name: Build with Gradle
-        run: cd backend-repo && /.gradlew build
+        run: cd pocketpt && /.gradlew build
         shell: bash
 
       - name: Make zip file
