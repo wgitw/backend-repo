@@ -1,7 +1,7 @@
-package com.madeyepeople.pocketpt.domain.chat.controller;
+package com.madeyepeople.pocketpt.domain.chattingMessage.controller;
 
-import com.madeyepeople.pocketpt.domain.chat.dto.ChatDTO;
-import com.madeyepeople.pocketpt.domain.chat.repository.ChatRepository;
+import com.madeyepeople.pocketpt.domain.chattingMessage.dto.ChatDTO;
+import com.madeyepeople.pocketpt.domain.chattingMessage.repository.ChatRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

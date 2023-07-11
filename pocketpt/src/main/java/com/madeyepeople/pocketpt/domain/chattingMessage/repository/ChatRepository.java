@@ -1,6 +1,6 @@
-package com.madeyepeople.pocketpt.domain.chat.repository;
+package com.madeyepeople.pocketpt.domain.chattingMessage.repository;
 
-import com.madeyepeople.pocketpt.domain.chatroom.dto.ChatRoomDto;
+import com.madeyepeople.pocketpt.domain.chattingRoom.dto.ChatRoomDto;
 import com.madeyepeople.pocketpt.domain.file.service.FileService;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
