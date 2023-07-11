@@ -1,8 +1,8 @@
-package com.madeyepeople.pocketpt.domain.chatroom.controller;
+package com.madeyepeople.pocketpt.domain.chattingRoom.controller;
 
 import com.madeyepeople.pocketpt.domain.account.social.PrincipalDetails;
-import com.madeyepeople.pocketpt.domain.chat.repository.ChatRepository;
-import com.madeyepeople.pocketpt.domain.chatroom.dto.ChatRoomDto;
+import com.madeyepeople.pocketpt.domain.chattingMessage.repository.ChatRepository;
+import com.madeyepeople.pocketpt.domain.chattingRoom.dto.ChatRoomDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
