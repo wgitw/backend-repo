@@ -8,15 +8,16 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 @Configuration
-@EnableWebSocketMessageBroker
-public class SpringConfig implements WebSocketMessageBrokerConfigurer {
+@EnableWebSocketMessageBroker // 웹소켓 서버를 사용하도록 정의
+public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
 
     // 웹 소켓 연결을 위한 엔드포인트 설정 및 stomp sub/pub 엔드포인트 설정
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // stomp 접속 주소 url => /ws-stomp
         registry.addEndpoint("/ws-stomp") // 연결될 엔드포인트
-                .withSockJS(); // SocketJS 를 연결한다는 설정
+                .setAllowedOrigins("*");
+//                .withSockJS(); // SocketJS 를 연결한다는 설정
     }
 
     @Override

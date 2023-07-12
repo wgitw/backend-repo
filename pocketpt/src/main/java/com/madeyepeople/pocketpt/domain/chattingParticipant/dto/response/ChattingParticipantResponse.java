@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class ChattingParticipantCreateResponse {
+public class ChattingParticipantResponse {
     private Long chattingParticipantId;
     private Long participantId;
     private Boolean isHost;

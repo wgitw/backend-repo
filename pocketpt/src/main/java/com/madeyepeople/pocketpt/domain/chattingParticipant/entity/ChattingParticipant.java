@@ -11,10 +11,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Data
+@Getter
+@Setter
+@Table
+//@ToString
 @Entity(name = "chatting_participant")
-@EqualsAndHashCode(callSuper=false)
-@ToString
 public class ChattingParticipant extends BaseEntity {
     @Id
     @Column(name = "chatting_participant_id")

@@ -1,6 +1,6 @@
 package com.madeyepeople.pocketpt.domain.chattingRoom.dto.response;
 
-import com.madeyepeople.pocketpt.domain.chattingParticipant.dto.response.ChattingParticipantCreateResponse;
+import com.madeyepeople.pocketpt.domain.chattingParticipant.dto.response.ChattingParticipantResponse;
 import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,11 +12,11 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class ChattingRoomCreateResponse {
+public class ChattingRoomResponse {
     private Long chattingRoomId;
     private String roomName;
     private ChattingRoom.ChattingRoomStatus status;
     private Long hostId;
-    private List<ChattingParticipantCreateResponse> chattingParticipantCreateResponseList;
+    private List<ChattingParticipantResponse> chattingParticipantResponseList;
     private LocalDateTime createdAt;
 }

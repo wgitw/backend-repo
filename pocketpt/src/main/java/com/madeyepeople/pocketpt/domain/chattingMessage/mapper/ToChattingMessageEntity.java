@@ -8,10 +8,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class ToChattingMessageEntity {
 
-    public ChattingMessage toChattingMessageCreateEntity(ChattingParticipant chattingParticipant, ChattingMessageCreateRequest chattingMessageCreateRequest, String fileUrl) {
+    public ChattingMessage toChattingMessageCreateEntity(ChattingParticipant chattingParticipant, ChattingMessageCreateRequest chattingMessageCreateRequest) {
         return ChattingMessage.builder()
                 .chattingParticipant(chattingParticipant)
                 .content(chattingMessageCreateRequest.getContent())
+                .build();
+    }
+
+    public ChattingMessage toChattingFileCreateEntity(ChattingParticipant chattingParticipant, ChattingMessageCreateRequest chattingMessageCreateRequest, String fileUrl) {
+        return ChattingMessage.builder()
+                .chattingParticipant(chattingParticipant)
                 .fileUrl(fileUrl)
                 .build();
     }
