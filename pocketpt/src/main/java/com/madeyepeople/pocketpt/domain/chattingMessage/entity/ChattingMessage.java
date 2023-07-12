@@ -10,9 +10,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Data
+@Getter
+@Setter
+//@ToString
 @Entity(name = "chatting_message")
-@EqualsAndHashCode(callSuper=false)
 public class ChattingMessage extends BaseEntity {
     @Id
     @Column(name = "chatting_message_id")
