@@ -2,12 +2,14 @@ package com.madeyepeople.pocketpt.domain.account.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 public class LoginController {
 
-    @GetMapping("/chatlogin")
+    @GetMapping("/")
     public String goLogin(){
-        return "chatlogin";
+        return "server connected";
     }
+
 }
