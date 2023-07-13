@@ -7,21 +7,16 @@ import com.madeyepeople.pocketpt.domain.chattingMessage.entity.ChattingMessage;
 import com.madeyepeople.pocketpt.domain.chattingMessage.mapper.ToChattingMessageEntity;
 import com.madeyepeople.pocketpt.domain.chattingMessage.mapper.ToChattingMessageResponse;
 import com.madeyepeople.pocketpt.domain.chattingMessage.repository.ChattingMessageRepository;
-import com.madeyepeople.pocketpt.domain.chattingParticipant.dto.response.ChattingParticipantResponse;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
-import com.madeyepeople.pocketpt.domain.chattingParticipant.mapper.ToChattingParticipantResponse;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.repository.ChattingParticipantRepository;
-import com.madeyepeople.pocketpt.domain.chattingRoom.dto.response.ChattingRoomResponse;
 import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
-import com.madeyepeople.pocketpt.domain.chattingRoom.mapper.ToChattingRoomResponse;
 import com.madeyepeople.pocketpt.domain.chattingRoom.repository.ChattingRoomRepository;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
+import com.madeyepeople.pocketpt.global.s3.S3FileService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -39,6 +34,8 @@ public class ChattingMessageService {
     private final ToChattingMessageEntity toChattingMessageEntity;
 
     private final ToChattingMessageResponse toChattingMessageResponse;
+
+    private final S3FileService s3FileService;
 
     @Transactional
     public Map<String, Object> createChattingMessage(ChattingMessageCreateRequest chattingMessageCreateRequest) {
@@ -65,6 +62,23 @@ public class ChattingMessageService {
 
     @Transactional
     public ResultResponse createChattingFile(ChattingFileCreateRequest chattingFileCreateRequest) {
-        return null;
+        // [1] 채팅방 유효성 검사
+        Optional<ChattingRoom> foundChattingRoom = chattingRoomRepository.findByChattingRoomId(chattingFileCreateRequest.getChattingRoomId());
+
+        // [2] 채팅 sender 유효성 검사
+        Optional<ChattingParticipant> foundChattingParticipant = chattingParticipantRepository.findById(chattingFileCreateRequest.getChattingParticipantId());
+
+        // [3] 채팅 파일 S3 업로드
+        String fileUrl = s3FileService.uploadFile("chatting/" + chattingFileCreateRequest.getChattingRoomId() + "/", chattingFileCreateRequest.getFile());
+
+        // [4] 채팅 파일 저장 및 정보 담기
+        ChattingMessage chattingMessage = toChattingMessageEntity.toChattingFileCreateEntity(foundChattingParticipant.get(), fileUrl);
+        ChattingMessage savedChattingMessage = chattingMessageRepository.save(chattingMessage);
+        ChattingMessageResponse chattingMessageResponse = toChattingMessageResponse.toChattingFileCreateResponse(foundChattingRoom.get().getChattingRoomId(), foundChattingParticipant.get().getChattingParticipantId(), savedChattingMessage);
+
+        // [5] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageResponse
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_FILE_CREATE_SUCCESS, chattingMessageResponse);
+
+        return resultResponse;
     }
 }

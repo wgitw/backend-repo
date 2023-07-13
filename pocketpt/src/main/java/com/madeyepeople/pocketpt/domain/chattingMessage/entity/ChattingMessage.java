@@ -5,8 +5,6 @@ import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -24,7 +22,7 @@ public class ChattingMessage extends BaseEntity {
     @JoinColumn(name = "chatting_participant_id")
     private ChattingParticipant chattingParticipant;
 
-    @Column(name = "content", nullable = false)
+    @Column(name = "content")
     private String content;
 
     @Column(name = "file_url")

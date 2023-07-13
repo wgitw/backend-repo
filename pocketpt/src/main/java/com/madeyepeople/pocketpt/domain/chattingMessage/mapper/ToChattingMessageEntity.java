@@ -15,7 +15,7 @@ public class ToChattingMessageEntity {
                 .build();
     }
 
-    public ChattingMessage toChattingFileCreateEntity(ChattingParticipant chattingParticipant, ChattingMessageCreateRequest chattingMessageCreateRequest, String fileUrl) {
+    public ChattingMessage toChattingFileCreateEntity(ChattingParticipant chattingParticipant, String fileUrl) {
         return ChattingMessage.builder()
                 .chattingParticipant(chattingParticipant)
                 .fileUrl(fileUrl)
