@@ -1,19 +1,10 @@
 package com.madeyepeople.pocketpt.domain.chattingRoom.controller;
 
-import com.madeyepeople.pocketpt.domain.account.social.PrincipalDetails;
-import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingMessageCreateRequest;
-import com.madeyepeople.pocketpt.domain.chattingMessage.repository.ChatRepository;
-import com.madeyepeople.pocketpt.domain.chattingRoom.dto.ChatRoomDto;
 import com.madeyepeople.pocketpt.domain.chattingRoom.dto.request.ChattingRoomCreateRequest;
-import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
-import com.madeyepeople.pocketpt.domain.chattingRoom.repository.ChattingRoomRepository;
 import com.madeyepeople.pocketpt.domain.chattingRoom.service.ChattingRoomService;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 

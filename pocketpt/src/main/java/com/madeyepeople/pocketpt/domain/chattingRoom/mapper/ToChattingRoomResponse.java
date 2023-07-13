@@ -5,7 +5,6 @@ import com.madeyepeople.pocketpt.domain.chattingRoom.dto.response.ChattingRoomRe
 import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Component

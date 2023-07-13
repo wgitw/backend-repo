@@ -17,6 +17,7 @@ public enum ResultCode {
 
     // chatting message
     CHATTING_MESSAGE_CREATE_SUCCESS("CM001", "채팅 메시지 생성 성공"),
+    CHATTING_FILE_CREATE_SUCCESS("CM002", "채팅 파일 생성 성공"),
 
     // file
     FILE_UPLOAD_SUCCESS("F001", "파일 업로드 성공");
