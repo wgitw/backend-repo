@@ -33,6 +33,8 @@ public class ChattingParticipant extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatting_room_id")
     private ChattingRoom chattingRoom;
+//    @EmbeddedId
+//    private ChattingParticipantId chattingParticipantId;
 
     @OneToMany(mappedBy = "chattingParticipant")
     private List<ChattingMessage> chattingMessageList;

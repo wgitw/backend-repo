@@ -1,6 +1,7 @@
 package com.madeyepeople.pocketpt.domain.chattingMessage.entity;
 
 import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
+import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
