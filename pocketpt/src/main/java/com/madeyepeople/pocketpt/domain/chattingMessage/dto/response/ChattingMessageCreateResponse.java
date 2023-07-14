@@ -1,7 +1,5 @@
 package com.madeyepeople.pocketpt.domain.chattingMessage.dto.response;
 
-import com.madeyepeople.pocketpt.domain.chattingParticipant.dto.response.ChattingParticipantResponse;
-import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,9 +9,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Builder
-public class ChattingMessageResponse {
+public class ChattingMessageCreateResponse {
     private Long chattingRoomId;
-    private Long chattingParticipantId;
+    private Long chattingParticipantId; // TODO: account 이름으로 변경할 것
     private Long chattingMessageId;
     private String content;
     private String fileUrl;
