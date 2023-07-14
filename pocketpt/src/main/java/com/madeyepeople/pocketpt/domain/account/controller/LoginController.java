@@ -7,9 +7,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LoginController {
 
-    @GetMapping("/")
+    @GetMapping("/main")
     public String goLogin(){
-        return "server connected";
+        return "여기는 main 페이지 입니다.";
     }
 
+    @GetMapping("/test")
+    public String test(){
+        return "테스트 페이지 입니다.";
+    }
 }
