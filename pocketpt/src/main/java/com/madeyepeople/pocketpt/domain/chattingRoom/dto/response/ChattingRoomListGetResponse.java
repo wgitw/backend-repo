@@ -1,7 +1,6 @@
 package com.madeyepeople.pocketpt.domain.chattingRoom.dto.response;
 
 import com.madeyepeople.pocketpt.domain.chattingParticipant.dto.response.ChattingParticipantResponse;
-import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

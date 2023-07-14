@@ -78,7 +78,6 @@ public class ChattingRoomService {
         // TODO: [1] accountId 유효성 체크
 
         // [2] ChattingParticipant에서 participantId로 select
-//        List<ChattingParticipant> chattingParticipantList = chattingParticipantRepository.findAllByParticipantId(accountId);
         List<ChattingParticipant> chattingParticipantList = chattingParticipantRepository.findAllByParticipantIdAndIsDeletedFalse(accountId);
 
         List<ChattingRoomListGetResponse> chattingRoomResponseList = new ArrayList<>();

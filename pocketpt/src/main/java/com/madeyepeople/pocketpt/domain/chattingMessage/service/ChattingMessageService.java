@@ -3,7 +3,6 @@ package com.madeyepeople.pocketpt.domain.chattingMessage.service;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingFileCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingMessageCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageCreateResponse;
-import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageGetResponse;
 import com.madeyepeople.pocketpt.domain.chattingMessage.entity.ChattingMessage;
 import com.madeyepeople.pocketpt.domain.chattingMessage.mapper.ToChattingMessageEntity;
 import com.madeyepeople.pocketpt.domain.chattingMessage.mapper.ToChattingMessageResponse;
