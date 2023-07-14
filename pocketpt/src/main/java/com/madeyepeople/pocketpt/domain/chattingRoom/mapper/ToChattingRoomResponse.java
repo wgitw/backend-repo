@@ -12,7 +12,8 @@ import java.util.List;
 @Component
 public class ToChattingRoomResponse {
 
-    public ChattingRoomResponse toChattingRoomCreateResponse(ChattingRoom chattingRoom, List<ChattingParticipantResponse> chattingParticipantResponseList) {
+    public ChattingRoomResponse toChattingRoomCreateResponse(ChattingRoom chattingRoom,
+                                                             List<ChattingParticipantResponse> chattingParticipantResponseList) {
         return ChattingRoomResponse.builder()
                 .chattingRoomId(chattingRoom.getChattingRoomId())
                 .roomName(chattingRoom.getRoomName())
@@ -35,17 +36,5 @@ public class ToChattingRoomResponse {
                 .latestChattingMessageCreatedAt(chattingMessage.getCreatedAt())
                 .build();
     }
-
-//    public ChattingRoomResponse toChattingRoomReadByIdResponse(ChattingRoom chattingRoom) {
-//
-//
-//        return ChattingRoomResponse.builder()
-//                .chattingRoomId(chattingRoom.getChattingRoomId())
-//                .roomName(chattingRoom.getRoomName())
-//                .status(chattingRoom.getStatus())
-//                .hostId(chattingRoom.getHostId())
-//                .chattingParticipantResponseList(chattingRoom.getChattingParticipantList())
-//
-//    }
 
 }

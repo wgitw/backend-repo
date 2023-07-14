@@ -17,7 +17,6 @@ public class ChattingRoomCreateRequest {
     // @NotNull(message = "식당 카테고리는 공백이 올 수 없습니다.")
 
     private Long hostId;
-
     private List<ChattingParticipantCreateRequest> chattingParticipantCreateRequestList;
 
 }
