@@ -2,7 +2,8 @@ package com.madeyepeople.pocketpt.domain.chattingMessage.service;
 
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingFileCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingMessageCreateRequest;
-import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageResponse;
+import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageCreateResponse;
+import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageGetResponse;
 import com.madeyepeople.pocketpt.domain.chattingMessage.entity.ChattingMessage;
 import com.madeyepeople.pocketpt.domain.chattingMessage.mapper.ToChattingMessageEntity;
 import com.madeyepeople.pocketpt.domain.chattingMessage.mapper.ToChattingMessageResponse;
@@ -43,18 +44,19 @@ public class ChattingMessageService {
         Optional<ChattingRoom> foundChattingRoom = chattingRoomRepository.findByChattingRoomId(chattingMessageCreateRequest.getChattingRoomId());
 
         // [2] 채팅 sender 유효성 검사
-        Optional<ChattingParticipant> chattingParticipant = chattingParticipantRepository.findById(chattingMessageCreateRequest.getChattingParticipantId());
+        Optional<ChattingParticipant> chattingParticipant = chattingParticipantRepository.findByChattingParticipantId(chattingMessageCreateRequest.getChattingParticipantId());
 
         // [3] 채팅 메시지 저장 및 정보 담기
         ChattingMessage chattingMessage = toChattingMessageEntity.toChattingMessageCreateEntity(chattingParticipant.get(), chattingMessageCreateRequest);
         ChattingMessage savedChattingMessage = chattingMessageRepository.save(chattingMessage);
-        ChattingMessageResponse chattingMessageResponse = toChattingMessageResponse.toChattingMessageCreateResponse(foundChattingRoom.get().getChattingRoomId(), chattingParticipant.get().getChattingParticipantId(), savedChattingMessage);
+        ChattingMessageCreateResponse chattingMessageCreateResponse = toChattingMessageResponse.toChattingMessageCreateResponse(foundChattingRoom.get().getChattingRoomId(),
+                chattingParticipant.get().getChattingParticipantId(), savedChattingMessage);
 
-        // [4] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageResponse
-        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_CREATE_SUCCESS, chattingMessageResponse);
+        // [4] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageCreateResponse
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_CREATE_SUCCESS, chattingMessageCreateResponse);
 
         Map<String, Object> map = new HashMap<>();
-        map.put("chattingRoomId", chattingMessageResponse.getChattingRoomId());
+        map.put("chattingRoomId", chattingMessageCreateResponse.getChattingRoomId());
         map.put("resultResponse", resultResponse);
 
         return map;
@@ -66,7 +68,7 @@ public class ChattingMessageService {
         Optional<ChattingRoom> foundChattingRoom = chattingRoomRepository.findByChattingRoomId(chattingFileCreateRequest.getChattingRoomId());
 
         // [2] 채팅 sender 유효성 검사
-        Optional<ChattingParticipant> foundChattingParticipant = chattingParticipantRepository.findById(chattingFileCreateRequest.getChattingParticipantId());
+        Optional<ChattingParticipant> foundChattingParticipant = chattingParticipantRepository.findByChattingParticipantId(chattingFileCreateRequest.getChattingParticipantId());
 
         // [3] 채팅 파일 S3 업로드
         String fileUrl = s3FileService.uploadFile("chatting/" + chattingFileCreateRequest.getChattingRoomId() + "/", chattingFileCreateRequest.getFile());
@@ -74,11 +76,13 @@ public class ChattingMessageService {
         // [4] 채팅 파일 저장 및 정보 담기
         ChattingMessage chattingMessage = toChattingMessageEntity.toChattingFileCreateEntity(foundChattingParticipant.get(), fileUrl);
         ChattingMessage savedChattingMessage = chattingMessageRepository.save(chattingMessage);
-        ChattingMessageResponse chattingMessageResponse = toChattingMessageResponse.toChattingFileCreateResponse(foundChattingRoom.get().getChattingRoomId(), foundChattingParticipant.get().getChattingParticipantId(), savedChattingMessage);
+        ChattingMessageCreateResponse chattingMessageCreateResponse = toChattingMessageResponse.toChattingFileCreateResponse(foundChattingRoom.get().getChattingRoomId(),
+                foundChattingParticipant.get().getChattingParticipantId(), savedChattingMessage);
 
-        // [5] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageResponse
-        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_FILE_CREATE_SUCCESS, chattingMessageResponse);
+        // [5] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageCreateResponse
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_FILE_CREATE_SUCCESS, chattingMessageCreateResponse);
 
         return resultResponse;
     }
+
 }

@@ -1,6 +1,7 @@
 package com.madeyepeople.pocketpt.domain.chattingMessage.entity;
 
 import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
+import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,7 +20,10 @@ public class ChattingMessage extends BaseEntity {
     private Long chattingMessageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chatting_participant_id")
+    @JoinColumns(value = {
+            @JoinColumn(name = "chattingParticipantId"),
+            @JoinColumn(name = "chattingRoom")
+    }, foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private ChattingParticipant chattingParticipant;
 
     @Column(name = "content")
