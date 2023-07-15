@@ -42,11 +42,11 @@ jobs:
         env:
          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
          ECR_REPOSITORY: pocket-pt
-         IMAGE_TAG: ${{ github.sha }}
+         IMAGE_TAG: latest
         run: |
           cd pocketpt
-          docker build -t $ECR_REGISTRY/my-image:latest .
-          docker push $ECR_REGISTRY/my-image:latest
+          docker build -t $ECR_REGISTRY/my-image:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/my-image:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/my-image:latest"
           
              
@@ -61,7 +61,6 @@ jobs:
             aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             aws configure set region ap-northeast-2
             aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 042973332120.dkr.ecr.ap-northeast-2.amazonaws.com
-            docker pull 042973332120.dkr.ecr.ap-northeast-2.amazonaws.com/pocket-pt:my-image:latest
-            
+            docker pull 042973332120.dkr.ecr.ap-northeast-2.amazonaws.com/pocket-pt:my-image:latest            
             cd /home/ubuntu/Pocket-PT
-            
+          
