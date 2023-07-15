@@ -1,4 +1,4 @@
-name: 1
+name: test #빌드 성공 버전
 
 on: [workflow_dispatch]
 
