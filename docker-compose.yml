@@ -29,9 +29,7 @@ services:
 
   application:
     container_name: application
-    env_file:
-      .env
-    build: ./pocketpt
+    image: 042973332120.dkr.ecr.ap-northeast-2.amazonaws.com/pocket-pt/pocket-pt:latest
     depends_on:
       - mysql-db
     expose:
