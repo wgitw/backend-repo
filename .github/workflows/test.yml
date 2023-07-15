@@ -1,4 +1,4 @@
-name: test
+name: hoho
 
 on: [workflow_dispatch]
 
