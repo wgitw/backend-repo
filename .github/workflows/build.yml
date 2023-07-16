@@ -1,4 +1,4 @@
-name: haha
+name: build
 
 on: [workflow_dispatch]
 
