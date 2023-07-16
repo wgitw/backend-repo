@@ -49,7 +49,7 @@ jobs:
       - name: Connect to EC2
         uses: appleboy/ssh-action@master
         with:
-          host: 43.201.85.241
+          host: 3.38.153.63
           username: ubuntu
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
