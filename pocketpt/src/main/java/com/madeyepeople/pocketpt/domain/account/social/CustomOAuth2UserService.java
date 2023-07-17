@@ -39,32 +39,19 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         Map<String, Object> attributes = super.loadUser(userRequest).getAttributes();
 
-        log.error(attributes.toString());
-        log.error(attributes.getClass().getName());
-        log.error(attributes.get("kakao_account").toString());
-        log.error(userRequest.getClientRegistration().getRegistrationId());
-//        log.error(attributes.get(LOGIN_ATTRIBUTE).toString());
-
-        //resource Server로 부터 받아온 정보중 필요한 정보 추출.
-//        String apiId = ((Integer)attributes.get(ID_ATTRIBUTE)).toString();
-        //takim
-//        String login = (String)attributes.get(LOGIN_ATTRIBUTE);
-        //takim@student.42seoul.kr
-//        String email = (String) attributes.get(EMAIL_ATTRIBUTE);
         LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>)attributes.get("kakao_account");
-        log.error(map.toString());
 //        String apiId = ((Integer)attributes.get(ID_ATTRIBUTE)).toString();
         String nickname = ((LinkedHashMap<String, Object>)map.get("profile")).get("nickname").toString();
         String email = map.get("email").toString();
         String social = userRequest.getClientRegistration().getRegistrationId();
 
         String imageUrl = "";
-        //https://cdn.intra.42.fr/users/09cc1ec9/takim.jpg
         if (attributes.get(IMAGE_ATTRIBUTE) instanceof Map) {
             imageUrl = (String)((Map)(attributes.get(IMAGE_ATTRIBUTE))).get(LINK_ATTRIBUTE) == null ?
                     "" : (String)((Map)(attributes.get(IMAGE_ATTRIBUTE))).get(LINK_ATTRIBUTE);
         }
 
+        log.error("nickname : " + nickname + ", email : " + email + ", social : " + social + ", imageUrl : " + imageUrl);
         Optional<Account> accountOptional = accountRepository.findByEmail(email);
         OAuth2User oAuth2User = signUpOrUpdateUser(attributes, email, social, imageUrl, accountOptional);
 
@@ -75,7 +62,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private OAuth2User signUpOrUpdateUser(Map<String, Object> attributes, String email, String social, String imageUrl,
                                           Optional<Account> accountOptional) {
         OAuth2User oAuth2User;
-        Account saved = null;
+        Account saved;
 
         if (accountOptional.isEmpty()) {
 
@@ -97,7 +84,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 //            necessaryAttributes.put(CREATE_FLAG, true);
             //생성해야할 객체 추가로 더 있을 수 있음.
         } else {
-            log.error("\n\n이미 가입된 회원입니다!!!!!!!!!\n\n");
+            log.info("\n\n이미 가입된 회원입니다. nickname을 업데이트합니다.\n\n");
             saved = accountOptional.get();
             saved = accountRepository.save(saved
                     .update(
@@ -110,7 +97,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 ////            user.updateUserBHOAuthIfo(imageUrl);
 //            necessaryAttributes.put(CREATE_FLAG, false);
         }
-        log.error(saved.toString());
+        log.info(saved.toString());
         oAuth2User = AccountPrincipal.create(saved, attributes);
         return oAuth2User;
     }

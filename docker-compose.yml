@@ -9,11 +9,9 @@ services:
     container_name: mysql-db
     image: mysql
     environment:
-      MYSQL_DATABASE: userdb
-      #      MYSQL_USER: user
-      #      MYSQL_PASSWORD: userpwd
-      MYSQL_ROOT_HOST: '%'
-      MYSQL_ROOT_PASSWORD: rootpwd
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_HOST: ${MYSQL_ROOT_HOST}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     command:
       - --default-authentication-plugin=mysql_native_password
       - --character-set-server=utf8mb4

@@ -29,6 +29,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf((csrf) -> csrf.disable())
+//                .cors((cors) -> cors
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/**").permitAll()
@@ -38,7 +39,7 @@ public class SecurityConfig {
 //                .addFilterBefore(new JwtExceptionFilter(), JwtAuthFilter.class)
                 .logout((logout) -> logout
                         .logoutUrl("/logout").permitAll()
-                        .logoutSuccessUrl("/test")
+                        .logoutSuccessUrl("/main")
                 )
                 .oauth2Login((oauth2Login) -> oauth2Login
 //                        .loginPage("/chatlogin")

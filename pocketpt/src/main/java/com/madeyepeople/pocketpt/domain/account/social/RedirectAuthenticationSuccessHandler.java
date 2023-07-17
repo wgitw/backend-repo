@@ -2,21 +2,15 @@ package com.madeyepeople.pocketpt.domain.account.social;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.IOException;
 import java.time.Duration;
@@ -25,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     @Value("${cors.frontend}")
@@ -70,16 +65,27 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
                 user.getUsername(),
                 refreshTokenExpire);
 
-        ResponseCookie cookie = ResponseCookie.from(jwtUtil.REFRESH_TOKEN, refreshToken)
+        ResponseCookie cookie_refresh = ResponseCookie.from(jwtUtil.REFRESH_TOKEN, refreshToken)
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path("/")      // path
                 .maxAge(Duration.ofDays(15))
                 .sameSite("None")  // sameSite
                 .build();
-        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        response.sendRedirect(
-                referer +
-                        "?access_token=" + accessToken);
+        ResponseCookie cookie_access = ResponseCookie.from("access-token", accessToken)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")      // path
+                .maxAge(Duration.ofDays(15))
+                .sameSite("None")  // sameSite
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie_refresh.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie_access.toString());
+
+        log.info("accessToken : " + accessToken);
+        log.info("refreshToken : " + refreshToken);
+//        response.addHeader(HttpHeaders.AUTHORIZATION, accessToken);
+        response.sendRedirect(referer);
     }
 }
