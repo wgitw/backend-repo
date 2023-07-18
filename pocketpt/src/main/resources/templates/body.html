@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Response Body 출력</title>
+</head>
+<body>
+<h1>Response Body 출력</h1>
+<pre id="response-body"></pre>
+
+<script>
+    // XMLHttpRequest 객체 생성
+    var xhr = new XMLHttpRequest();
+
+    // 요청 보내기
+    xhr.open('GET', '/your-api-endpoint', true);
+    xhr.setRequestHeader('Content-type', 'application/json');
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // Response Body 출력
+            document.getElementById('response-body').textContent = xhr.responseText;
+        }
+    };
+    xhr.send();
+</script>
+</body>
+</html>
