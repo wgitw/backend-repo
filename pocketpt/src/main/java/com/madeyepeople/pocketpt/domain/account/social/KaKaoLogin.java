@@ -24,7 +24,7 @@ public class KaKaoLogin implements SocialLogin{
         HashMap<String, Object> account = (HashMap<String, Object>) kakaoAttributes.get("kakao_account");
 
         String email = (String) account.get("email");
-//		System.out.println("memail : "+memail);
+//		System.out.println("memail : "+ email);
 
         return email;
     }

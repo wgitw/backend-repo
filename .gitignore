@@ -38,4 +38,9 @@ out/
 
 .idea
 
+### environment variables ###
 .env
+.env.swp
+
+### DB volumes ###
+db

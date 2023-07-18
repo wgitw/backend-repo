@@ -5,7 +5,6 @@ import com.madeyepeople.pocketpt.domain.chattingRoom.service.ChattingRoomService
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

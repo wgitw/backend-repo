@@ -1,13 +1,25 @@
 package com.madeyepeople.pocketpt.domain.account.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Controller
+@RestController
 public class LoginController {
 
-    @GetMapping("/chatlogin")
+    @GetMapping("/main")
     public String goLogin(){
-        return "chatlogin";
+        return "여기는 main 페이지 입니다.";
+    }
+
+    @GetMapping("/auth")
+    public String test(){
+        return "JWT 토큰 검증 통과";
+    }
+
+    @GetMapping("/done")
+    public String done(@CookieValue String accessToken, @CookieValue String refreshToken) {
+        return "accessToken: " + accessToken + "\n" + "refreshToken: " + refreshToken;
     }
 }
