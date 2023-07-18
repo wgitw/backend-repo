@@ -9,6 +9,6 @@ import lombok.ToString;
 @Builder
 @AllArgsConstructor
 @ToString
-public class ChattingRoomListGetRequest {
+public class ChattingRoomGetRequest {
     private Long userId;
 }

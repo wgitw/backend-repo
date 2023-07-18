@@ -11,7 +11,8 @@ import com.madeyepeople.pocketpt.domain.chattingParticipant.mapper.ToChattingPar
 import com.madeyepeople.pocketpt.domain.chattingParticipant.mapper.ToChattingParticipantResponse;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.repository.ChattingParticipantRepository;
 import com.madeyepeople.pocketpt.domain.chattingRoom.dto.request.ChattingRoomCreateRequest;
-import com.madeyepeople.pocketpt.domain.chattingRoom.dto.response.ChattingRoomListGetResponse;
+import com.madeyepeople.pocketpt.domain.chattingRoom.dto.response.ChattingRoomGetResponse;
+import com.madeyepeople.pocketpt.domain.chattingRoom.dto.response.ChattingRoomListPaginationResponse;
 import com.madeyepeople.pocketpt.domain.chattingRoom.dto.response.ChattingRoomResponse;
 import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
 import com.madeyepeople.pocketpt.domain.chattingRoom.mapper.ToChattingRoomEntity;
@@ -22,6 +23,8 @@ import com.madeyepeople.pocketpt.global.result.ResultResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -74,15 +77,15 @@ public class ChattingRoomService {
     }
 
     @Transactional
-    public ResultResponse getChattingRoomListByUser(Long accountId) {
+    public ResultResponse getChattingRoomListByUser(Long accountId, Pageable pageable) {
         // TODO: [1] accountId 유효성 체크
 
         // [2] ChattingParticipant에서 participantId로 select
-        List<ChattingParticipant> chattingParticipantList = chattingParticipantRepository.findAllByParticipantIdAndIsDeletedFalse(accountId);
+        Slice<ChattingParticipant> chattingParticipantList = chattingParticipantRepository.findAllByParticipantIdAndIsDeletedFalse(accountId, pageable);
 
-        List<ChattingRoomListGetResponse> chattingRoomResponseList = new ArrayList<>();
         // [3] select된 ChattingParticipant에서 room list 정보 리스트에 담기
-        for(ChattingParticipant chattingParticipant: chattingParticipantList) {
+        List<ChattingRoomGetResponse> chattingRoomResponseList = new ArrayList<>();
+        for(ChattingParticipant chattingParticipant: chattingParticipantList.getContent()) {
             ChattingRoom chattingRoom = chattingParticipant.getChattingRoom();
 
             // [3-1] room 정보에 포함되어 있는 participant list 정보 담기 - 본인 제외
@@ -97,24 +100,27 @@ public class ChattingRoomService {
 
             // [3-2] 최신 메시지 정보 가져오기
             // TODO: 최신 메시지 읽음 유무 확인할 것
+            // TODO: 최신 메시지 created_at desc로 정렬할 것
             Optional<ChattingMessage> chattingMessage = chattingMessageRepository.findLatestChattingMessageByRoom(chattingRoom.getChattingRoomId());
-            ChattingRoomListGetResponse chattingRoomListGetResponse;
+            ChattingRoomGetResponse chattingRoomGetResponse;
             if(chattingMessage.isPresent()) { // 채팅 내용이 존재하는 경우
-                chattingRoomListGetResponse = toChattingRoomResponse.toChattingRoomListGetResponse(chattingRoom, chattingParticipantResponseList, chattingMessage.get());
+                chattingRoomGetResponse = toChattingRoomResponse.toChattingRoomListGetResponse(chattingRoom, chattingParticipantResponseList, chattingMessage.get());
             }
             else { // 채팅방이 새롭게 개설되어 채팅 내용이 존재하지 않는 경우
                 ChattingMessage defaultChattingMessage = new ChattingMessage();
-                chattingRoomListGetResponse = toChattingRoomResponse.toChattingRoomListGetResponse(chattingRoom, chattingParticipantResponseList, defaultChattingMessage);
+                chattingRoomGetResponse = toChattingRoomResponse.toChattingRoomListGetResponse(chattingRoom, chattingParticipantResponseList, defaultChattingMessage);
             }
-            chattingRoomResponseList.add(chattingRoomListGetResponse);
+            chattingRoomResponseList.add(chattingRoomGetResponse);
         }
 
-        // [4] Response 만들기
-        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_LIST_GET_SUCCESS, chattingRoomResponseList);
+        // [4] 페이지네이션 정보와 chattingRoom list를 response로 변환
+        ChattingRoomListPaginationResponse chattingRoomListPaginationResponse = ToChattingRoomResponse.toChattingRoomListPaginationResponse(chattingParticipantList, chattingRoomResponseList);
+
+        // [5] resultResponse 만들기
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_LIST_GET_SUCCESS, chattingRoomListPaginationResponse);
 
         return resultResponse;
     }
-
 
     @Transactional
     public ResultResponse getChattingMessageListByRoom(Long chattingRoomId) {
