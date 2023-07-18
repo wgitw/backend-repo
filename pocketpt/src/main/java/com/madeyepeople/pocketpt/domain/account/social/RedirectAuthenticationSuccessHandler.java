@@ -1,5 +1,7 @@
 package com.madeyepeople.pocketpt.domain.account.social;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -80,7 +83,7 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
 //                .maxAge(Duration.ofDays(15))
 //                .sameSite("None")  // sameSite
 //                .build();
-
+//
 //        response.addHeader(HttpHeaders.SET_COOKIE, cookie_refresh.toString());
 //        response.addHeader(HttpHeaders.SET_COOKIE, cookie_access.toString());
 //        response.addHeader(HttpHeaders.AUTHORIZATION, accessToken);
@@ -89,8 +92,20 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("text/plain");
         response.setCharacterEncoding("utf-8");
-        PrintWriter writer = response.getWriter();
-        writer.write("{\n\t\"accessToken\":\"" + accessToken + "\",\n\t\"refreshToken\":\"" + refreshToken + "\"\n}");
+
+        Map<String, String> map = Map.of("accessToken", accessToken, "refreshToken", refreshToken);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(map);
+        log.info(json);
+        response.getWriter().write(json);
+
+        Cookie cookie_refresh = new Cookie(jwtUtil.REFRESH_TOKEN, refreshToken);
+        cookie_refresh.setPath("/api/v1/main");
+        response.addCookie(cookie_refresh);
+        Cookie cookie_access = new Cookie("access-token", accessToken);
+//        cookie_access.setDomain("localhost");
+        cookie_access.setPath("/api/v1/main");
+        response.addCookie(cookie_access);
 
         response.sendRedirect(referer);
     }
