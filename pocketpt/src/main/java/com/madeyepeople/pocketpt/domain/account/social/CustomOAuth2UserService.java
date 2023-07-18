@@ -51,7 +51,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     "" : (String)((Map)(attributes.get(IMAGE_ATTRIBUTE))).get(LINK_ATTRIBUTE);
         }
 
-        log.error("nickname : " + nickname + ", email : " + email + ", social : " + social + ", imageUrl : " + imageUrl);
         Optional<Account> accountOptional = accountRepository.findByEmail(email);
         OAuth2User oAuth2User = signUpOrUpdateUser(attributes, email, social, imageUrl, accountOptional);
 
