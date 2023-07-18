@@ -1,4 +1,5 @@
-package com.madeyepeople.pocketpt.domain.chattingMessage.dto;//package com.madeyepeople.pocketpt.domain.chattingMessage.dto;
+//package com.madeyepeople.pocketpt.domain.chattingMessage.dto;
+
 //
 //import lombok.AllArgsConstructor;
 //import lombok.Builder;

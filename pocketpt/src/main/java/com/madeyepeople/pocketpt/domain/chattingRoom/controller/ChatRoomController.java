@@ -1,4 +1,5 @@
-package com.madeyepeople.pocketpt.domain.chattingRoom.controller;//package com.madeyepeople.pocketpt.domain.chattingRoom.controller;
+//package com.madeyepeople.pocketpt.domain.chattingRoom.controller;
+
 //
 //import com.madeyepeople.pocketpt.domain.account.social.PrincipalDetails;
 //import com.madeyepeople.pocketpt.domain.chattingMessage.repository.ChatRepository;

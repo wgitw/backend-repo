@@ -1,4 +1,5 @@
-package com.madeyepeople.pocketpt.domain.chattingMessage.repository;//package com.madeyepeople.pocketpt.domain.chattingMessage.repository;
+//package com.madeyepeople.pocketpt.domain.chattingMessage.repository;
+
 //
 //import com.madeyepeople.pocketpt.domain.chattingRoom.dto.ChatRoomDto;
 //import com.madeyepeople.pocketpt.domain.file.service.FileService;

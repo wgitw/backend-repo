@@ -1,4 +1,5 @@
-package com.madeyepeople.pocketpt.domain.chattingRoom.dto;//package com.madeyepeople.pocketpt.domain.chattingRoom.dto;
+//package com.madeyepeople.pocketpt.domain.chattingRoom.dto;
+
 //
 //import lombok.Builder;
 //import lombok.Data;

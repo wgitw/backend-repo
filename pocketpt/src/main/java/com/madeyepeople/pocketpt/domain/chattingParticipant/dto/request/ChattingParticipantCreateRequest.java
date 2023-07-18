@@ -1,5 +1,6 @@
 package com.madeyepeople.pocketpt.domain.chattingParticipant.dto.request;
 
+import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
