@@ -55,14 +55,14 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
                 .map(GrantedAuthority::getAuthority).collect(Collectors.toList());
 
         String accessToken = jwtUtil.createAccessToken(
-                request.getRequestURL().toString(),
                 user.getUsername(),
+                request.getRequestURL().toString(),
                 accessTokenExpire,
                 authorities);
 
         String refreshToken = jwtUtil.createRefreshToken(
-                request.getRequestURL().toString(),
                 user.getUsername(),
+                request.getRequestURL().toString(),
                 refreshTokenExpire);
 
         ResponseCookie cookie_refresh = ResponseCookie.from(jwtUtil.REFRESH_TOKEN, refreshToken)

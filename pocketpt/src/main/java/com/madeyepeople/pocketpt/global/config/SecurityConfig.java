@@ -32,7 +32,7 @@ public class SecurityConfig {
 //                .cors((cors) -> cors
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/login/oauth2/code/kakao", "/main").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((formLogin) -> formLogin.disable())

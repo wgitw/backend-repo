@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -30,31 +31,31 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createAccessToken(String subject, String requestUrl, long tokenExpireInSeconds, Collection<String> authorities) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime expiryDate = now.plusSeconds(tokenExpireInSeconds);
+    public String createAccessToken(String subject, String requestUrl, long tokenExpire, Collection<String> authorities) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + tokenExpire);
         Map<String, Object> claims = new HashMap<>();
         claims.put("authorities", new ArrayList<>(authorities));
 
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(subject)
                 .setIssuer(requestUrl)
-                .setIssuedAt(Date.from(now.atZone(ZoneId.of("Asia/Seoul")).toInstant()))
-                .setExpiration(Date.from(expiryDate.atZone(ZoneId.of("Asia/Seoul")).toInstant()))
-                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
-    public String createRefreshToken(String subject, String requestUrl, long tokenExpireInSeconds) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime expiryDate = now.plusSeconds(tokenExpireInSeconds);
+    public String createRefreshToken(String subject, String requestUrl, long tokenExpire) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + tokenExpire);
 
         return Jwts.builder()
                 .setSubject(subject)
                 .setIssuer(requestUrl)
-                .setIssuedAt(Date.from(now.atZone(ZoneId.of("Asia/Seoul")).toInstant()))
-                .setExpiration(Date.from(expiryDate.atZone(ZoneId.of("Asia/Seoul")).toInstant()))
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
@@ -63,19 +64,20 @@ public class JwtUtil {
         // 토큰 복호화
         Claims claims = parseClaims(accessToken);
 
-        if (claims.get("auth") == null) {
+        if (claims.get("authorities") == null) {
             throw new RuntimeException("권한 정보가 없는 토큰입니다.");
         }
 
         // 클레임에서 권한 정보 가져오기
         Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get("auth").toString().split(","))
+                Arrays.stream(claims.get("authorities").toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
         // UserDetails 객체를 만들어서 Authentication 리턴
         UserDetails principal = new User(claims.getSubject(), "", authorities);
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        return usernamePasswordAuthenticationToken;
     }
 
     // 토큰 정보를 검증하는 메서드
