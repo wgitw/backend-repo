@@ -17,7 +17,9 @@ import com.madeyepeople.pocketpt.global.s3.S3FileService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.util.*;
 
@@ -82,6 +84,22 @@ public class ChattingMessageService {
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_FILE_CREATE_SUCCESS, chattingMessageCreateResponse);
 
         return resultResponse;
+    }
+
+    public ResultResponse exitChattingRoom(SessionDisconnectEvent event) {
+        log.info("DisConnEvent {}", event);
+
+        // [1] headerAccessor 객체 생성
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+
+        // [2] stomp 세션에 있던 uuid 와 roomId 를 확인 및 유효성 검증
+        String userUUID = (String) headerAccessor.getSessionAttributes().get("userUUID");
+        String roomId = (String) headerAccessor.getSessionAttributes().get("roomId");
+
+        // [3] user와 roomId를 통해 유저가 채팅방 나간 시간 기록
+
+
+        return null;
     }
 
 }
