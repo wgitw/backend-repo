@@ -23,7 +23,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class JwtUtil {
-    public final String REFRESH_TOKEN = "refresh-token";
+
+    public final String COOKIE_KEY_ACCESS_TOKEN = "access_token";
+    public final String COOKIE_KEY_REFRESH_TOKEN = "refresh_token";
+
     private final Key key;
 
     public JwtUtil(@Value("${jwt.secret}") String secretKey) {

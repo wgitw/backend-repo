@@ -32,7 +32,7 @@ public class SecurityConfig {
 //                .cors((cors) -> cors
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login/oauth2/code/kakao", "/api/v1/main").permitAll()
+                        .requestMatchers("/api/v1/main").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((formLogin) -> formLogin.disable())
@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/main")
                 )
                 .oauth2Login((oauth2Login) -> oauth2Login
+                        // TODO: FE에서 받은 redirect_uri_after_login을 쿠키에 저장
 //                        .loginPage("/chatlogin")
                                 .userInfoEndpoint(userInfo -> userInfo
                                         .userService(customOAuth2UserService))
