@@ -1,7 +1,10 @@
 package com.madeyepeople.pocketpt.domain.chattingParticipant.entity;
 
 import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 

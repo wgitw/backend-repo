@@ -1,5 +1,6 @@
 package com.madeyepeople.pocketpt.domain.account.dto;
 
+
 import com.madeyepeople.pocketpt.domain.account.entity.ChatUser;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

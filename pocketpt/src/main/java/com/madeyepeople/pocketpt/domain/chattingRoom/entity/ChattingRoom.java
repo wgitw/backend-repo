@@ -38,4 +38,6 @@ public class ChattingRoom extends BaseEntity {
     @Column(name = "hostId", nullable = false)
     private Long hostId;
 
+    // 채팅 메시지가 created_at이 된 일자를 추가
+
 }

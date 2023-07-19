@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class ChattingRoomListGetResponse {
+public class ChattingRoomGetResponse {
     // 채팅방 정보
     private Long chattingRoomId;
     private String roomName;
