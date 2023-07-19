@@ -40,6 +40,7 @@ jobs:
 
       - name: build docker file and setting deploy files
         run: |
+          cd pocketpt
           docker build -t studygit/pocket-pt:latest .
           docker push studygit/pocket-pt:latest
 
