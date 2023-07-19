@@ -44,6 +44,15 @@ jobs:
           docker build -t studygit/pocketpt:latest .
           docker push studygit/pocketpt:latest
 
+      - name: Connect to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: 43.202.53.46
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          script: |
+            docker pull studygit/pocketpt:latest
+            
       # ECR 관련 코드 주석 처리
       #- name: Login to ECR
       #  id: login-ecr
