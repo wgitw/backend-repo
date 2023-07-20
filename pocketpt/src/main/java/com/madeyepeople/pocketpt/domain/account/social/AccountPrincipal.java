@@ -32,7 +32,7 @@ public class AccountPrincipal implements OAuth2User, UserDetails {
                 singletonList(new SimpleGrantedAuthority("member"));
 
         return new AccountPrincipal(
-                account.getId(),
+                account.getAccountId(),
                 account.getEmail(),
                 account.getPassword(),
                 authorities

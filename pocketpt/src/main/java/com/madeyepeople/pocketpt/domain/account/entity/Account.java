@@ -16,11 +16,12 @@ import org.antlr.v4.runtime.misc.NotNull;
 @Getter
 @ToString
 @NoArgsConstructor
+// TODO: @SQLDelete 로 삭제시 is_deleted = true 로 변경되게 하기
 public class Account extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "account_id")
-    private Long id;
+    private Long accountId;
 
     private String email;
 
