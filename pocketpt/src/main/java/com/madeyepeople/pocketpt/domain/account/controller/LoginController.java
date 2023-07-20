@@ -1,7 +1,10 @@
 package com.madeyepeople.pocketpt.domain.account.controller;
 
+import com.madeyepeople.pocketpt.domain.account.social.AccountPrincipal;
+import com.madeyepeople.pocketpt.global.util.SecurityUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
@@ -11,22 +14,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LoginController {
 
+    private SecurityUtil securityUtil;
+
     @GetMapping("/main")
     public String goLogin(HttpServletRequest request){
-        Cookie[] cookies = request.getCookies();
 
-        String temp = "";
-
-        for(Cookie c : cookies) {
-            temp += (c.getName())+" : ";  // 쿠키 이름 가져오기
-            temp += (c.getValue())+"\n";  // 쿠키 값 가져오기
-        }
-        return temp;
+        return "메인 페이지 입니다!";
     }
 
     @GetMapping("/auth")
     public String test(){
-        return "JWT 토큰 검증 통과";
+        String email = securityUtil.getLoginUsername();
+        return email;
     }
 
     @GetMapping("/done")
