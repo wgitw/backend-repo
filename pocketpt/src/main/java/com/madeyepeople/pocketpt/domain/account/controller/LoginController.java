@@ -19,13 +19,13 @@ public class LoginController {
     private final SecurityUtil securityUtil;
 
     @GetMapping("/main")
-    public String goLogin(HttpServletRequest request){
+    public String goLogin(HttpServletRequest request) {
 
         return "메인 페이지 입니다!";
     }
 
     @GetMapping("/auth")
-    public Long test(){
+    public Long test() {
         Long id = securityUtil.getLoginUsername();
         return id;
     }
@@ -33,5 +33,10 @@ public class LoginController {
     @GetMapping("/done")
     public String done(@CookieValue String accessToken, @CookieValue String refreshToken) {
         return "accessToken: " + accessToken + "\n" + "refreshToken: " + refreshToken;
+    }
+
+    @GetMapping("/test-logout")
+    public String logout() {
+        return "로그아웃 되었습니다.";
     }
 }
