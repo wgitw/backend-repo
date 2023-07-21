@@ -30,7 +30,11 @@ services:
     ports:
       - "3303:3306"
     restart: always
-
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 20s
+      retries: 10
+      
   application:
     container_name: application
     env_file:
@@ -39,6 +43,7 @@ services:
     # image: 042973332120.dkr.ecr.ap-northeast-2.amazonaws.com/pocket-pt:latest
     depends_on:
       - mysql-db
+        condition: service_healthy
     expose:
       - "8080"
     ports:
