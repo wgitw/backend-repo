@@ -6,12 +6,15 @@ import com.madeyepeople.pocketpt.domain.account.social.RedirectAuthenticationSuc
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 
 @Configuration
@@ -28,11 +31,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors(withDefaults())
                 .csrf((csrf) -> csrf.disable())
-//                .cors((cors) -> cors
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login/oauth2/code/kakao", "/api/v1/main").permitAll()
+                        .requestMatchers("/api/v1/main").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((formLogin) -> formLogin.disable())
@@ -42,6 +45,7 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/main")
                 )
                 .oauth2Login((oauth2Login) -> oauth2Login
+                        // TODO: FE에서 받은 redirect_uri_after_login을 쿠키에 저장
 //                        .loginPage("/chatlogin")
                                 .userInfoEndpoint(userInfo -> userInfo
                                         .userService(customOAuth2UserService))
