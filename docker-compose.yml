@@ -35,7 +35,8 @@ services:
     container_name: application
     env_file:
       .env
-    image: 042973332120.dkr.ecr.ap-northeast-2.amazonaws.com/pocket-pt:latest
+    image: studygit/pocketpt:latest
+    # image: 042973332120.dkr.ecr.ap-northeast-2.amazonaws.com/pocket-pt:latest
     depends_on:
       - mysql-db
     expose:
