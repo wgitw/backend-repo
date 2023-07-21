@@ -50,6 +50,16 @@ services:
       - "8080:8080"
     restart: always
 
+  nginx-reverse-proxy:
+    container_name: nginx-reverse-proxy
+    image: nginx:latest
+    ports:
+      - "80:80" # 원하는 포트로 수정 가능
+    volumes:
+      - ./nginx/conf:/etc/nginx/conf.d
+    depends_on:
+      - application
+
 #  chat-db:
 #    container_name: chat-db
 #    image: mysql
