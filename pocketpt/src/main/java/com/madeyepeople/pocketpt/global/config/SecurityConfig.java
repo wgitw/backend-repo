@@ -35,14 +35,14 @@ public class SecurityConfig {
                 .csrf((csrf) -> csrf.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/v1/main").permitAll()
+                        .requestMatchers("/api/v1/main", "/api/v1/test-logout").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((formLogin) -> formLogin.disable())
 //                .addFilterBefore(new JwtExceptionFilter(), JwtAuthFilter.class)
                 .logout((logout) -> logout
-                        .logoutUrl("/logout").permitAll()
-                        .logoutSuccessUrl("/main")
+                        .logoutUrl("/api/v1/logout").permitAll()
+                        .logoutSuccessUrl("/api/v1/test-logout")
                 )
                 .oauth2Login((oauth2Login) -> oauth2Login
                         // TODO: FE에서 받은 redirect_uri_after_login을 쿠키에 저장
