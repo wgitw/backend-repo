@@ -100,12 +100,14 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
         response.getWriter().write(json);
 
         Cookie cookie_refresh = new Cookie(jwtUtil.COOKIE_KEY_REFRESH_TOKEN, refreshToken);
-        cookie_refresh.setPath("/api/v1/main");
+        cookie_refresh.setPath("/");
         response.addCookie(cookie_refresh);
 
         Cookie cookie_access = new Cookie(jwtUtil.COOKIE_KEY_ACCESS_TOKEN, accessToken);
+        log.error(cookie_access.getPath());
+        log.error(cookie_access.getAttributes().toString());
 //        cookie_access.setDomain("localhost");
-        cookie_access.setPath("/api/v1/main");
+        cookie_access.setPath("/");
         response.addCookie(cookie_access);
 
         response.sendRedirect(referer);
