@@ -104,11 +104,11 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
         response.addCookie(cookie_refresh);
 
         Cookie cookie_access = new Cookie(jwtUtil.COOKIE_KEY_ACCESS_TOKEN, accessToken);
-        log.error(cookie_access.getPath());
-        log.error(cookie_access.getAttributes().toString());
 //        cookie_access.setDomain("localhost");
         cookie_access.setPath("/");
         response.addCookie(cookie_access);
+        log.error(cookie_access.getPath());
+        log.error(cookie_access.getAttributes().toString());
 
         response.sendRedirect(referer);
     }
