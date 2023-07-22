@@ -20,7 +20,7 @@ public class CorsConfig {
 
         config.setAllowCredentials(true);
         // TODO: setAllowdOriginPatterns를 사용해야함
-        config.setAllowedOrigins(List.of("http://localhost:8080", corsFrontend));
+//        config.setAllowedOrigins(List.of("http://localhost:8080", corsFrontend));
         config.setAllowedOriginPatterns(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
