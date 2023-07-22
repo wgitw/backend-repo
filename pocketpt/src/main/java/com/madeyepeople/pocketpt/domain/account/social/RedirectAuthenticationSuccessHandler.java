@@ -118,8 +118,9 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
         log.error(cookie_access.getAttributes().toString());
         log.error(cookie_refresh.getAttributes().toString());
 
-//        response.setHeader(HttpHeaders.AUTHORIZATION, accessToken);
+        response.setHeader(HttpHeaders.AUTHORIZATION, accessToken);
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, corsFrontend);
         response.sendRedirect(referer);
     }
 }
