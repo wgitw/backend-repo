@@ -18,9 +18,8 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // TODO: setAllowdOriginPatterns에서 "*"를 위해선 false로 해야함.
-        config.setAllowCredentials(false);
-//        config.setAllowedOrigins(List.of("http://localhost:8080", corsFrontend));
+        config.setAllowCredentials(true);
+//        config.setAllowedOrigins(List.of("http://localhost:8000", corsFrontend));
         config.setAllowedOriginPatterns(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
