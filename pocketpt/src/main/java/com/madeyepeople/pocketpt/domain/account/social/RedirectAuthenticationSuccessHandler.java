@@ -109,7 +109,7 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
         Cookie cookie_access = new Cookie(jwtUtil.COOKIE_KEY_ACCESS_TOKEN, accessToken);
 //        cookie_access.setDomain("localhost");
         cookie_access.setPath("/");
-        cookie_access.setSecure(false);
+        cookie_access.setSecure(true);
         cookie_access.setAttribute("SameSite", "None");
         cookie_access.setAttribute("access_token", accessToken);
         response.addCookie(cookie_access);
@@ -118,6 +118,8 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
         log.error(cookie_access.getAttributes().toString());
         log.error(cookie_refresh.getAttributes().toString());
 
+//        response.setHeader(HttpHeaders.AUTHORIZATION, accessToken);
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
         response.sendRedirect(referer);
     }
 }
