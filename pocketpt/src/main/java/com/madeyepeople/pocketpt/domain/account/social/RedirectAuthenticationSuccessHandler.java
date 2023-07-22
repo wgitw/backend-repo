@@ -107,7 +107,7 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
         response.addCookie(cookie_refresh);
 
         Cookie cookie_access = new Cookie(jwtUtil.COOKIE_KEY_ACCESS_TOKEN, accessToken);
-//        cookie_access.setDomain("localhost");
+        cookie_access.setDomain("http://43.201.57.199:8000");
         cookie_access.setPath("/");
         cookie_access.setSecure(true);
         cookie_access.setAttribute("SameSite", "None");
