@@ -100,12 +100,12 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
         response.getWriter().write(json);
 
         Cookie cookie_refresh = new Cookie(jwtUtil.COOKIE_KEY_REFRESH_TOKEN, refreshToken);
-        cookie_refresh.setPath(corsFrontend);
+        cookie_refresh.setPath("/api/v1/main");
         response.addCookie(cookie_refresh);
 
         Cookie cookie_access = new Cookie(jwtUtil.COOKIE_KEY_ACCESS_TOKEN, accessToken);
 //        cookie_access.setDomain("localhost");
-        cookie_access.setPath(corsFrontend);
+        cookie_access.setPath("/api/v1/main");
         response.addCookie(cookie_access);
 
         response.sendRedirect(referer);
