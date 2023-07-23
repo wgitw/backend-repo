@@ -100,6 +100,7 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
         response.getWriter().write(json);
 
         Cookie cookie_refresh = new Cookie(jwtUtil.COOKIE_KEY_REFRESH_TOKEN, refreshToken);
+        cookie_refresh.setDomain("pocketpt.netlify.app");
         cookie_refresh.setPath("/");
         cookie_refresh.setSecure(true);
         cookie_refresh.setAttribute("SameSite", "None");
@@ -108,7 +109,7 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
 
         Cookie cookie_access = new Cookie(jwtUtil.COOKIE_KEY_ACCESS_TOKEN, accessToken);
 //        log.error(cookie_access.getDomain());
-        cookie_access.setDomain("43.201.57.199");
+        cookie_access.setDomain("pocketpt.netlify.app");
         cookie_access.setPath("/");
         cookie_access.setSecure(true);
         cookie_access.setAttribute("SameSite", "None");
