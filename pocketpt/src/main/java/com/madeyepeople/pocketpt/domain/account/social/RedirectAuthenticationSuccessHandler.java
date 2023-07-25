@@ -96,7 +96,7 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
         Map<String, String> map = Map.of("accessToken", accessToken, "refreshToken", refreshToken);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(map);
-        log.info(json);
+//        log.info(json);
         response.getWriter().write(json);
 
         Cookie cookie_refresh = new Cookie(jwtUtil.COOKIE_KEY_REFRESH_TOKEN, refreshToken);

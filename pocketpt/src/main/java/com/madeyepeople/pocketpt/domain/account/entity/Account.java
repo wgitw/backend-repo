@@ -1,14 +1,11 @@
 package com.madeyepeople.pocketpt.domain.account.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.madeyepeople.pocketpt.domain.account.constants.AuthProvider;
 import com.madeyepeople.pocketpt.domain.account.constants.Role;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
 
 
@@ -23,29 +20,31 @@ public class Account extends BaseEntity {
     @Column(name = "account_id")
     private Long accountId;
 
+    @Column(name = "oauth2_id")
+    private Long oauth2Id;
+
+    @Nonnull
+    private String provider;
+
+    @Nonnull
     private String email;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    private AuthProvider social;
-
-    @NotNull
     @Enumerated(EnumType.STRING)
     private Role role;
 
     private String nickname;
 
+    private String profile_picture_url;
+
     @JsonIgnore
     private String password;
 
-    // 소셜 제공자에서 제공하는 유저 고유 id. email 못받으면 이걸로 중복 가입 방지 로직 구현 예정
-//    private String providerId;
 
     @Builder
-    public Account(String email, AuthProvider social, String nickname, String password) {
+    public Account(Long oauth2Id, String email, String provider, String nickname, String password) {
+        this.oauth2Id = oauth2Id;
+        this.provider = provider;
         this.email = email;
-        this.social = social;
-//        this.role = role; 이건 OAuth 이후 추가정보 받을때 알 수 있으니 최초 생성시기인 OAuth때는 모름
         this.nickname = nickname;
         this.password = password;
     }
