@@ -36,21 +36,25 @@ public class Account extends BaseEntity {
 
     private String profile_picture_url;
 
+    // oauth2 provider가 제공하는 access token. 회원 탈퇴를 위해 필요.
+    private String oauth2AccessToken;
     @JsonIgnore
     private String password;
 
 
     @Builder
-    public Account(Long oauth2Id, String email, String provider, String nickname, String password) {
+    public Account(Long oauth2Id, String email, String provider, String nickname, String oauth2AccessToken, String password) {
         this.oauth2Id = oauth2Id;
         this.provider = provider;
         this.email = email;
         this.nickname = nickname;
+        this.oauth2AccessToken = oauth2AccessToken;
         this.password = password;
     }
 
-    public Account update(String nickname) {
+    public Account update(String nickname, String oauth2AccessToken) {
         this.nickname = nickname;
+        this.oauth2AccessToken = oauth2AccessToken;
         return this;
     }
 }

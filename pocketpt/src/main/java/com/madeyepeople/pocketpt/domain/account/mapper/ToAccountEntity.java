@@ -13,6 +13,7 @@ public class ToAccountEntity {
                 .email(oauth2ProviderInfo.getEmail())
                 .nickname(oauth2ProviderInfo.getNickname())
                 .password(encodedPassword)
+                .oauth2AccessToken(oauth2ProviderInfo.getOauth2ProviderAccessToken())
                 .build();
     }
 }

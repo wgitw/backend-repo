@@ -19,6 +19,7 @@ import java.io.PrintWriter;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -53,6 +54,8 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
         AccountPrincipal user = (AccountPrincipal) authentication.getPrincipal();
+        String username = user.getUsername();
+//        Optional
         String referer = corsFrontend;
 
         Collection<String> authorities = user.getAuthorities().stream()
@@ -99,14 +102,27 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
 //        log.info(json);
         response.getWriter().write(json);
 
+
         Cookie cookie_refresh = new Cookie(jwtUtil.COOKIE_KEY_REFRESH_TOKEN, refreshToken);
-        cookie_refresh.setPath("/api/v1/main");
+        cookie_refresh.setDomain("pocketpt.shop");
+        cookie_refresh.setPath("/");
+        cookie_refresh.setSecure(true);
+        cookie_refresh.setAttribute("SameSite", "None");
+        cookie_refresh.setAttribute("refresh_token", refreshToken);
         response.addCookie(cookie_refresh);
 
+
         Cookie cookie_access = new Cookie(jwtUtil.COOKIE_KEY_ACCESS_TOKEN, accessToken);
-//        cookie_access.setDomain("localhost");
-        cookie_access.setPath("/api/v1/main");
+        cookie_access.setDomain("pocketpt.shop");
+        cookie_access.setPath("/");
+        cookie_access.setSecure(true);
+        cookie_access.setAttribute("SameSite", "None");
+        cookie_access.setAttribute("access_token", accessToken);
         response.addCookie(cookie_access);
+
+        response.setHeader(HttpHeaders.AUTHORIZATION, accessToken);
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+        response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, corsFrontend);
 
         response.sendRedirect(referer);
     }

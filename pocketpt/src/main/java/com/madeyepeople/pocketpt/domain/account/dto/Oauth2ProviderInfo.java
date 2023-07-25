@@ -18,5 +18,6 @@ public class Oauth2ProviderInfo {
     private final String email;
     private final String nickname;
     private final String imageUrl;
+    private final String oauth2ProviderAccessToken;
     private final Optional<Account> accountOptional;
 }

@@ -38,17 +38,17 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Transactional
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        log.error(userRequest.toString());
-        log.error(userRequest.getAccessToken().getTokenValue());
         Map<String, Object> attributes = super.loadUser(userRequest).getAttributes();
         LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>)attributes.get("kakao_account");
 
+        String oauth2ProviderAccessToken = "";
         Long oauth2Id = 0L;
         String email = "";
         String nickname = "";
         String provider = "";
 
         try {
+            oauth2ProviderAccessToken = userRequest.getAccessToken().getTokenValue();
             oauth2Id = Long.valueOf((attributes.get(OAUTH2_ID_ATTRIBUTE)).toString());
             provider = userRequest.getClientRegistration().getRegistrationId();
             email = map.get(EMAIL_ATTRIBUTE).toString();
@@ -78,6 +78,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .email(email)
                 .nickname(nickname)
                 .imageUrl(imageUrl)
+                .oauth2ProviderAccessToken(oauth2ProviderAccessToken)
                 .accountOptional(accountOptional)
                 .build();
 
@@ -108,7 +109,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             saved = oauth2ProviderInfo.getAccountOptional().get();
             saved = accountRepository.save(saved
                     .update(
-                            saved.getNickname()
+                            oauth2ProviderInfo.getNickname(),
+                            oauth2ProviderInfo.getOauth2ProviderAccessToken()
                     )
             );
 //            //회원정보 수정
