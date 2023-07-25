@@ -13,6 +13,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -27,19 +30,19 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .cors(withDefaults())
                 .csrf((csrf) -> csrf.disable())
-//                .cors((cors) -> cors.disable())
+//                .cors((cors) -> cors
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/v1/main", "/ws-stomp").permitAll()
-//                        .requestMatchers("/**").permitAll()
+                        .requestMatchers("/api/v1/main", "/api/v1/test-logout", "api/v1/cookie-test").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((formLogin) -> formLogin.disable())
 //                .addFilterBefore(new JwtExceptionFilter(), JwtAuthFilter.class)
                 .logout((logout) -> logout
-                        .logoutUrl("/logout").permitAll()
-                        .logoutSuccessUrl("/main")
+                        .logoutUrl("/api/v1/logout").permitAll()
+                        .logoutSuccessUrl("/api/v1/test-logout")
                 )
                 .oauth2Login((oauth2Login) -> oauth2Login
                         // TODO: FE에서 받은 redirect_uri_after_login을 쿠키에 저장
@@ -51,6 +54,8 @@ public class SecurityConfig {
 //                )
                 )
                 .addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+
+//        http.addFilterBefore(new JwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
