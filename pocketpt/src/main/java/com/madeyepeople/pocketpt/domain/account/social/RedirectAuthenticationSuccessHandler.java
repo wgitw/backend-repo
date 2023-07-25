@@ -120,7 +120,6 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
         cookie_access.setAttribute("access_token", accessToken);
         response.addCookie(cookie_access);
 
-        feature/oauth
         response.setHeader(HttpHeaders.AUTHORIZATION, accessToken);
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
         response.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, corsFrontend);
