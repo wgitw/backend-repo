@@ -19,7 +19,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:8000", corsFrontend));
+        config.setAllowedOrigins(List.of("http://localhost:8000", corsFrontend, "ws://localhost:8080/ws-stomp"));
 //        config.setAllowedOriginPatterns(List.of("*"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));

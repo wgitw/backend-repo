@@ -30,12 +30,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors(withDefaults())
+//                .cors(withDefaults())
                 .csrf((csrf) -> csrf.disable())
 //                .cors((cors) -> cors
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/v1/main", "/api/v1/test-logout", "api/v1/cookie-test").permitAll()
+                        .requestMatchers("/api/v1/main", "/api/v1/test-logout", "/api/v1/cookie-test", "/ws-stomp").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((formLogin) -> formLogin.disable())
