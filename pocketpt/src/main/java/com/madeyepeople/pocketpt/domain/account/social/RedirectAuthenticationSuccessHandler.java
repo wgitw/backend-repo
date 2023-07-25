@@ -104,7 +104,6 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
 
 
         Cookie cookie_refresh = new Cookie(jwtUtil.COOKIE_KEY_REFRESH_TOKEN, refreshToken);
-        feature/oauth
         cookie_refresh.setDomain("pocketpt.shop");
         cookie_refresh.setPath("/");
         cookie_refresh.setSecure(true);
@@ -114,7 +113,6 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
 
 
         Cookie cookie_access = new Cookie(jwtUtil.COOKIE_KEY_ACCESS_TOKEN, accessToken);
-
         cookie_access.setDomain("pocketpt.shop");
         cookie_access.setPath("/");
         cookie_access.setSecure(true);

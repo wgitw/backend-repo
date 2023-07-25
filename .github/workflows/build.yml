@@ -27,6 +27,12 @@ jobs:
         run: cd pocketpt && ./gradlew build
         shell: bash
 
+      - name: build docker file
+        run: |
+          cd pocketpt
+          docker build -t my_image:latest .
+          docker save -o my_image.tar my_image:latest
+          
       - name: Make zip file
         run: zip -qq -r ./$GITHUB_SHA.zip ./pocketpt/build/libs/* appspec.yml deploy.sh
         shell: bash
