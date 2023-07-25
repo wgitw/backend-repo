@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .csrf((csrf) -> csrf.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/v1/main", "/api/v1/test-logout").permitAll()
+                        .requestMatchers("/api/v1/main", "/api/v1/test-logout", "api/v1/cookie-test").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin((formLogin) -> formLogin.disable())
@@ -55,7 +55,6 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
 
-//        http.addFilterBefore(new JwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
