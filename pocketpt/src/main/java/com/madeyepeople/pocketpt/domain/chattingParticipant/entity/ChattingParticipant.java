@@ -6,6 +6,7 @@ import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @NoArgsConstructor
@@ -15,7 +16,6 @@ import java.util.List;
 @Setter
 @Table
 @IdClass(ChattingParticipantId.class)
-//@ToString
 @Entity(name = "chatting_participant")
 @Access(value = AccessType.FIELD)
 public class ChattingParticipant extends BaseEntity {
@@ -37,11 +37,24 @@ public class ChattingParticipant extends BaseEntity {
     @OneToMany(mappedBy = "chattingParticipant")
     private List<ChattingMessage> chattingMessageList;
 
-    @Column(name = "participant_id", nullable = false)
-    private Long participantId;
+    @Column(name = "participant_account_id", nullable = false)
+    private Long accountId;
 
     @Column(name = "is_host", nullable = false)
     @Builder.Default
     private Boolean isHost = Boolean.FALSE;
+
+    @Column(name = "chatting_room_entry_time")
+    private LocalDateTime chattingRoomEntryTime;
+
+    @Column(name = "chatting_room_exit_time")
+    private LocalDateTime chattingRoomExitTime;
+
+    @Column(name = "simp_session_id")
+    private String simpSessionId;
+
+    @Column(name = "not_view_count", nullable = false)
+    @Builder.Default
+    private int notViewCount = 0;
 
 }

@@ -6,7 +6,6 @@ import com.madeyepeople.pocketpt.domain.account.social.RedirectAuthenticationSuc
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -33,6 +32,7 @@ public class SecurityConfig {
         http
                 .cors(withDefaults())
                 .csrf((csrf) -> csrf.disable())
+//                .cors((cors) -> cors
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/v1/main", "/api/v1/test-logout", "api/v1/cookie-test").permitAll()
@@ -55,6 +55,7 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
 
+//        http.addFilterBefore(new JwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
