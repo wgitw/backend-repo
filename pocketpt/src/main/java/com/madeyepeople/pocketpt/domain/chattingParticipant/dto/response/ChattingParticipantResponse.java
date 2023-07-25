@@ -11,7 +11,9 @@ import java.time.LocalDateTime;
 @Builder
 public class ChattingParticipantResponse {
     private Long chattingParticipantId;
-    private Long participantId;
+    private Long accountId;
+    private String profileImageUrl;
+    private String nickname;
     private Boolean isHost;
     private LocalDateTime createdAt;
 }

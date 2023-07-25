@@ -17,5 +17,6 @@ public class ChattingMessageCreateResponse {
     private String fileUrl;
     private Boolean isEdited;
     private Boolean isBookmarked;
+    private int notViewCount;
     private LocalDateTime createdAt;
 }

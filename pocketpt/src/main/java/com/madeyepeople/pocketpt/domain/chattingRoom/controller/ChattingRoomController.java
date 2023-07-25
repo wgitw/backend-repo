@@ -3,6 +3,7 @@ package com.madeyepeople.pocketpt.domain.chattingRoom.controller;
 import com.madeyepeople.pocketpt.domain.chattingRoom.dto.request.ChattingRoomCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingRoom.service.ChattingRoomService;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
+import com.madeyepeople.pocketpt.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -16,12 +17,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/api/v1/chatting/rooms")
 public class ChattingRoomController {
 
+    private final SecurityUtil securityUtil;
     private final ChattingRoomService chattingRoomService;
 
     //  채팅방 만들기
     @PostMapping
-    public ResponseEntity<ResultResponse> createChattingRoom(@RequestBody ChattingRoomCreateRequest chattingRoomCreateRequest, RedirectAttributes rttr) {
-        ResultResponse resultResponse = chattingRoomService.createChattingRoom(chattingRoomCreateRequest);
+    public ResponseEntity<ResultResponse> createChattingRoom(@RequestBody ChattingRoomCreateRequest chattingRoomCreateRequest,
+                                                             RedirectAttributes rttr) {
+        Long hostAccountId = securityUtil.getLoginUsername();
+        ResultResponse resultResponse = chattingRoomService.createChattingRoom(hostAccountId, chattingRoomCreateRequest);
         rttr.addFlashAttribute("roomName", "roomName");
         return ResponseEntity.ok(resultResponse);
     }

@@ -1,6 +1,6 @@
 package com.madeyepeople.pocketpt.domain.chattingMessage.mapper;
 
-import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingMessageCreateRequest;
+import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingMessageContentCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingMessage.entity.ChattingMessage;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
 import org.springframework.stereotype.Component;
@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ToChattingMessageEntity {
 
-    public ChattingMessage toChattingMessageCreateEntity(ChattingParticipant chattingParticipant, ChattingMessageCreateRequest chattingMessageCreateRequest) {
+    public ChattingMessage toChattingMessageCreateEntity(ChattingParticipant chattingParticipant, ChattingMessageContentCreateRequest chattingMessageContentCreateRequest) {
         return ChattingMessage.builder()
                 .chattingParticipant(chattingParticipant)
-                .content(chattingMessageCreateRequest.getContent())
+                .content(chattingMessageContentCreateRequest.getContent())
                 .build();
     }
 
