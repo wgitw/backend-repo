@@ -44,7 +44,7 @@ public class StompHandler implements ChannelInterceptor {
                 final String accessToken = jwtUtil.extractJwt(accessor);
                 Boolean validation = jwtUtil.validateToken(accessToken);
                 // TODO: validation false면 connect 중단할 것
-                Authentication authentication = jwtUtil.getUsernamePasswordAuthenticationToken(accessToken);
+                Authentication authentication = jwtUtil.getAuthentication(accessToken);
                 accessor.setUser(authentication);
             }
             System.out.println("==========================================");
