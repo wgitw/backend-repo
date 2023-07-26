@@ -1,5 +1,6 @@
 profiles:
   default: local
+
 spring:
   datasource:
     #    include:
