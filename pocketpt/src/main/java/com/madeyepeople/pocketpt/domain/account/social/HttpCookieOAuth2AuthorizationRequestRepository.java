@@ -3,11 +3,13 @@ package com.madeyepeople.pocketpt.domain.account.social;
 import com.nimbusds.oauth2.sdk.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class HttpCookieOAuth2AuthorizationRequestRepository implements AuthorizationRequestRepository<OAuth2AuthorizationRequest> {
     public static final String OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME = "oauth2AuthRequest";
     public static final String REDIRECT_URI_PARAM_COOKIE_NAME = "redirectUri";
@@ -24,6 +26,9 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements Authoriza
     /** 플랫폼으로 보내기 위한 Request 를 `oauth2_auth_request` 라는  cookie 에 저장 한다 authorizationUri, authorizationGrantType, responseType, clientId, redirectUri, scopes, additionalParameters */
     @Override
     public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request, HttpServletResponse response) {
+        log.error("saveAuthorizationRequest : " + authorizationRequest.getRedirectUri());
+        log.error("saveAuthorizationRequest : " + authorizationRequest.getAuthorizationUri());
+        log.error("saveAuthorizationRequest : " + authorizationRequest.getAuthorizationRequestUri());
         if (authorizationRequest == null) {
             removeAuthorizationRequest(request, response);
             return;

@@ -3,11 +3,13 @@ package com.madeyepeople.pocketpt.domain.account.social;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.SerializationUtils;
 
 import java.util.Base64;
 import java.util.Optional;
 
+@Slf4j
 public class CookieUtil {
 
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {
@@ -16,6 +18,11 @@ public class CookieUtil {
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(name)) {
+                    if (cookie.getName().equals("oauth2AuthRequest")) {
+                        log.error("1cookie name: {}", cookie.getName());
+                        log.error("2cookie value: {}", SerializationUtils.deserialize(
+                                Base64.getUrlDecoder().decode(cookie.getValue())).toString());
+                    }
                     return Optional.of(cookie);
                 }
             }
@@ -25,8 +32,10 @@ public class CookieUtil {
     }
 
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
+        log.error("addCookie: name: {}, value: {}, maxAge: {}", name, value, maxAge);
         Cookie cookie = new Cookie(name, value);
         cookie.setDomain("localhost");
+        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);

@@ -62,6 +62,7 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
         log.info("targetUrl: {}", targetUrl);
 
         String accessToken = jwtUtil.createAccessToken(authentication);
+        log.info("accessToken: {}", accessToken);
 
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("accessToken", accessToken)
