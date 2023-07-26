@@ -30,23 +30,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-//                .cors(withDefaults())
-                .csrf((csrf) -> csrf.disable())
-//                .cors((cors) -> cors
+                .cors(withDefaults())
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/v1/main", "/api/v1/test-logout", "/api/v1/cookie-test", "/ws-stomp").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin((formLogin) -> formLogin.disable())
+                .formLogin(formLogin -> formLogin.disable())
 //                .addFilterBefore(new JwtExceptionFilter(), JwtAuthFilter.class)
-                .logout((logout) -> logout
+                .logout(logout -> logout
                         .logoutUrl("/api/v1/logout").permitAll()
                         .logoutSuccessUrl("/api/v1/test-logout")
                 )
                 .oauth2Login((oauth2Login) -> oauth2Login
                         // TODO: FE에서 받은 redirect_uri_after_login을 쿠키에 저장
-//                        .loginPage("/chatlogin")
                                 .userInfoEndpoint(userInfo -> userInfo
                                         .userService(customOAuth2UserService))
                                 .successHandler(redirectAuthenticationSuccessHandler)
@@ -54,8 +52,6 @@ public class SecurityConfig {
 //                )
                 )
                 .addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
-
-//        http.addFilterBefore(new JwtAuthFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }
