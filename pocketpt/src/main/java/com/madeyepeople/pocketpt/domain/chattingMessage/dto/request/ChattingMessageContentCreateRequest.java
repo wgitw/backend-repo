@@ -1,14 +1,12 @@
 package com.madeyepeople.pocketpt.domain.chattingMessage.dto.request;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
 @NoArgsConstructor
 @ToString
-public class ChattingMessageCreateRequest {
-    private Long chattingRoomId;
-
-    private Long chattingParticipantId;
-
+public class ChattingMessageContentCreateRequest {
     private String content;
 }

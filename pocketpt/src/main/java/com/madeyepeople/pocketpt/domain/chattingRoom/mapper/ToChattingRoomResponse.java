@@ -16,10 +16,11 @@ import java.util.List;
 public class ToChattingRoomResponse {
 
     public ChattingRoomResponse toChattingRoomCreateResponse(ChattingRoom chattingRoom,
-                                                             List<ChattingParticipantResponse> chattingParticipantResponseList) {
+                                                             List<ChattingParticipantResponse> chattingParticipantResponseList,
+                                                             String participantName) {
         return ChattingRoomResponse.builder()
                 .chattingRoomId(chattingRoom.getChattingRoomId())
-                .roomName(chattingRoom.getRoomName())
+                .roomName(participantName)
                 .status(chattingRoom.getStatus())
                 .hostId(chattingRoom.getHostId())
                 .chattingParticipantResponseList(chattingParticipantResponseList)

@@ -82,3 +82,9 @@ cloud:
       secretKey: ${AWS_S3_SECRET_KEY}
     stack:
       auto: 'false'
+
+app:
+  oauth2:
+    authorizedRedirectUris:
+      - http://localhost:8000/main
+      - https://frontend.pocketpt.shop/main

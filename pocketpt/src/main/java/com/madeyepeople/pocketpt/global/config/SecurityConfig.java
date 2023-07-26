@@ -2,11 +2,12 @@ package com.madeyepeople.pocketpt.global.config;
 
 import com.madeyepeople.pocketpt.domain.account.social.CustomAuthorizationFilter;
 import com.madeyepeople.pocketpt.domain.account.social.CustomOAuth2UserService;
+import com.madeyepeople.pocketpt.domain.account.social.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.madeyepeople.pocketpt.domain.account.social.RedirectAuthenticationSuccessHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,25 +29,33 @@ public class SecurityConfig {
 
     private final CustomAuthorizationFilter customAuthorizationFilter;
 
+    @Autowired
+    private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors(withDefaults())
-                .csrf((csrf) -> csrf.disable())
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/v1/main", "/api/v1/test-logout", "api/v1/cookie-test").permitAll()
+                        .requestMatchers(
+                                "/api/v1/main",
+                                "/api/v1/test-logout",
+                                "/api/v1/cookie-test",
+                                "/ws-stomp"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin((formLogin) -> formLogin.disable())
-//                .addFilterBefore(new JwtExceptionFilter(), JwtAuthFilter.class)
-                .logout((logout) -> logout
+                .formLogin(formLogin -> formLogin.disable())
+                .logout(logout -> logout
                         .logoutUrl("/api/v1/logout").permitAll()
                         .logoutSuccessUrl("/api/v1/test-logout")
                 )
                 .oauth2Login((oauth2Login) -> oauth2Login
-                        // TODO: FE에서 받은 redirect_uri_after_login을 쿠키에 저장
-//                        .loginPage("/chatlogin")
+                                .authorizationEndpoint(authorization -> authorization
+                                        .baseUri("/oauth2/authorization")
+                                        .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository))
                                 .userInfoEndpoint(userInfo -> userInfo
                                         .userService(customOAuth2UserService))
                                 .successHandler(redirectAuthenticationSuccessHandler)
@@ -54,7 +63,6 @@ public class SecurityConfig {
 //                )
                 )
                 .addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 }

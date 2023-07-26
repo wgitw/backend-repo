@@ -5,6 +5,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,11 +13,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.security.Key;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,6 +26,12 @@ public class JwtUtil {
     public final String COOKIE_KEY_ACCESS_TOKEN = "access_token";
     public final String COOKIE_KEY_REFRESH_TOKEN = "refresh_token";
 
+    @Value("${jwt.access-token-expiration}")
+    private long accessTokenExpire;
+
+    @Value("${jwt.refresh-token-expiration}")
+    private long refreshTokenExpire;
+
     private final Key key;
 
     public JwtUtil(@Value("${jwt.secret}") String secretKey) {
@@ -34,25 +39,29 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createAccessToken(String subject, String requestUrl, long tokenExpire, Collection<String> authorities) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + tokenExpire);
+    public String createAccessToken(Authentication authentication) {
+        AccountPrincipal user = (AccountPrincipal) authentication.getPrincipal();
+        Collection<String> authorities = user.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         Map<String, Object> claims = new HashMap<>();
         claims.put("authorities", new ArrayList<>(authorities));
 
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + accessTokenExpire);
+
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(subject)
-                .setIssuer(requestUrl)
+                .setSubject(user.getUsername())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
-    public String createRefreshToken(String subject, String requestUrl, long tokenExpire) {
+    // TODO: refreshToken 필요성 재고 필요
+    public String createRefreshToken(String subject, String requestUrl) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + tokenExpire);
+        Date expiryDate = new Date(now.getTime() + refreshTokenExpire);
 
         return Jwts.builder()
                 .setSubject(subject)
@@ -83,6 +92,14 @@ public class JwtUtil {
         return usernamePasswordAuthenticationToken;
     }
 
+    public String extractJwt(final StompHeaderAccessor accessor) {
+        String bearerToken = accessor.getFirstNativeHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
+            return bearerToken.substring(7);
+        }
+        return null;
+    }
+
     // 토큰 정보를 검증하는 메서드
     public boolean validateToken(String token) {
         try {
@@ -99,6 +116,8 @@ public class JwtUtil {
             log.error("Unsupported JWT Token", e);
         } catch (IllegalArgumentException e) {
             log.error("JWT claims string is empty.", e);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return false;
     }

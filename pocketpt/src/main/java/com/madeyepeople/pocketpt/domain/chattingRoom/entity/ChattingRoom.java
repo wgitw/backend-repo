@@ -29,15 +29,15 @@ public class ChattingRoom extends BaseEntity {
 
     // 두 명 대상인 경우: 채팅 상대방의 이름으로 설정 -> 상대방 이름이 변경될 경우 동기화 필요
     // 세 명 이상일 경우: 채팅방 이름 수정 가능
-    @Column(name = "roomName", nullable = false)
+    @Column(name = "room_name")
     private String roomName;
 
     @Column(name = "status", nullable = false)
     private ChattingRoomStatus status;
 
-    @Column(name = "hostId", nullable = false)
+    @Column(name = "host_id", nullable = false)
     private Long hostId;
 
-    // 채팅 메시지가 created_at이 된 일자를 추가
-
+    @Column(name = "number_of_participant", nullable = false)
+    private int numberOfParticipant;
 }

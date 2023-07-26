@@ -15,6 +15,7 @@ public class ToChattingMessageResponse {
                 .content(chattingMessage.getContent())
                 .isEdited(chattingMessage.getIsEdited())
                 .isBookmarked(chattingMessage.getIsBookmarked())
+                .notViewCount(chattingMessage.getNotViewCount())
                 .createdAt(chattingMessage.getCreatedAt())
                 .build();
     }
@@ -27,6 +28,7 @@ public class ToChattingMessageResponse {
                 .fileUrl(chattingMessage.getFileUrl())
                 .isEdited(chattingMessage.getIsEdited())
                 .isBookmarked(chattingMessage.getIsBookmarked())
+                .notViewCount(chattingMessage.getNotViewCount())
                 .createdAt(chattingMessage.getCreatedAt())
                 .build();
     }
@@ -38,6 +40,7 @@ public class ToChattingMessageResponse {
                 .fileUrl(chattingMessage.getFileUrl())
                 .isEdited(chattingMessage.getIsEdited())
                 .isBookmarked(chattingMessage.getIsBookmarked())
+                .notViewCount(chattingMessage.getNotViewCount())
                 .isDeleted(chattingMessage.getIsDeleted())
                 .createdAt(chattingMessage.getCreatedAt())
                 .updatedAt(chattingMessage.getUpdatedAt())
