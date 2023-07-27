@@ -26,9 +26,9 @@ public class HttpCookieOAuth2AuthorizationRequestRepository implements Authoriza
     /** 플랫폼으로 보내기 위한 Request 를 `oauth2_auth_request` 라는  cookie 에 저장 한다 authorizationUri, authorizationGrantType, responseType, clientId, redirectUri, scopes, additionalParameters */
     @Override
     public void saveAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest, HttpServletRequest request, HttpServletResponse response) {
-        log.error("saveAuthorizationRequest : " + authorizationRequest.getRedirectUri());
-        log.error("saveAuthorizationRequest : " + authorizationRequest.getAuthorizationUri());
-        log.error("saveAuthorizationRequest : " + authorizationRequest.getAuthorizationRequestUri());
+        log.info("saveAuthorizationRequest.getRedirectUri : " + authorizationRequest.getRedirectUri());
+        log.info("getAuthorizationUri : " + authorizationRequest.getAuthorizationUri());
+        log.info("getAuthorizationRequestUri : " + authorizationRequest.getAuthorizationRequestUri());
         if (authorizationRequest == null) {
             removeAuthorizationRequest(request, response);
             return;
