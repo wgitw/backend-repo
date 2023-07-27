@@ -34,8 +34,8 @@ public class CookieUtil {
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
         log.error("addCookie: name: {}, value: {}, maxAge: {}", name, value, maxAge);
         Cookie cookie = new Cookie(name, value);
-        cookie.setDomain("localhost");
-        cookie.setSecure(true);
+//        cookie.setDomain("localhost");
+//        cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);

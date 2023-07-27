@@ -34,6 +34,7 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException {
+        log.error("onAuthenticationSuccess");
         String targetUrl = determineTargetUrl(request, response, authentication);
         if (response.isCommitted()) {
             logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);

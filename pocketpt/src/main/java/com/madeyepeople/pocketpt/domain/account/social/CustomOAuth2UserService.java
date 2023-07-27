@@ -38,7 +38,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     @Transactional
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        log.error("before loadUser");
         Map<String, Object> attributes = super.loadUser(userRequest).getAttributes();
+        log.error("카카오 정보 받아옴");
         LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>)attributes.get("kakao_account");
 
         String oauth2ProviderAccessToken = "";
