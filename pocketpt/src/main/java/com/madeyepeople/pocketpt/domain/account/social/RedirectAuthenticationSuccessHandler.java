@@ -55,6 +55,7 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
 //        }
 
 //        String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
+
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
 
         log.info("targetUrl-redirectUri: {}", targetUrl);
