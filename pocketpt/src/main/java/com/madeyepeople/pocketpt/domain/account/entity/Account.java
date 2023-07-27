@@ -2,11 +2,14 @@ package com.madeyepeople.pocketpt.domain.account.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.madeyepeople.pocketpt.domain.account.constants.Role;
+import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
+
+import java.util.List;
 
 
 @Entity
@@ -19,6 +22,9 @@ public class Account extends BaseEntity {
     @Id @GeneratedValue
     @Column(name = "account_id")
     private Long accountId;
+
+    @OneToMany(mappedBy = "account")
+    private List<ChattingParticipant> chattingParticipantList;
 
     @Column(name = "oauth2_id")
     private Long oauth2Id;
@@ -34,7 +40,7 @@ public class Account extends BaseEntity {
 
     private String nickname;
 
-    private String profile_picture_url;
+    private String profilePictureUrl; // 카멜로 안되어 있어서 내가 바꿀게
 
     // oauth2 provider가 제공하는 access token. 회원 탈퇴를 위해 필요.
     private String oauth2AccessToken;

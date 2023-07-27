@@ -71,25 +71,25 @@ public class ChattingRoomService {
         // host의 account 정보 GET
         Account hostAccount = accountRepository.findByAccountIdAndIsDeletedFalse(hostAccountId).orElseThrow();
         // participant에 SAVE
-        ChattingParticipant chattingHost = toChattingParticipantEntity.toChattingHostCreateEntity(savedChattingRoom, hostAccountId);
+        ChattingParticipant chattingHost = toChattingParticipantEntity.toChattingHostCreateEntity(savedChattingRoom, hostAccount);
         ChattingParticipant savedChattingHost = chattingParticipantRepository.save(chattingHost);
         // Websocket Session에 참여자 정보 SAVE
         // headerAccessor.getSessionAttributes().put("chattingParticipantId", savedChattingHost.getChattingParticipantId());
         // response로 변환
-        ChattingParticipantResponse chattingHostResponse = toChattingParticipantResponse.toChattingRoomCreateResponse(savedChattingHost, hostAccount);
+        ChattingParticipantResponse chattingHostResponse = toChattingParticipantResponse.toChattingRoomCreateResponse(savedChattingHost);
         // list에 추가
         chattingParticipantResponseList.add(chattingHostResponse);
 
         // [2-2] Chatting Participant 저장 및 정보 담기
         // participant의 account 정보 GET
-        Account participantAccount = accountRepository.findByAccountIdAndIsDeletedFalse(chattingRoomCreateRequest.getParticipantId()).orElseThrow();
+        Account participantAccount = accountRepository.findByAccountIdAndIsDeletedFalse(chattingRoomCreateRequest.getAccountId()).orElseThrow();
         // participant에 SAVE
-        ChattingParticipant chattingParticipant = toChattingParticipantEntity.toChattingParticipantCreateEntity(savedChattingRoom, participantAccount.getAccountId());
+        ChattingParticipant chattingParticipant = toChattingParticipantEntity.toChattingParticipantCreateEntity(savedChattingRoom, participantAccount);
         ChattingParticipant savedChattingParticipant = chattingParticipantRepository.save(chattingParticipant);
         // Websocket Session에 참여자 정보 SAVE
         // headerAccessor.getSessionAttributes().put("chattingParticipantId", savedChattingParticipant.getChattingParticipantId());
         // response로 변환
-        ChattingParticipantResponse chattingParticipantResponse = toChattingParticipantResponse.toChattingRoomCreateResponse(savedChattingParticipant, participantAccount);
+        ChattingParticipantResponse chattingParticipantResponse = toChattingParticipantResponse.toChattingRoomCreateResponse(savedChattingParticipant);
         // list에 추가
         chattingParticipantResponseList.add(chattingParticipantResponse);
 
@@ -104,21 +104,24 @@ public class ChattingRoomService {
     // 채팅방 입장
     @Transactional
     public void chattingRoomEnter(String accountUsername, Long chattingRoomId, String simpSessionId) {
-        // [1] 채팅방 입장 시간 및 simpSessionId update
-        ChattingParticipant chattingParticipant = chattingParticipantRepository.findByAccountUsernameAndChattingRoomIdAndIsDeletedFalse(accountUsername, chattingRoomId).orElseThrow();
+        // [1] 채팅방 유효성 검사
+        ChattingRoom chattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
+
+        // [2] 채팅 sender 유효성 검사
+        Account account = accountRepository.findByEmailAndIsDeletedFalse(accountUsername).orElseThrow();
+        ChattingParticipant chattingParticipant = chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, chattingRoom).orElseThrow();
+
+        // [3] 채팅방 입장 시간 및 simpSessionId update
         chattingParticipant.setChattingRoomEntryTime(LocalDateTime.now());
         chattingParticipant.setSimpSessionId(simpSessionId);
         chattingParticipantRepository.save(chattingParticipant);
 
-        // [2] 채팅방에서 그동안 읽지 않았던 메시지 읽음 처리
-        // [2-1] 채팅방에 해당하면서 다른 유저가 보낸 읽지 않은 메시지 개수: (원래 읽지 않은 메시지 개수) -1 처리
-        chattingMessageRepository.updateAllByNotViewCountMinusOneByRoomIdAndChattingParticipantIdAndIsDeletedFalse(chattingRoomId, chattingParticipant.getChattingParticipantId());
+        // [4] 채팅방에서 그동안 읽지 않았던 메시지 읽음 처리
+        // [4-1] 채팅방에 해당하면서 다른 유저가 보낸 읽지 않은 메시지 개수: (원래 읽지 않은 메시지 개수) -1 처리
+        chattingMessageRepository.updateAllByNotViewCountMinusOneByRoomIdAndChattingAccountId(chattingRoomId, chattingParticipant.getAccount().getAccountId());
 
-        // [2-2] 채팅방에 해당하면서 내가 읽지 않은 메시지 개수: 0 처리
-        chattingParticipantRepository.updateAllByNotViewCountZeroByRoomIdAndChattingParticipantIdAndIsDeletedFalse(chattingRoomId, chattingParticipant.getChattingParticipantId());
-
-        // [3] 리스트 줄거면 여기서 줘야 함
-
+        // [4-2] 채팅방에 해당하면서 내가 읽지 않은 메시지 개수: 0 처리
+        chattingParticipantRepository.updateAllByNotViewCountZeroByRoomIdAndAccountIdAndIsDeletedFalse(chattingRoomId, chattingParticipant.getAccount().getAccountId());
 
         // socket session에 저장
 //        simpMessageHeaderAccessor.getSessionAttributes().put("participantId", chattingParticipant.getChattingParticipantId());
@@ -154,9 +157,6 @@ public class ChattingRoomService {
 //            // 입장했으니까 바로 socket 열고 입장시켜줘야 함
 //        // 방 입장: 이후에는 개별적으로 입장 퇴장 생각
 //
-//
-//        // TODO: account 테이블 조회 후 프로필 사진과 이름 받아와서 chattingRoomName 설정할 것
-//
 //        // [1] ChattingRoom 내용 저장
 //        ChattingRoom chattingRoom = toChattingRoomEntity.toChattingRoomCreateEntity(chattingRoomCreateRequest);
 //        ChattingRoom savedChattingRoom = chattingRoomRepository.save(chattingRoom);
@@ -184,21 +184,22 @@ public class ChattingRoomService {
 
     @Transactional
     public ResultResponse getChattingRoomListByUser(Long accountId, Pageable pageable) {
-        // TODO: [1] accountId 유효성 체크
+        // [1] accountId 유효성 체크
+        Account account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId).orElseThrow();
 
         // [2] ChattingParticipant에서 participantId로 select
-        Slice<ChattingParticipant> chattingParticipantList = chattingParticipantRepository.findAllByAccountIdAndIsDeletedFalse(accountId, pageable);
+        List<ChattingParticipant> chattingParticipantList = chattingParticipantRepository.findAllByAccountAndIsDeletedFalse(account);
 
         // [3] select된 ChattingParticipant에서 room list 정보 리스트에 담기
         List<ChattingRoomGetResponse> chattingRoomResponseList = new ArrayList<>();
-        for(ChattingParticipant chattingParticipant: chattingParticipantList.getContent()) {
+        for(ChattingParticipant chattingParticipant: chattingParticipantList) {
             ChattingRoom chattingRoom = chattingParticipant.getChattingRoom();
 
             // [3-1] room 정보에 포함되어 있는 participant list 정보 담기 - 본인 제외
             // TODO: account 테이블 조회 후 프로필 사진과 이름 받아와서 그 정보로 변경할 것
             List<ChattingParticipantResponse> chattingParticipantResponseList = new ArrayList<>();
             for(ChattingParticipant chattingRoomParticipant: chattingRoom.getChattingParticipantList()) {
-                if(!accountId.equals(chattingRoomParticipant.getAccountId())) {
+                if(!accountId.equals(chattingRoomParticipant.getAccount().getAccountId())) {
                     ChattingParticipantResponse chattingParticipantResponse = toChattingParticipantResponse.toChattingParticipantCreateResponse(chattingRoomParticipant);
                     chattingParticipantResponseList.add(chattingParticipantResponse);
                 }
@@ -220,26 +221,28 @@ public class ChattingRoomService {
         }
 
         // [4] 페이지네이션 정보와 chattingRoom list를 response로 변환
-        ChattingRoomListPaginationResponse chattingRoomListPaginationResponse = ToChattingRoomResponse.toChattingRoomListPaginationResponse(chattingParticipantList, chattingRoomResponseList);
-
-        // [5] resultResponse 만들기
-        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_LIST_GET_SUCCESS, chattingRoomListPaginationResponse);
-
-        return resultResponse;
+//        ChattingRoomListPaginationResponse chattingRoomListPaginationResponse = ToChattingRoomResponse.toChattingRoomListPaginationResponse(chattingParticipantList, chattingRoomResponseList);
+//
+//        // [5] resultResponse 만들기
+//        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_LIST_GET_SUCCESS, chattingRoomListPaginationResponse);
+//
+//        return resultResponse;
+        return null;
     }
 
+    // 채팅 메시지 리스트 최신 100개
     @Transactional
     public ResultResponse getChattingMessageListByRoom(Long chattingRoomId) {
         // [1] 채팅방 유효성 검사
-        Optional<ChattingRoom> foundChattingRoom = chattingRoomRepository.findByChattingRoomId(chattingRoomId);
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
 
-        // [2] 채팅방 참가자 정보 가져와서 정보 담기 - 참가자 이름, 프로필 사진
-        //  TODO: 참가자 정보 account에서 가져오기
-
-        // [3] ChattingMessage list 가져와서 정보 담기
-        List<ChattingMessage> chattingMessageList = chattingMessageRepository.findAllByChattingRoom(chattingRoomId);
+        // [2] ChattingMessage list 가져와서 정보 담기
+        List<ChattingMessage> chattingMessageList = chattingMessageRepository.findAllByChattingRoom(foundChattingRoom.getChattingRoomId());
         List<ChattingMessageGetResponse> chattingMessageGetResponseList = new ArrayList<>();
         chattingMessageList.forEach(c -> chattingMessageGetResponseList.add(toChattingMessageResponse.toChattingMessageGetResponse(c)));
+        System.out.println("===============");
+        chattingMessageGetResponseList.forEach(c -> System.out.println(c.getContent()));
+        System.out.println("===============");
 
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_LIST_GET_SUCCESS, chattingMessageGetResponseList);
 
@@ -249,13 +252,10 @@ public class ChattingRoomService {
     @Transactional
     public ResultResponse getChattingFileListByRoom(Long chattingRoomId) {
         // [1] 채팅방 유효성 검사
-        Optional<ChattingRoom> foundChattingRoom = chattingRoomRepository.findByChattingRoomId(chattingRoomId);
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
 
-        // [2] 채팅방 참가자 정보 가져와서 정보 담기 - 참가자 이름, 프로필 사진
-        //  TODO: 참가자 정보 account에서 가져오기
-
-        // [3] ChattingMessage list 가져와서 정보 담기
-        List<ChattingMessage> chattingMessageList = chattingMessageRepository.findAllFileUrlByChattingRoom(chattingRoomId);
+        // [2] ChattingMessage list 가져와서 정보 담기
+        List<ChattingMessage> chattingMessageList = chattingMessageRepository.findAllFileUrlByChattingRoom(foundChattingRoom.getChattingRoomId());
         List<ChattingMessageGetResponse> chattingMessageGetResponseList = new ArrayList<>();
         chattingMessageList.forEach(c -> chattingMessageGetResponseList.add(toChattingMessageResponse.toChattingMessageGetResponse(c)));
 

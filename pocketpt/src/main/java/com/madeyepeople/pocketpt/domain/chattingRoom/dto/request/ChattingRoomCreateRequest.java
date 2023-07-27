@@ -6,5 +6,5 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class ChattingRoomCreateRequest {
-    private Long participantId;
+    private Long accountId;
 }

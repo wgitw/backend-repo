@@ -7,12 +7,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ToChattingParticipantResponse {
-    public ChattingParticipantResponse toChattingRoomCreateResponse(ChattingParticipant chattingParticipant, Account account) {
+    public ChattingParticipantResponse toChattingRoomCreateResponse(ChattingParticipant chattingParticipant) {
         return ChattingParticipantResponse.builder()
-                .chattingParticipantId(chattingParticipant.getChattingParticipantId())
-                .accountId(chattingParticipant.getAccountId())
-                .profileImageUrl("") // 수정할 것
-                .nickname(account.getNickname())
+                .accountId(chattingParticipant.getAccount().getAccountId())
+                .accountNickName(chattingParticipant.getAccount().getNickname())
+                .accountProfilePictureUrl(chattingParticipant.getAccount().getProfilePictureUrl())
                 .isHost(chattingParticipant.getIsHost())
                 .createdAt(chattingParticipant.getCreatedAt())
                 .build();
@@ -20,8 +19,9 @@ public class ToChattingParticipantResponse {
 
     public ChattingParticipantResponse toChattingParticipantCreateResponse(ChattingParticipant chattingParticipant) {
         return ChattingParticipantResponse.builder()
-                .chattingParticipantId(chattingParticipant.getChattingParticipantId())
-                .accountId(chattingParticipant.getAccountId())
+                .accountId(chattingParticipant.getAccount().getAccountId())
+                .accountNickName(chattingParticipant.getAccount().getNickname())
+                .accountProfilePictureUrl(chattingParticipant.getAccount().getProfilePictureUrl())
                 .isHost(chattingParticipant.getIsHost())
                 .createdAt(chattingParticipant.getCreatedAt())
                 .build();

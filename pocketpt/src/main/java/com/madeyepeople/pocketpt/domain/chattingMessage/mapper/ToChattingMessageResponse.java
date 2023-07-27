@@ -7,10 +7,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ToChattingMessageResponse {
-    public ChattingMessageCreateResponse toChattingMessageCreateResponse(Long chattingRoomId, Long chattingParticipantId, ChattingMessage chattingMessage) {
+    public ChattingMessageCreateResponse toChattingMessageCreateResponse(ChattingMessage chattingMessage) {
         return ChattingMessageCreateResponse.builder()
-                .chattingRoomId(chattingRoomId)
-                .chattingParticipantId(chattingParticipantId)
+                .chattingRoomId(chattingMessage.getChattingParticipant().getChattingRoom().getChattingRoomId())
+                .chattingAccountId(chattingMessage.getChattingParticipant().getAccount().getAccountId())
+                .chattingAccountName(chattingMessage.getChattingParticipant().getAccount().getNickname())
+                .chattingAccountProfilePictureUrl(chattingMessage.getChattingParticipant().getAccount().getProfilePictureUrl())
                 .chattingMessageId(chattingMessage.getChattingMessageId())
                 .content(chattingMessage.getContent())
                 .isEdited(chattingMessage.getIsEdited())
@@ -20,10 +22,12 @@ public class ToChattingMessageResponse {
                 .build();
     }
 
-    public ChattingMessageCreateResponse toChattingFileCreateResponse(Long chattingRoomId, Long chattingParticipantId, ChattingMessage chattingMessage) {
+    public ChattingMessageCreateResponse toChattingFileCreateResponse(ChattingMessage chattingMessage) {
         return ChattingMessageCreateResponse.builder()
-                .chattingRoomId(chattingRoomId)
-                .chattingParticipantId(chattingParticipantId)
+                .chattingRoomId(chattingMessage.getChattingParticipant().getChattingRoom().getChattingRoomId())
+                .chattingAccountId(chattingMessage.getChattingParticipant().getAccount().getAccountId())
+                .chattingAccountName(chattingMessage.getChattingParticipant().getAccount().getNickname())
+                .chattingAccountProfilePictureUrl(chattingMessage.getChattingParticipant().getAccount().getProfilePictureUrl())
                 .chattingMessageId(chattingMessage.getChattingMessageId())
                 .fileUrl(chattingMessage.getFileUrl())
                 .isEdited(chattingMessage.getIsEdited())
@@ -35,7 +39,11 @@ public class ToChattingMessageResponse {
 
     public ChattingMessageGetResponse toChattingMessageGetResponse(ChattingMessage chattingMessage) {
         return ChattingMessageGetResponse.builder()
-                .chattingParticipantId(chattingMessage.getChattingParticipant().getChattingParticipantId())
+                .chattingRoomId(chattingMessage.getChattingParticipant().getChattingRoom().getChattingRoomId())
+                .chattingAccountId(chattingMessage.getChattingParticipant().getAccount().getAccountId())
+                .chattingAccountName(chattingMessage.getChattingParticipant().getAccount().getNickname())
+                .chattingAccountProfilePictureUrl(chattingMessage.getChattingParticipant().getAccount().getProfilePictureUrl())
+                .chattingMessageId(chattingMessage.getChattingMessageId())
                 .content(chattingMessage.getContent())
                 .fileUrl(chattingMessage.getFileUrl())
                 .isEdited(chattingMessage.getIsEdited())

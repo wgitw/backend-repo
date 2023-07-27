@@ -41,7 +41,6 @@ public class ChattingRoomController {
     // 채팅방 메시지 리스트 가져오기
     @GetMapping("/{chattingRoomId}/messages")
     public  ResponseEntity<ResultResponse> getChattingMessageListByRoom(@PathVariable Long chattingRoomId) {
-        // TODO: 메시지 읽음 유무 처리할 것
         ResultResponse resultResponse = chattingRoomService.getChattingMessageListByRoom(chattingRoomId);
         return ResponseEntity.ok(resultResponse);
     }

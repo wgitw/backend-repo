@@ -10,10 +10,9 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class ChattingParticipantResponse {
-    private Long chattingParticipantId;
     private Long accountId;
-    private String profileImageUrl;
-    private String nickname;
+    private String accountNickName;
+    private String accountProfilePictureUrl;
     private Boolean isHost;
     private LocalDateTime createdAt;
 }

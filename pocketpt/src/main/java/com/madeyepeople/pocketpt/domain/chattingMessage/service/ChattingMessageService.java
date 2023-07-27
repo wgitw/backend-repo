@@ -1,5 +1,7 @@
 package com.madeyepeople.pocketpt.domain.chattingMessage.service;
 
+import com.madeyepeople.pocketpt.domain.account.entity.Account;
+import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingFileCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingMessageContentCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageCreateResponse;
@@ -25,6 +27,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class ChattingMessageService {
+    private final AccountRepository accountRepository;
     private final ChattingMessageRepository chattingMessageRepository;
 
     private final ChattingRoomRepository chattingRoomRepository;
@@ -40,21 +43,27 @@ public class ChattingMessageService {
     @Transactional
     public ResultResponse createChattingMessage(ChattingMessageContentCreateRequest chattingMessageContentCreateRequest, Long roomId, String accountUsername) {
         // [1] 채팅방 유효성 검사
-        Optional<ChattingRoom> foundChattingRoom = chattingRoomRepository.findByChattingRoomId(roomId);
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(roomId).orElseThrow();
 
         // [2] 채팅 sender 유효성 검사
-        Optional<ChattingParticipant> foundChattingParticipant = chattingParticipantRepository.findByAccountUsernameAndChattingRoomIdAndIsDeletedFalse(accountUsername, roomId);
+        Account account = accountRepository.findByEmailAndIsDeletedFalse(accountUsername).orElseThrow();
+        ChattingParticipant foundChattingParticipant = chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow();
+        System.out.println("==========foundChattingParticipant=========");
+        System.out.println("getChattingRoomId: " + foundChattingParticipant.getChattingRoom().getChattingRoomId());
+        System.out.println("getAccountId: " + foundChattingParticipant.getAccount().getAccountId());
+        System.out.println("===================");
 
         // [3] ChattingMessage 초기화
-        ChattingMessage chattingMessage = toChattingMessageEntity.toChattingMessageCreateEntity(foundChattingParticipant.get(), chattingMessageContentCreateRequest);
+        ChattingMessage chattingMessage = toChattingMessageEntity.toChattingMessageCreateEntity(foundChattingParticipant, chattingMessageContentCreateRequest);
+        System.out.println("==========chattingMessage=========");
+        System.out.println("getChattingRoomId: " + chattingMessage.getChattingParticipant().getChattingRoom().getChattingRoomId());
+        System.out.println("getAccountId: " + chattingMessage.getChattingParticipant().getAccount().getAccountId());
+        System.out.println("===================");
 
         // [4] 채팅방에 참여 중인 사람이 현재 채팅방 참여 중인지 체크 - 채팅 읽음 처리 로직
-        List<ChattingParticipant> chattingParticipantList = chattingParticipantRepository.findAllByChattingRoomIdAndNotInAccountIdAndIsDeletedFalse(roomId, foundChattingParticipant.get().getAccountId());
-        int notViewCount = foundChattingRoom.get().getNumberOfParticipant() - 1; // 본인을 제외한 나머지 수로 초기 세팅
+        List<ChattingParticipant> chattingParticipantList = chattingParticipantRepository.findAllByChattingRoomIdAndNotInAccountIdAndIsDeletedFalse(roomId, foundChattingParticipant.getAccount().getAccountId());
+        int notViewCount = foundChattingRoom.getNumberOfParticipant() - 1; // 본인을 제외한 나머지 수로 초기 세팅
         for(ChattingParticipant chattingParticipant: chattingParticipantList) {
-            log.info("-----------");
-            log.info(chattingParticipant.getChattingParticipantId().toString());
-            log.info(chattingParticipant.getSimpSessionId());
             if (chattingParticipant.getSimpSessionId() != null) {
                 // 채팅 메시지를 읽지 않은 사람의 수
                 --notViewCount;
@@ -64,14 +73,16 @@ public class ChattingMessageService {
                 chattingParticipant.setNotViewCount(++participantNotViewCount);
                 chattingParticipantRepository.save(chattingParticipant);
             }
-            log.info("-----------");
         }
         chattingMessage.setNotViewCount(notViewCount);
 
         // [5] 채팅 메시지 저장 및 정보 담기
         ChattingMessage savedChattingMessage = chattingMessageRepository.save(chattingMessage);
-        ChattingMessageCreateResponse chattingMessageCreateResponse = toChattingMessageResponse.toChattingMessageCreateResponse(foundChattingRoom.get().getChattingRoomId(),
-                foundChattingParticipant.get().getChattingParticipantId(), savedChattingMessage);
+        System.out.println("==========savedChattingMessage=========");
+        System.out.println("getChattingRoomId: " + savedChattingMessage.getChattingParticipant().getChattingRoom().getChattingRoomId());
+        System.out.println("getAccountId: " + savedChattingMessage.getChattingParticipant().getAccount().getAccountId());
+        System.out.println("===================");
+        ChattingMessageCreateResponse chattingMessageCreateResponse = toChattingMessageResponse.toChattingMessageCreateResponse(savedChattingMessage);
 
         // [5] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageCreateResponse
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_CREATE_SUCCESS, chattingMessageCreateResponse);
@@ -82,23 +93,24 @@ public class ChattingMessageService {
     @Transactional
     public ResultResponse createChattingFile(ChattingFileCreateRequest chattingFileCreateRequest, Long roomId, Long accountId) {
         // [1] 채팅방 유효성 검사
-        Optional<ChattingRoom> foundChattingRoom = chattingRoomRepository.findByChattingRoomId(roomId);
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(roomId).orElseThrow();
 
         // [2] 채팅 sender 유효성 검사
-        Optional<ChattingParticipant> foundChattingParticipant = chattingParticipantRepository.findByAccountIdAndChattingRoomIdAndIsDeletedFalse(accountId, roomId);
+        Account account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId).orElseThrow();
+        ChattingParticipant foundChattingParticipant = chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow();
 
         // [3] 채팅 파일 S3 업로드
         String fileUrl = s3FileService.uploadFile("chatting/" + roomId + "/", chattingFileCreateRequest.getFile());
 
         // [4] ChattingMessage 초기화
-        ChattingMessage chattingMessage = toChattingMessageEntity.toChattingFileCreateEntity(foundChattingParticipant.get(), fileUrl);
+        ChattingMessage chattingMessage = toChattingMessageEntity.toChattingFileCreateEntity(foundChattingParticipant, fileUrl);
 
         // [5] 채팅방에 참여 중인 사람이 현재 채팅방 참여 중인지 체크 - 채팅 읽음 처리 로직
         List<ChattingParticipant> chattingParticipantList = chattingParticipantRepository.findAllByChattingRoomIdAndNotInAccountIdAndIsDeletedFalse(roomId, accountId);
-        int notViewCount = foundChattingRoom.get().getNumberOfParticipant() - 1; // 본인을 제외한 나머지 수로 초기 세팅
+        int notViewCount = foundChattingRoom.getNumberOfParticipant() - 1; // 본인을 제외한 나머지 수로 초기 세팅
         for(ChattingParticipant chattingParticipant: chattingParticipantList) {
             log.info("-----------");
-            log.info(chattingParticipant.getChattingParticipantId().toString());
+//            log.info(chattingParticipant.getChattingParticipantId().toString());
             log.info(chattingParticipant.getSimpSessionId());
             if (chattingParticipant.getSimpSessionId() != null) {
                 // 채팅 메시지를 읽지 않은 사람의 수
@@ -115,8 +127,7 @@ public class ChattingMessageService {
 
         // [6] 채팅 메시지 저장 및 정보 담기
         ChattingMessage savedChattingMessage = chattingMessageRepository.save(chattingMessage);
-        ChattingMessageCreateResponse chattingMessageCreateResponse = toChattingMessageResponse.toChattingFileCreateResponse(foundChattingRoom.get().getChattingRoomId(),
-                foundChattingParticipant.get().getChattingParticipantId(), savedChattingMessage);
+        ChattingMessageCreateResponse chattingMessageCreateResponse = toChattingMessageResponse.toChattingFileCreateResponse(savedChattingMessage);
 
         // [7] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageCreateResponse
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_FILE_CREATE_SUCCESS, chattingMessageCreateResponse);

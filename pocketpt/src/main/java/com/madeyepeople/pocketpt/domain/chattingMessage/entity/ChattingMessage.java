@@ -20,8 +20,9 @@ public class ChattingMessage extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns(value = {
-            @JoinColumn(name = "chattingParticipantId"),
-            @JoinColumn(name = "chattingRoom")
+//            @JoinColumn(name = "chattingParticipantId"),
+            @JoinColumn(name = "chattingRoom"),
+            @JoinColumn(name = "account")
     }, foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private ChattingParticipant chattingParticipant;
 
