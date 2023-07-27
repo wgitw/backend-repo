@@ -22,9 +22,6 @@ import static com.madeyepeople.pocketpt.domain.account.social.HttpCookieOAuth2Au
 @Slf4j
 public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    @Value("${cors.frontend}")
-    private String corsFrontend;
-
     private final OAuth2 oAuth2 = new OAuth2();
 
     private final JwtUtil jwtUtil;
@@ -60,11 +57,14 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
 //        }
 
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
-        log.info("targetUrl: {}", targetUrl);
+        log.info("targetUrl-redirectUri: {}", targetUrl);
 
         String accessToken = jwtUtil.createAccessToken(authentication);
         log.info("accessToken: {}", accessToken);
 
+        log.info("targetUrl-processedUri: {}", UriComponentsBuilder.fromUriString(targetUrl)
+                .queryParam("accessToken", accessToken)
+                .build().toUriString());
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("accessToken", accessToken)
                 .build().toUriString();
