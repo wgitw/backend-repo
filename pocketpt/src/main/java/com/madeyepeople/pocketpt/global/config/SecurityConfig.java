@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
+                                "/",
                                 "/api/v1/main",
                                 "/api/v1/test-logout",
                                 "/api/v1/cookie-test",
@@ -53,7 +54,6 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/api/v1/test-logout")
                 )
                 .oauth2Login((oauth2Login) -> oauth2Login
-                                .loginPage("/api/v1/main")
                                 .authorizationEndpoint(authorization -> authorization
                                         .baseUri("/oauth2/authorization")
                                         .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository))
