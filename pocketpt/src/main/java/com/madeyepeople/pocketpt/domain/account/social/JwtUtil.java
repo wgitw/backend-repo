@@ -105,21 +105,20 @@ public class JwtUtil {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
+        // TODO: 각 경우에 따라 다른 exception 처리 필요. 일단 login으로 redirect
         } catch (SignatureException e) {
-            log.error("Invalid JWT signature: {}", e.getMessage());
+            throw new JwtException("사용자 인증 실패", e);
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.error("Invalid JWT Token", e);
+            throw new JwtException("유효하지 않은 토큰", e);
         } catch (ExpiredJwtException e) {
-            // TODO: refresh token으로 재발급하게 exception handling
-            log.error("Expired JWT Token", e);
+            throw new JwtException("만료된 JWT Token", e);
         } catch (UnsupportedJwtException e) {
-            log.error("Unsupported JWT Token", e);
+            throw new JwtException("지원하지 않는 JWT token", e);
         } catch (IllegalArgumentException e) {
-            log.error("JWT claims string is empty.", e);
+            throw new JwtException("지원하지 않는 JWT token", e);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new JwtException("알 수 없는 JWT token error", e);
         }
-        return false;
     }
 
     private Claims parseClaims(String accessToken) {

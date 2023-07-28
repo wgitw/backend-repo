@@ -1,9 +1,6 @@
 package com.madeyepeople.pocketpt.global.config;
 
-import com.madeyepeople.pocketpt.domain.account.social.CustomAuthorizationFilter;
-import com.madeyepeople.pocketpt.domain.account.social.CustomOAuth2UserService;
-import com.madeyepeople.pocketpt.domain.account.social.HttpCookieOAuth2AuthorizationRequestRepository;
-import com.madeyepeople.pocketpt.domain.account.social.RedirectAuthenticationSuccessHandler;
+import com.madeyepeople.pocketpt.domain.account.social.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -28,6 +26,8 @@ public class SecurityConfig {
     private final RedirectAuthenticationSuccessHandler redirectAuthenticationSuccessHandler;
 
     private final CustomAuthorizationFilter customAuthorizationFilter;
+
+    private final JwtExceptionFilter jwtExceptionFilter;
 
     @Autowired
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
@@ -63,7 +63,8 @@ public class SecurityConfig {
 //                        .failureHandler(authenticationFailureHandler)
 //                )
                 )
-                .addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter, customAuthorizationFilter.getClass());
         return http.build();
     }
 }
