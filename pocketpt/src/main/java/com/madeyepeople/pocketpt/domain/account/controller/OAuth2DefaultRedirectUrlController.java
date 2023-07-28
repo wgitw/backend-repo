@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping
-public class DefaultUrlController {
+public class OAuth2DefaultRedirectUrlController {
     @GetMapping("/")
     public String defaultPage() {
         return "OAuth 인증 후 redirect url을 입력하지 않아 server의 base url로 redirect 됩니다.";
