@@ -1,5 +1,6 @@
 package com.madeyepeople.pocketpt.domain.account.social;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -29,7 +30,7 @@ public class CustomAuthorizationFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
-        // 1. Request Header 에서 JWT 토큰 추출
+            // 1. Request Header 에서 JWT 토큰 추출
             String token = resolveToken((HttpServletRequest) request);
 
             // 2. validateToken 으로 토큰 유효성 검사
@@ -38,6 +39,8 @@ public class CustomAuthorizationFilter extends GenericFilterBean {
                 Authentication authentication = jwtUtil.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
+        } catch (JwtException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Security Context에서 사용자 인증을 설정할 수 없습니다.", e);
         }

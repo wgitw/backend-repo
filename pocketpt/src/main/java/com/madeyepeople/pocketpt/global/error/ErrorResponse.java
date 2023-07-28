@@ -1,5 +1,7 @@
 package com.madeyepeople.pocketpt.global.error;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -57,5 +59,10 @@ public class ErrorResponse {
                                             error.getDefaultMessage()))
                     .collect(Collectors.toList());
         }
+    }
+
+    public String toJSonString() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(this);
     }
 }

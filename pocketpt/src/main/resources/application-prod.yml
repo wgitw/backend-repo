@@ -1,9 +1,0 @@
-spring:
-  security:
-    oauth2:
-      client:
-        registration:
-          kakao:
-            redirect-uri: "https://back.pocketpt.shop/login/oauth2/code/{registrationId}"
-          naver:
-            redirect-uri: "https://back.pocketpt.shop/login/oauth2/code/{registrationId}"

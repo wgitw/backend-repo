@@ -68,8 +68,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             e.printStackTrace();
         }
 
-//        String fileUrl = s3FileService.uploadFile("chatting/" + chattingFileCreateRequest.getChattingRoomId() + "/", chattingFileCreateRequest.getFile());
-
         Optional<Account> accountOptional = accountRepository.findByEmailAndIsDeletedFalse(email);
         Oauth2ProviderInfo oauth2ProviderInfo = Oauth2ProviderInfo.builder()
                 .attributes(attributes)
@@ -91,7 +89,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if (oauth2ProviderInfo.getAccountOptional().isEmpty()) {
             String encodedPassword = passwordEncoder.encode(UUID.randomUUID().toString());
-            // TODO: imageUrl을 S3 url로 바꿔야함.
             saved = accountRepository.save(toAccountEntity.toAccountCreateEntity(oauth2ProviderInfo, encodedPassword));
         } else {
             log.info("\n\n이미 가입된 회원입니다. nickname을 업데이트합니다.\n\n");
