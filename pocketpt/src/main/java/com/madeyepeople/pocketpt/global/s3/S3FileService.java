@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +21,6 @@ import java.util.UUID;
 @Slf4j
 public class S3FileService {
     private AmazonS3Client amazonS3Client;
-
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
 

@@ -43,6 +43,7 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         Optional<String> redirectUri = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
+        log.info("redirectUri_from_FE: {}", redirectUri.get());
 
         // TODO: FE 개발 안정화되면, FE와 정한 redirectUri만 가능하도록 수정
 //        if(redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
@@ -69,9 +70,10 @@ public class RedirectAuthenticationSuccessHandler extends SimpleUrlAuthenticatio
 
         CookieUtil.addCookie(response, "accessToken", accessToken, 60 * 60 * 24);
 
-        return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("accessToken", accessToken)
-                .build().toUriString();
+//        return UriComponentsBuilder.fromUriString(targetUrl)
+//                .queryParam("accessToken", accessToken)
+//                .build().toUriString();
+        return targetUrl + "?accessToken=" + accessToken;
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
