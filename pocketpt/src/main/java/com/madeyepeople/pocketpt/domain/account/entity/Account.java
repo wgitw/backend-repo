@@ -10,13 +10,14 @@ import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.List;
+import java.util.Date;
+
 
 
 @Entity
 @Getter
 @ToString
 @NoArgsConstructor
-//@EqualsAndHashCode
 // TODO: @SQLDelete 로 삭제시 is_deleted = true 로 변경되게 하기
 public class Account extends BaseEntity {
 
@@ -29,6 +30,9 @@ public class Account extends BaseEntity {
 
     @Column(name = "oauth2_id")
     private Long oauth2Id;
+  
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Nonnull
     private String provider;
@@ -36,26 +40,37 @@ public class Account extends BaseEntity {
     @Nonnull
     private String email;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @Column(name = "oauth2_id")
+    private Long oauth2Id;
+
+    private String name;
+
+    private String phoneNumber;
 
     private String nickname;
 
-    private String profilePictureUrl; // 카멜로 안되어 있어서 내가 바꿀게
+    private String profilePictureUrl;
+
+    private String gender;
+
+    @Temporal(TemporalType.DATE)
+    private Date birthdate;
 
     // oauth2 provider가 제공하는 access token. 회원 탈퇴를 위해 필요.
     private String oauth2AccessToken;
+  
     @JsonIgnore
     private String password;
 
 
     @Builder
-    public Account(Long oauth2Id, String email, String provider, String nickname, String oauth2AccessToken, String password) {
+    public Account(Long oauth2Id, String email, String provider, String nickname, String oauth2AccessToken, String password, String profilePictureUrl) {
         this.oauth2Id = oauth2Id;
         this.provider = provider;
         this.email = email;
         this.nickname = nickname;
         this.oauth2AccessToken = oauth2AccessToken;
+        this.profilePictureUrl = profilePictureUrl;
         this.password = password;
     }
 
@@ -65,24 +80,3 @@ public class Account extends BaseEntity {
         return this;
     }
 }
-
-//public abstract  class OAuth2UserInfo {
-//
-//    protected Map<String, Object> attributes;
-//
-//    public OAuth2UserInfo(Map<String, Object> attributes) {
-//        this.attributes = attributes;
-//    }
-//
-//    public Map<String, Object> getAttributes() {
-//        return attributes;
-//    }
-//
-//    public abstract String getId();
-//
-//    public abstract String getName();
-//
-//    public abstract String getEmail();
-//
-//    public abstract String getImageUrl();
-//}

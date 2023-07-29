@@ -68,8 +68,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             e.printStackTrace();
         }
 
-//        String fileUrl = s3FileService.uploadFile("chatting/" + chattingFileCreateRequest.getChattingRoomId() + "/", chattingFileCreateRequest.getFile());
-
         Optional<Account> accountOptional = accountRepository.findByEmailAndIsDeletedFalse(email);
         Oauth2ProviderInfo oauth2ProviderInfo = Oauth2ProviderInfo.builder()
                 .attributes(attributes)
@@ -91,19 +89,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if (oauth2ProviderInfo.getAccountOptional().isEmpty()) {
             String encodedPassword = passwordEncoder.encode(UUID.randomUUID().toString());
-            // TODO: imageUrl을 S3 url로 바꿔야함.
-            saved = accountRepository.save(toAccountEntity.toAccountCreateEntity(oauth2ProviderInfo, encodedPassword));
-
-
-//            Role role = roleRepository.findByValue(RoleEnum.ROLE_USER).orElseThrow(() ->
-//                    new EntityNotFoundException(RoleEnum.ROLE_USER + "에 해당하는 Role이 없습니다."));
-//            user = User.of(username, encodedPassword, email, login, imageUrl, member);
-//            UserRole userRole = UserRole.of(role, user);
-//
-//            userRepository.save(user);
-//            userRoleRepository.save(userRole);
-//            necessaryAttributes.put(CREATE_FLAG, true);
-            //생성해야할 객체 추가로 더 있을 수 있음.
+            saved = accountRepository.save(toAccountEntity.toAccountEntityFromOAuth2Info(oauth2ProviderInfo, encodedPassword));
         } else {
             log.info("\n\n이미 가입된 회원입니다. nickname을 업데이트합니다.\n\n");
             saved = oauth2ProviderInfo.getAccountOptional().get();
@@ -113,11 +99,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                             oauth2ProviderInfo.getOauth2ProviderAccessToken()
                     )
             );
-//            //회원정보 수정
-//            user = userOptional.get();
-//            // 새로 로그인 시 oauth2 기반 데이터로 변경하지않음.
-////            user.updateUserBHOAuthIfo(imageUrl);
-//            necessaryAttributes.put(CREATE_FLAG, false);
         }
         log.info(saved.toString());
         oAuth2User = AccountPrincipal.create(saved, oauth2ProviderInfo.getAttributes());

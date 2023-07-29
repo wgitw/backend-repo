@@ -14,9 +14,9 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E001", "서버 오류"),
     INPUT_INVALID_VALUE(HttpStatus.BAD_REQUEST, "E002", "잘못된 입력"),
 
-    // 예시
-    // User 도메인
-    EXAMPLE_USER_ERROR(HttpStatus.BAD_REQUEST, "U001", "테스트용 예시 에러코드"),
+    // Account 도메인
+    EXAMPLE_USER_ERROR(HttpStatus.BAD_REQUEST, "A001", "테스트용 예시 에러코드"),
+    JWT_VALIDATION_ERROR(HttpStatus.UNAUTHORIZED, "A001", "JWT 유효성 예외 발생"),
     ;
 
     private final HttpStatus status;

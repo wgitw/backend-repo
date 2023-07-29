@@ -26,6 +26,12 @@ public class JwtUtil {
     public final String COOKIE_KEY_ACCESS_TOKEN = "access_token";
     public final String COOKIE_KEY_REFRESH_TOKEN = "refresh_token";
 
+    @Value("${jwt.access-token-expiration}")
+    private long accessTokenExpire;
+
+    @Value("${jwt.refresh-token-expiration}")
+    private long refreshTokenExpire;
+
     private final Key key;
 
     public JwtUtil(@Value("${jwt.secret}") String secretKey) {
@@ -33,25 +39,29 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createAccessToken(String subject, String requestUrl, long tokenExpire, Collection<String> authorities) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + tokenExpire);
+    public String createAccessToken(Authentication authentication) {
+        AccountPrincipal user = (AccountPrincipal) authentication.getPrincipal();
+        Collection<String> authorities = user.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority).collect(Collectors.toList());
         Map<String, Object> claims = new HashMap<>();
         claims.put("authorities", new ArrayList<>(authorities));
 
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + accessTokenExpire);
+
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject(subject)
-                .setIssuer(requestUrl)
+                .setSubject(user.getUsername())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
 
-    public String createRefreshToken(String subject, String requestUrl, long tokenExpire) {
+    // TODO: refreshToken 필요성 재고 필요
+    public String createRefreshToken(String subject, String requestUrl) {
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + tokenExpire);
+        Date expiryDate = new Date(now.getTime() + refreshTokenExpire);
 
         return Jwts.builder()
                 .setSubject(subject)
@@ -63,26 +73,6 @@ public class JwtUtil {
     }
 
     public Authentication getAuthentication(String accessToken) {
-        // 토큰 복호화
-        Claims claims = parseClaims(accessToken);
-
-        if (claims.get("authorities") == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
-        }
-
-        // 클레임에서 권한 정보 가져오기
-        Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get("authorities").toString().split(","))
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
-
-        // UserDetails 객체를 만들어서 Authentication 리턴
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(principal, "", authorities);
-        return usernamePasswordAuthenticationToken;
-    }
-
-    public UsernamePasswordAuthenticationToken getUsernamePasswordAuthenticationToken(String accessToken) {
         // 토큰 복호화
         Claims claims = parseClaims(accessToken);
 
@@ -115,21 +105,20 @@ public class JwtUtil {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
+        // TODO: 각 경우에 따라 다른 exception 처리 필요. 일단 login으로 redirect
         } catch (SignatureException e) {
-            log.error("Invalid JWT signature: {}", e.getMessage());
+            throw new JwtException("사용자 인증 실패", e);
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.error("Invalid JWT Token", e);
+            throw new JwtException("유효하지 않은 토큰", e);
         } catch (ExpiredJwtException e) {
-            // TODO: refresh token으로 재발급하게 exception handling
-            log.error("Expired JWT Token", e);
+            throw new JwtException("만료된 JWT Token", e);
         } catch (UnsupportedJwtException e) {
-            log.error("Unsupported JWT Token", e);
+            throw new JwtException("지원하지 않는 JWT token", e);
         } catch (IllegalArgumentException e) {
-            log.error("JWT claims string is empty.", e);
+            throw new JwtException("지원하지 않는 JWT token", e);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new JwtException("알 수 없는 JWT token error", e);
         }
-        return false;
     }
 
     private Claims parseClaims(String accessToken) {
