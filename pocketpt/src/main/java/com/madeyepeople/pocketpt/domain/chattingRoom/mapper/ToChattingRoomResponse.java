@@ -29,11 +29,15 @@ public class ToChattingRoomResponse {
     }
 
     public ChattingRoomGetResponse toChattingRoomListGetResponse(ChattingRoom chattingRoom,
+                                                                 String roomName,
+                                                                 int notViewCount,
                                                                  List<ChattingParticipantResponse> chattingParticipantResponseList,
                                                                  ChattingMessage chattingMessage) {
         return ChattingRoomGetResponse.builder()
                 .chattingRoomId(chattingRoom.getChattingRoomId())
-                .roomName(chattingRoom.getRoomName())
+                .notViewCount(notViewCount)
+                .roomName(roomName)
+                .createdAt(chattingRoom.getCreatedAt())
                 .chattingParticipantResponseList(chattingParticipantResponseList)
                 .latestChattingMessage(chattingMessage.getContent())
                 .latestFileUrl(chattingMessage.getFileUrl())

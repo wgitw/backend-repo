@@ -15,7 +15,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 @Component
-public class StompExceptionHandler extends StompSubProtocolErrorHandler {
+public class
+StompExceptionHandler extends StompSubProtocolErrorHandler {
 
     private static final byte[] EMPTY_PAYLOAD = new byte[0];
 

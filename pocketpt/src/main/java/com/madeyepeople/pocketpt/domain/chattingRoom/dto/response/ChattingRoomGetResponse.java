@@ -15,9 +15,10 @@ public class ChattingRoomGetResponse {
     // 채팅방 정보
     private Long chattingRoomId;
     private String roomName;
+    private int notViewCount;
+    private LocalDateTime createdAt;
 
     // 채팅 참여자 정보
-    // TODO: 채팅 참여자 account 테이블 정보로 변경하여 이름과 프로필사진을 response로 넘길 것
     private List<ChattingParticipantResponse> chattingParticipantResponseList;
 
     // 가장 최근 채팅 정보

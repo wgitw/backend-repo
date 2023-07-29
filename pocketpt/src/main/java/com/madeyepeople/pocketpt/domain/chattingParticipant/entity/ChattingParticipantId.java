@@ -1,6 +1,5 @@
 package com.madeyepeople.pocketpt.domain.chattingParticipant.entity;
 
-import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,9 +12,12 @@ import java.io.Serializable;
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ChattingParticipantId implements Serializable {
-    @EqualsAndHashCode.Include
-    private Long chattingParticipantId;
+//    @EqualsAndHashCode.Include
+//    private Long chattingParticipantId;
 
     @EqualsAndHashCode.Include
-    private ChattingRoom chattingRoom;
+    private Long chattingRoom;
+
+    @EqualsAndHashCode.Include
+    private Long account;
 }

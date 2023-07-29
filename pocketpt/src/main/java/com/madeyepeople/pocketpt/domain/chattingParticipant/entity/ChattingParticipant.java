@@ -1,5 +1,6 @@
 package com.madeyepeople.pocketpt.domain.chattingParticipant.entity;
 
+import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.chattingMessage.entity.ChattingMessage;
 import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
@@ -19,26 +20,28 @@ import java.util.List;
 @Entity(name = "chatting_participant")
 @Access(value = AccessType.FIELD)
 public class ChattingParticipant extends BaseEntity {
-    @SequenceGenerator(
-            name = "chatting_participant_id_seq",
-            sequenceName = "chatting_participant_id_seq",
-            allocationSize = 1
-    )
-    @Id
-    @Column(name = "chatting_participant_id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chatting_participant_id_seq")
-    private Long chattingParticipantId;
+//    @SequenceGenerator(
+//            name = "chatting_participant_id_seq",
+//            sequenceName = "chatting_participant_id_seq",
+//            allocationSize = 1
+//    )
+//    @Id
+//    @Column(name = "chatting_participant_id")
+//    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "chatting_participant_id_seq")
+//    private Long chattingParticipantId;
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatting_room_id")
     private ChattingRoom chattingRoom;
 
+    @Id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id", nullable = false)
+    private Account account;
+
     @OneToMany(mappedBy = "chattingParticipant")
     private List<ChattingMessage> chattingMessageList;
-
-    @Column(name = "participant_account_id", nullable = false)
-    private Long accountId;
 
     @Column(name = "is_host", nullable = false)
     @Builder.Default

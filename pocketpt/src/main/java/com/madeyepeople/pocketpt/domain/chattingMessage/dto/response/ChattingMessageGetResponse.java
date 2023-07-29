@@ -10,7 +10,11 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class ChattingMessageGetResponse {
-    private Long chattingParticipantId;
+    private Long chattingRoomId;
+    private Long chattingAccountId;
+    private String chattingAccountName;
+    private String chattingAccountProfilePictureUrl;
+    private Long chattingMessageId;
     private String content;
     private String fileUrl;
     private Boolean isEdited;
