@@ -7,7 +7,6 @@ import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.*;
-import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.List;
 import java.util.Date;
@@ -40,9 +39,6 @@ public class Account extends BaseEntity {
     @Nonnull
     private String email;
 
-    @Column(name = "oauth2_id")
-    private Long oauth2Id;
-
     private String name;
 
     private String phoneNumber;
@@ -57,26 +53,26 @@ public class Account extends BaseEntity {
     private Date birthdate;
 
     // oauth2 provider가 제공하는 access token. 회원 탈퇴를 위해 필요.
-    private String oauth2AccessToken;
+    private String oauthAccessToken;
   
     @JsonIgnore
     private String password;
 
 
     @Builder
-    public Account(Long oauth2Id, String email, String provider, String nickname, String oauth2AccessToken, String password, String profilePictureUrl) {
+    public Account(Long oauth2Id, String email, String provider, String nickname, String oauthAccessToken, String password, String profilePictureUrl) {
         this.oauth2Id = oauth2Id;
         this.provider = provider;
         this.email = email;
         this.nickname = nickname;
-        this.oauth2AccessToken = oauth2AccessToken;
+        this.oauthAccessToken = oauthAccessToken;
         this.profilePictureUrl = profilePictureUrl;
         this.password = password;
     }
 
-    public Account update(String nickname, String oauth2AccessToken) {
+    public Account update(String nickname, String oauthAccessToken) {
         this.nickname = nickname;
-        this.oauth2AccessToken = oauth2AccessToken;
+        this.oauthAccessToken = oauthAccessToken;
         return this;
     }
 }
