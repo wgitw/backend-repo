@@ -23,6 +23,7 @@ public class ToChattingParticipantResponse {
                 .accountNickName(chattingParticipant.getAccount().getNickname())
                 .accountProfilePictureUrl(chattingParticipant.getAccount().getProfilePictureUrl())
                 .isHost(chattingParticipant.getIsHost())
+                .isDeleted(chattingParticipant.getIsDeleted())
                 .createdAt(chattingParticipant.getCreatedAt())
                 .build();
     }

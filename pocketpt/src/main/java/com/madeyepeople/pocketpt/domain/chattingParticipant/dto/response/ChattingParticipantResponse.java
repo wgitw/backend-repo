@@ -14,5 +14,6 @@ public class ChattingParticipantResponse {
     private String accountNickName;
     private String accountProfilePictureUrl;
     private Boolean isHost;
+    private Boolean isDeleted;
     private LocalDateTime createdAt;
 }
