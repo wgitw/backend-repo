@@ -24,7 +24,7 @@ spring:
         jdbc:
           time_zone: Asia/Seoul
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
   output:
     ansi:

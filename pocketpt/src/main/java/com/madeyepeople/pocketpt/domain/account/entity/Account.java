@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.util.Date;
+
 
 @Entity
 @Getter
@@ -20,8 +22,8 @@ public class Account extends BaseEntity {
     @Column(name = "account_id")
     private Long accountId;
 
-    @Column(name = "oauth2_id")
-    private Long oauth2Id;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Nonnull
     private String provider;
@@ -29,12 +31,21 @@ public class Account extends BaseEntity {
     @Nonnull
     private String email;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @Column(name = "oauth2_id")
+    private Long oauth2Id;
+
+    private String name;
+
+    private String phoneNumber;
 
     private String nickname;
 
     private String profilePictureUrl;
+
+    private String gender;
+
+    @Temporal(TemporalType.DATE)
+    private Date birthdate;
 
     // oauth2 provider가 제공하는 access token. 회원 탈퇴를 위해 필요.
     private String oauth2AccessToken;
@@ -59,24 +70,3 @@ public class Account extends BaseEntity {
         return this;
     }
 }
-
-//public abstract  class OAuth2UserInfo {
-//
-//    protected Map<String, Object> attributes;
-//
-//    public OAuth2UserInfo(Map<String, Object> attributes) {
-//        this.attributes = attributes;
-//    }
-//
-//    public Map<String, Object> getAttributes() {
-//        return attributes;
-//    }
-//
-//    public abstract String getId();
-//
-//    public abstract String getName();
-//
-//    public abstract String getEmail();
-//
-//    public abstract String getImageUrl();
-//}
