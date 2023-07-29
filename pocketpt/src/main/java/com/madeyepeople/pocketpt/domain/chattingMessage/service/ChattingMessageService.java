@@ -57,8 +57,8 @@ public class ChattingMessageService {
                 --notViewCount;
             } else if (chattingParticipant.getSimpSessionId() == null) {
                 // 채팅 참여자가 읽지 않은 메시지 수
-                int participantNotViewCount = chattingParticipant.getNotViewCount();
-                chattingParticipant.setNotViewCount(++participantNotViewCount);
+                int participantNotViewCount = chattingParticipant.getNotViewCount() + 1;
+                chattingParticipant.setNotViewCount(participantNotViewCount);
                 chattingParticipantRepository.save(chattingParticipant);
             }
         }
