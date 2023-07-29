@@ -15,6 +15,8 @@ public class ChattingRoomGetResponse {
     // 채팅방 정보
     private Long chattingRoomId;
     private String roomName;
+    private int notViewCount;
+    private LocalDateTime createdAt;
 
     // 채팅 참여자 정보
     private List<ChattingParticipantResponse> chattingParticipantResponseList;

@@ -18,7 +18,7 @@ public interface ChattingMessageRepository extends JpaRepository<ChattingMessage
                 SELECT *
                 FROM chatting_message m
                 WHERE m.chatting_room = :chattingRoom
-                    AND ORDER BY m.created_at DESC LIMIT 1
+                    ORDER BY m.created_at DESC LIMIT 1
             """, nativeQuery = true)
     Optional<ChattingMessage> findLatestChattingMessageByRoom(Long chattingRoom);
 

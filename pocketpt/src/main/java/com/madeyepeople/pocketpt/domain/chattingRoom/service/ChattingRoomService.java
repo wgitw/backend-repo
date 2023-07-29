@@ -125,58 +125,49 @@ public class ChattingRoomService {
     // 채팅방 리스트 - 메시지순으로 전체 조회
     @Transactional
     public ResultResponse getChattingRoomListByUser(Long accountId, Pageable pageable) {
+        // TODO: 최신 메시지 created_at desc로 정렬할 것, 최신 메시지가 없다면 방이 만들어진 시간으로 대체
+
         // [1] accountId 유효성 체크
         Account account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId).orElseThrow();
+
+        // [2] account에서 participant 리스트 정보 받아오기
         List<ChattingParticipant> chattingParticipantList = account.getChattingParticipantList();
 
+        // [3] select된 ChattingParticipant에서 room list 정보 리스트에 담기
+        List<ChattingRoomGetResponse> chattingRoomResponseList = new ArrayList<>();
         for(ChattingParticipant chattingParticipant:chattingParticipantList) {
-            System.out.println(chattingParticipant.getChattingRoom().getChattingRoomId());
-//            System.out.println(chattingParticipant.getChattingMessageList());
-            System.out.println(chattingParticipant.getChattingRoom().getChattingRoomId());
+            ChattingRoom chattingRoom = chattingParticipant.getChattingRoom();
+            String roomName = "";
+            int notViewCount = 0;
+
+            // [3-1] room 정보에 포함되어 있는 participant list 정보 담기 - 본인 제외
+            List<ChattingParticipantResponse> chattingParticipantResponseList = new ArrayList<>();
+            for(ChattingParticipant c: chattingRoom.getChattingParticipantList()) {
+                if(accountId.equals(c.getAccount().getAccountId())) {
+                    notViewCount = c.getNotViewCount();
+                } else {
+                    ChattingParticipantResponse chattingParticipantResponse = toChattingParticipantResponse.toChattingParticipantCreateResponse(c);
+                    roomName += c.getAccount().getNickname();
+                    chattingParticipantResponseList.add(chattingParticipantResponse);
+                }
+            }
+
+            // [3-2] 최신 메시지 정보 가져오기
+            Optional<ChattingMessage> chattingMessage = chattingMessageRepository.findLatestChattingMessageByRoom(chattingRoom.getChattingRoomId());
+            ChattingRoomGetResponse chattingRoomGetResponse;
+            if(chattingMessage.isPresent()) { // 채팅 내용이 존재하는 경우
+                chattingRoomGetResponse = toChattingRoomResponse.toChattingRoomListGetResponse(chattingRoom, roomName, notViewCount, chattingParticipantResponseList, chattingMessage.get());
+            }
+            else { // 채팅방이 새롭게 개설되어 채팅 내용이 존재하지 않는 경우
+                ChattingMessage defaultChattingMessage = new ChattingMessage();
+                chattingRoomGetResponse = toChattingRoomResponse.toChattingRoomListGetResponse(chattingRoom, roomName, notViewCount, chattingParticipantResponseList, defaultChattingMessage);
+            }
+            chattingRoomResponseList.add(chattingRoomGetResponse);
         }
 
+        // [5] resultResponse 만들기
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_LIST_GET_SUCCESS, chattingRoomResponseList);
 
-//        // [2] ChattingParticipant에서 participantId로 select
-//        List<ChattingParticipant> chattingParticipantList = chattingParticipantRepository.findAllByAccountAndIsDeletedFalse(account);
-//
-//        // [3] select된 ChattingParticipant에서 room list 정보 리스트에 담기
-//        List<ChattingRoomGetResponse> chattingRoomResponseList = new ArrayList<>();
-//        for(ChattingParticipant chattingParticipant: chattingParticipantList) {
-//            ChattingRoom chattingRoom = chattingParticipant.getChattingRoom();
-//
-//            // [3-1] room 정보에 포함되어 있는 participant list 정보 담기 - 본인 제외
-//            // TODO: account 테이블 조회 후 프로필 사진과 이름 받아와서 그 정보로 변경할 것
-//            List<ChattingParticipantResponse> chattingParticipantResponseList = new ArrayList<>();
-//            for(ChattingParticipant chattingRoomParticipant: chattingRoom.getChattingParticipantList()) {
-//                if(!accountId.equals(chattingRoomParticipant.getAccount().getAccountId())) {
-//                    ChattingParticipantResponse chattingParticipantResponse = toChattingParticipantResponse.toChattingParticipantCreateResponse(chattingRoomParticipant);
-//                    chattingParticipantResponseList.add(chattingParticipantResponse);
-//                }
-//            }
-//
-//            // [3-2] 최신 메시지 정보 가져오기
-//            // TODO: 최신 메시지 읽음 유무 확인할 것
-//            // TODO: 최신 메시지 created_at desc로 정렬할 것
-//            Optional<ChattingMessage> chattingMessage = chattingMessageRepository.findLatestChattingMessageByRoom(chattingRoom.getChattingRoomId());
-//            ChattingRoomGetResponse chattingRoomGetResponse;
-//            if(chattingMessage.isPresent()) { // 채팅 내용이 존재하는 경우
-//                chattingRoomGetResponse = toChattingRoomResponse.toChattingRoomListGetResponse(chattingRoom, chattingParticipantResponseList, chattingMessage.get());
-//            }
-//            else { // 채팅방이 새롭게 개설되어 채팅 내용이 존재하지 않는 경우
-//                ChattingMessage defaultChattingMessage = new ChattingMessage();
-//                chattingRoomGetResponse = toChattingRoomResponse.toChattingRoomListGetResponse(chattingRoom, chattingParticipantResponseList, defaultChattingMessage);
-//            }
-//            chattingRoomResponseList.add(chattingRoomGetResponse);
-//        }
-
-        // [4] 페이지네이션 정보와 chattingRoom list를 response로 변환
-//        ChattingRoomListPaginationResponse chattingRoomListPaginationResponse = ToChattingRoomResponse.toChattingRoomListPaginationResponse(chattingParticipantList, chattingRoomResponseList);
-//
-//        // [5] resultResponse 만들기
-//        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_LIST_GET_SUCCESS, chattingRoomListPaginationResponse);
-//
-//        return resultResponse;
-        return null;
+        return resultResponse;
     }
-
 }
