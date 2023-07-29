@@ -23,6 +23,9 @@ public class StompHandler implements ChannelInterceptor {
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        log.error("\n\npreSend");
+        log.error(message.toString());
+        log.error(channel.toString());
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
         // [v]session id 검증 : connect, subscribe, disconnect 다 동일한지
@@ -32,6 +35,8 @@ public class StompHandler implements ChannelInterceptor {
             // [v]disconnection : participant table에 room id가 있으니 추후에 session id로 exit 시간 push 하고 session id는 지우기
 
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+            log.error("CONNECT");
+            log.error(accessor.toString());
             String token = accessor.getFirstNativeHeader("Authorization");
             if (token != null) {
                 final String accessToken = jwtUtil.extractJwt(accessor);
@@ -41,6 +46,8 @@ public class StompHandler implements ChannelInterceptor {
                 accessor.setUser(authentication);
             }
         } else if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+            log.error("SUBSCRIBE");
+            log.error(accessor.toString());
             String accountUsername = accessor.getUser().getName();
             String simpSessionId = message.getHeaders().get("simpSessionId").toString();
             String destination = message.getHeaders().get("simpDestination").toString();
@@ -49,12 +56,15 @@ public class StompHandler implements ChannelInterceptor {
 //            headerAccessor.getSessionAttributes().put("userUUID", userUUID);
 //            headerAccessor.getSessionAttributes().put("roomId", chat.getRoomId());
         } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+            log.error("DISCONNECT");
+            log.error(accessor.toString());
             String simpSessionId = message.getHeaders().get("simpSessionId").toString();
             chattingRoomService.chattingRoomExit(simpSessionId);
         }
 //        else if (StompCommand.MESSAGE.equals(accessor.getCommand())) {
 //            String simpSessionId = message.getHeaders().get("simpSessionId").toString();
 //        }
+        log.error("END\n\n");
         return message;
     }
 }
