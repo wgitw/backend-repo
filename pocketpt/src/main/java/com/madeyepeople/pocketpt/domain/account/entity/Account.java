@@ -2,13 +2,16 @@ package com.madeyepeople.pocketpt.domain.account.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.madeyepeople.pocketpt.domain.account.constants.Role;
+import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.*;
 import org.antlr.v4.runtime.misc.NotNull;
 
+import java.util.List;
 import java.util.Date;
+
 
 
 @Entity
@@ -18,10 +21,16 @@ import java.util.Date;
 // TODO: @SQLDelete 로 삭제시 is_deleted = true 로 변경되게 하기
 public class Account extends BaseEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
     private Long accountId;
 
+    @OneToMany(mappedBy = "account")
+    private List<ChattingParticipant> chattingParticipantList;
+
+    @Column(name = "oauth2_id")
+    private Long oauth2Id;
+  
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -49,6 +58,7 @@ public class Account extends BaseEntity {
 
     // oauth2 provider가 제공하는 access token. 회원 탈퇴를 위해 필요.
     private String oauth2AccessToken;
+  
     @JsonIgnore
     private String password;
 

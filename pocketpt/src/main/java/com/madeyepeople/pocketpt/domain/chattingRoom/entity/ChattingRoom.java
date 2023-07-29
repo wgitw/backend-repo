@@ -14,6 +14,7 @@ import java.util.List;
 @Setter
 //@ToString
 @Entity(name = "chatting_room")
+//@EqualsAndHashCode
 public class ChattingRoom extends BaseEntity {
     public enum ChattingRoomStatus{
         ACTIVATE, DEACTIVATE;

@@ -1,16 +1,20 @@
 package com.madeyepeople.pocketpt.domain.chattingMessage.mapper;
 
+import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageCreateResponse;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageGetResponse;
 import com.madeyepeople.pocketpt.domain.chattingMessage.entity.ChattingMessage;
+import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ToChattingMessageResponse {
-    public ChattingMessageCreateResponse toChattingMessageCreateResponse(Long chattingRoomId, Long chattingParticipantId, ChattingMessage chattingMessage) {
+    public ChattingMessageCreateResponse toChattingMessageCreateResponse(ChattingRoom chattingRoom, Account account, ChattingMessage chattingMessage) {
         return ChattingMessageCreateResponse.builder()
-                .chattingRoomId(chattingRoomId)
-                .chattingParticipantId(chattingParticipantId)
+                .chattingRoomId(chattingRoom.getChattingRoomId())
+                .chattingAccountId(account.getAccountId())
+                .chattingAccountName(account.getNickname())
+                .chattingAccountProfilePictureUrl(account.getProfilePictureUrl())
                 .chattingMessageId(chattingMessage.getChattingMessageId())
                 .content(chattingMessage.getContent())
                 .isEdited(chattingMessage.getIsEdited())
@@ -20,10 +24,12 @@ public class ToChattingMessageResponse {
                 .build();
     }
 
-    public ChattingMessageCreateResponse toChattingFileCreateResponse(Long chattingRoomId, Long chattingParticipantId, ChattingMessage chattingMessage) {
+    public ChattingMessageCreateResponse toChattingFileCreateResponse(ChattingRoom chattingRoom, Account account, ChattingMessage chattingMessage) {
         return ChattingMessageCreateResponse.builder()
-                .chattingRoomId(chattingRoomId)
-                .chattingParticipantId(chattingParticipantId)
+                .chattingRoomId(chattingRoom.getChattingRoomId())
+                .chattingAccountId(account.getAccountId())
+                .chattingAccountName(account.getNickname())
+                .chattingAccountProfilePictureUrl(account.getProfilePictureUrl())
                 .chattingMessageId(chattingMessage.getChattingMessageId())
                 .fileUrl(chattingMessage.getFileUrl())
                 .isEdited(chattingMessage.getIsEdited())
@@ -34,8 +40,14 @@ public class ToChattingMessageResponse {
     }
 
     public ChattingMessageGetResponse toChattingMessageGetResponse(ChattingMessage chattingMessage) {
+        ChattingRoom chattingRoom = chattingMessage.getChattingParticipant().getChattingRoom();
+        Account account = chattingMessage.getChattingParticipant().getAccount();
         return ChattingMessageGetResponse.builder()
-                .chattingParticipantId(chattingMessage.getChattingParticipant().getChattingParticipantId())
+                .chattingRoomId(chattingRoom.getChattingRoomId())
+                .chattingAccountId(account.getAccountId())
+                .chattingAccountName(account.getNickname())
+                .chattingAccountProfilePictureUrl(account.getProfilePictureUrl())
+                .chattingMessageId(chattingMessage.getChattingMessageId())
                 .content(chattingMessage.getContent())
                 .fileUrl(chattingMessage.getFileUrl())
                 .isEdited(chattingMessage.getIsEdited())

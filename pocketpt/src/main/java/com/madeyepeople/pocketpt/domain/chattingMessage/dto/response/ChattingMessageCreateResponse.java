@@ -11,7 +11,9 @@ import java.time.LocalDateTime;
 @Builder
 public class ChattingMessageCreateResponse {
     private Long chattingRoomId;
-    private Long chattingParticipantId; // TODO: account 이름으로 변경할 것
+    private Long chattingAccountId;
+    private String chattingAccountName;
+    private String chattingAccountProfilePictureUrl;
     private Long chattingMessageId;
     private String content;
     private String fileUrl;

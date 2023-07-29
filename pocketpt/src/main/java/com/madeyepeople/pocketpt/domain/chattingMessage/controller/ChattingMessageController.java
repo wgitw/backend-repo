@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/chatting")
+@RequestMapping("/api/v1/chatting/rooms/{chattingRoomId}/messages")
 @Slf4j
 public class ChattingMessageController {
     // 아래에서 사용되는 convertAndSend 를 사용하기 위해서 서언
@@ -25,18 +25,33 @@ public class ChattingMessageController {
     private final ChattingMessageService chattingMessageService;
     private final SecurityUtil securityUtil;
 
-    @MessageMapping("/chatting/{roomId}") // MessageMapping은 RequestMapping의 영향을 받지 않는 듯함
-    public void sendChattingMessage(@DestinationVariable Long roomId, ChattingMessageContentCreateRequest chattingMessageContentCreateRequest, StompHeaderAccessor headerAccessor) {
+    // 채팅방 메시지 보내기
+    @MessageMapping("/chatting/rooms/{chattingRoomId}") // MessageMapping은 RequestMapping의 영향을 받지 않는 듯함
+    public void sendChattingMessage(@DestinationVariable Long chattingRoomId, ChattingMessageContentCreateRequest chattingMessageContentCreateRequest, StompHeaderAccessor headerAccessor) {
         String accountUsername = headerAccessor.getUser().getName();
-        ResultResponse resultResponse = chattingMessageService.createChattingMessage(chattingMessageContentCreateRequest, roomId, accountUsername);
-        template.convertAndSend("/sub/channel/" + roomId, resultResponse);
+        ResultResponse resultResponse = chattingMessageService.createChattingMessage(chattingMessageContentCreateRequest, chattingRoomId, accountUsername);
+        template.convertAndSend("/sub/channel/" + chattingRoomId, resultResponse);
     }
 
-    @PostMapping("/{roomId}/files")
-    public ResponseEntity<ResultResponse> createChattingFile(@PathVariable Long roomId, @ModelAttribute ChattingFileCreateRequest chattingRoomCreateRequest) {
+    // 채팅방 파일 보내기
+    @PostMapping("/files")
+    public ResponseEntity<ResultResponse> createChattingFile(@PathVariable Long chattingRoomId, @ModelAttribute ChattingFileCreateRequest chattingRoomCreateRequest) {
         Long accountId = securityUtil.getLoginUsername();
-        ResultResponse resultResponse = chattingMessageService.createChattingFile(chattingRoomCreateRequest, roomId, accountId);
+        ResultResponse resultResponse = chattingMessageService.createChattingFile(chattingRoomCreateRequest, chattingRoomId, accountId);
         return ResponseEntity.ok(resultResponse);
     }
 
+    // 채팅방 메시지 리스트 가져오기
+    @GetMapping
+    public  ResponseEntity<ResultResponse> getChattingMessageListByRoom(@PathVariable Long chattingRoomId) {
+        ResultResponse resultResponse = chattingMessageService.getChattingMessageListByRoom(chattingRoomId);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    // 채팅방 파일 리스트 가져오기
+    @GetMapping("/files")
+    public  ResponseEntity<ResultResponse> getChattingFileListByRoom(@PathVariable Long chattingRoomId) {
+        ResultResponse resultResponse = chattingMessageService.getChattingFileListByRoom(chattingRoomId);
+        return ResponseEntity.ok(resultResponse);
+    }
 }
