@@ -16,10 +16,11 @@ import java.util.List;
 @Getter
 @ToString
 @NoArgsConstructor
+//@EqualsAndHashCode
 // TODO: @SQLDelete 로 삭제시 is_deleted = true 로 변경되게 하기
 public class Account extends BaseEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "account_id")
     private Long accountId;
 

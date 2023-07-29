@@ -1,7 +1,5 @@
 package com.madeyepeople.pocketpt.domain.chattingParticipant.entity;
 
-import com.madeyepeople.pocketpt.domain.account.entity.Account;
-import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,8 +16,8 @@ public class ChattingParticipantId implements Serializable {
 //    private Long chattingParticipantId;
 
     @EqualsAndHashCode.Include
-    private ChattingRoom chattingRoom;
+    private Long chattingRoom;
 
     @EqualsAndHashCode.Include
-    private Account account;
+    private Long account;
 }

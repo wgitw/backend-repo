@@ -3,9 +3,6 @@ package com.madeyepeople.pocketpt.domain.chattingParticipant.repository;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
 import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
-import com.madeyepeople.pocketpt.domain.chattingRoom.service.ChattingRoomService;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,14 +18,26 @@ public interface ChattingParticipantRepository extends JpaRepository<ChattingPar
 
     Optional<ChattingParticipant> findBySimpSessionIdAndIsDeletedFalse(String simpSessionId);
 
-    @Query(value="SELECT * FROM chatting_participant m WHERE chatting_room_id = :chattingRoomId AND m.account_id NOT IN (:accountId) AND m.is_deleted = FALSE", nativeQuery = true)
+    @Query(value=
+            """
+                SELECT *
+                FROM chatting_participant m
+                WHERE chatting_room_id = :chattingRoomId
+                    AND m.account_id NOT IN (:accountId)
+                    AND m.is_deleted = FALSE
+            """, nativeQuery = true)
     List<ChattingParticipant> findAllByChattingRoomIdAndNotInAccountIdAndIsDeletedFalse(Long chattingRoomId, Long accountId);
-
-    List<ChattingParticipant> findAllByAccountAndIsDeletedFalse(Account account);
 
     // update
     @Modifying
-    @Query(value = "UPDATE chatting_participant SET not_view_count = 0 WHERE chatting_room_id = :chattingRoomId AND account_id = (:accountId) AND is_deleted = FALSE", nativeQuery = true)
+    @Query(value =
+            """
+                UPDATE chatting_participant
+                SET not_view_count = 0
+                WHERE chatting_room_id = :chattingRoomId
+                    AND account_id = (:accountId)
+                    AND is_deleted = FALSE
+            """, nativeQuery = true)
     int updateAllByNotViewCountZeroByRoomIdAndAccountIdAndIsDeletedFalse(Long chattingRoomId, Long accountId);
 
     // delete
