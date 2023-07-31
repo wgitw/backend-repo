@@ -4,7 +4,7 @@ public enum Role {
 
     ADMIN("admin"),
     TRAINER("trainer"),
-    MEMBER("member");
+    TRAINEE("trainee");
 
     private final String key;
 

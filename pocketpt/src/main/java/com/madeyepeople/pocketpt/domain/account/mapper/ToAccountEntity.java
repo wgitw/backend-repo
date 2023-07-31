@@ -1,13 +1,14 @@
 package com.madeyepeople.pocketpt.domain.account.mapper;
 
+import com.madeyepeople.pocketpt.domain.account.constants.Role;
 import com.madeyepeople.pocketpt.domain.account.dto.Oauth2ProviderInfo;
-import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerRegistrationRequest;
+import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ToAccountEntity {
-    public Account toAccountEntityFromOAuth2Info(Oauth2ProviderInfo oauth2ProviderInfo, String encodedPassword) {
+    public Account fromOAuth2Info(Oauth2ProviderInfo oauth2ProviderInfo, String encodedPassword) {
         return Account.builder()
                 .oauth2Id(oauth2ProviderInfo.getOauth2Id())
                 .provider(oauth2ProviderInfo.getProvider())
@@ -19,7 +20,12 @@ public class ToAccountEntity {
                 .build();
     }
 
-    public Account toAccountEntityFromTrainerRegistrationRequest(TrainerRegistrationRequest trainerRegistrationRequest) {
+    public Account fromRegistrationRequest(CommonRegistrationRequest commonRegistrationRequest, Role role) {
+        return Account.builder()
+                .name(commonRegistrationRequest.getName())
+                .phoneNumber(commonRegistrationRequest.getPhoneNumber())
+                .role(role)
+                .build();
         return Account.builder()
                 .build();
     }

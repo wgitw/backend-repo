@@ -18,7 +18,7 @@ public class SecurityUtil {
 
     private final AccountRepository accountRepository;
 
-    public Long getLoginUsername() {
+    public Long getLoginAccountId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username;
         try {
@@ -30,8 +30,7 @@ public class SecurityUtil {
             }
         } catch (Exception e) {
             // TODO: exception handling
-            log.error("User not authenticated");
-            log.error(e.getMessage());
+            throw new RuntimeException("User not authenticated");
         }
         return null;
     }

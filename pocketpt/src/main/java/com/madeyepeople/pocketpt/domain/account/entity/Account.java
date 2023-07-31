@@ -61,6 +61,7 @@ public class Account extends BaseEntity {
 
     @Builder
     public Account(Long oauth2Id, String email, String provider, String nickname, String oauthAccessToken, String password, String profilePictureUrl) {
+        this.name = name;
         this.oauth2Id = oauth2Id;
         this.provider = provider;
         this.email = email;
@@ -70,9 +71,16 @@ public class Account extends BaseEntity {
         this.password = password;
     }
 
-    public Account update(String nickname, String oauthAccessToken) {
+    public Account updateByOAuthInfo(String nickname, String oauthAccessToken) {
         this.nickname = nickname;
         this.oauthAccessToken = oauthAccessToken;
+        return this;
+    }
+
+    public Account updateByRegistrationRequest(String name, String phoneNumber, Role role) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.role = role;
         return this;
     }
 }

@@ -36,7 +36,7 @@ public class ChattingMessageController {
     // 채팅방 파일 보내기
     @PostMapping("/files")
     public ResponseEntity<ResultResponse> createChattingFile(@PathVariable Long chattingRoomId, @ModelAttribute ChattingFileCreateRequest chattingRoomCreateRequest) {
-        Long accountId = securityUtil.getLoginUsername();
+        Long accountId = securityUtil.getLoginAccountId();
         ResultResponse resultResponse = chattingMessageService.createChattingFile(chattingRoomCreateRequest, chattingRoomId, accountId);
         return ResponseEntity.ok(resultResponse);
     }

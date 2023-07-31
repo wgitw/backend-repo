@@ -24,7 +24,7 @@ public class ChattingRoomController {
     @PostMapping
     public ResponseEntity<ResultResponse> createChattingRoom(@RequestBody ChattingRoomCreateRequest chattingRoomCreateRequest,
                                                              RedirectAttributes rttr) {
-        Long hostAccountId = securityUtil.getLoginUsername();
+        Long hostAccountId = securityUtil.getLoginAccountId();
         ResultResponse resultResponse = chattingRoomService.createChattingRoom(hostAccountId, chattingRoomCreateRequest);
         rttr.addFlashAttribute("roomName", "roomName");
         return ResponseEntity.ok(resultResponse);
