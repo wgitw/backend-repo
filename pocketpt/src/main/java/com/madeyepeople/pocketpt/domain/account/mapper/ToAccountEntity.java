@@ -20,13 +20,11 @@ public class ToAccountEntity {
                 .build();
     }
 
-    public Account fromRegistrationRequest(CommonRegistrationRequest commonRegistrationRequest, Role role) {
+    public Account fromRegistrationRequest(CommonRegistrationRequest commonRegistrationRequest, Role accountRole) {
         return Account.builder()
                 .name(commonRegistrationRequest.getName())
                 .phoneNumber(commonRegistrationRequest.getPhoneNumber())
-                .role(role)
-                .build();
-        return Account.builder()
+                .accountRole(accountRole)
                 .build();
     }
 }

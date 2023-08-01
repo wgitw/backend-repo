@@ -1,24 +1,60 @@
 package com.madeyepeople.pocketpt.global.error;
 
+
 import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Slf4j
 @RestControllerAdvice(annotations = {RestController.class})
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    /**
+     * Controller에서 Request Body의 @Valid 유효성 검증 실패시 발생
+     *
+     * @param e MethodArgumentNotValidException
+     * @return ResponseEntity<ErrorResponse>
+     */
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException e, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        BindingResult bindingResult = e.getBindingResult();
+        final ErrorResponse response = ErrorResponse.of(ErrorCode.INPUT_INVALID_VALUE, bindingResult);
+        return new ResponseEntity<>(response, ErrorCode.INPUT_INVALID_VALUE.getStatus());
+    }
+
+    /**
+     * Controller에서 path variable 또는 Entity의 @Valid 유효성 검증 실패시 발생
+     * @param e
+     * @param request
+     * @return
+     */
     @ExceptionHandler
     public ResponseEntity<Object> validation(ConstraintViolationException e, WebRequest request) {
-        return handleExceptionInternal(e, ErrorCode.INPUT_INVALID_VALUE, request);
+        BindingResult bindingResult = extractErrorMessages(e);
+        final ErrorResponse response = ErrorResponse.of(ErrorCode.INPUT_INVALID_VALUE, bindingResult);
+        return new ResponseEntity<>(response, ErrorCode.INPUT_INVALID_VALUE.getStatus());
+//        return handleExceptionInternal(e, ErrorCode.INPUT_INVALID_VALUE, request);
     }
 
     @ExceptionHandler
@@ -41,6 +77,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             Exception e, ErrorCode errorCode, HttpStatus status, WebRequest request) {
         return super.handleExceptionInternal(
                 e, ErrorResponse.of(errorCode), HttpHeaders.EMPTY, status, request);
+    }
+
+    private BindingResult extractErrorMessages(ConstraintViolationException e) {
+        List<FieldError> fieldErrors = e.getConstraintViolations().stream()
+                .map(constraintViolation -> new FieldError(
+                        constraintViolation.getRootBeanClass().getSimpleName(),
+                        constraintViolation.getPropertyPath().toString(),
+                        constraintViolation.getMessage()))
+                .collect(Collectors.toList());
+        BindingResult bindingResult = new BindException(new ErrorResponse(), "errorResponse");
+        fieldErrors.forEach(bindingResult::addError);
+        return bindingResult;
     }
 }
 

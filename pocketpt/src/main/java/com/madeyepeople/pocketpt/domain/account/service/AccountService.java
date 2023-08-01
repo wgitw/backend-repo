@@ -28,16 +28,13 @@ public class AccountService {
         Long accountId = securityUtil.getLoginAccountId();
         Optional<Account> account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
 
-        if ()
-        if (account.isPresent()) {
-            Account newAccount = toAccountEntity.fromRegistrationRequest(commonRegistrationRequest, Role.valueOf(role));
-            accountRepository.save(newAccount);
-            return RegistrationResponse.builder()
-                    .accountId(newAccount.getAccountId())
-                    .build();
-        }
-
-
+//        if (account.isPresent()) {
+//            Account newAccount = toAccountEntity.fromRegistrationRequest(commonRegistrationRequest, Role.valueOf(role));
+//            accountRepository.save(newAccount);
+//            return RegistrationResponse.builder()
+//                    .accountId(newAccount.getAccountId())
+//                    .build();
+//        }
 
         return null;
     }

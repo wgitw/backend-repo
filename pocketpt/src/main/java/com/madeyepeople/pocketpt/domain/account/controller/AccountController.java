@@ -6,8 +6,11 @@ import com.madeyepeople.pocketpt.domain.account.service.AccountService;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
 import com.madeyepeople.pocketpt.global.util.SecurityUtil;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
@@ -24,8 +27,12 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping("/signup/{role}")
-    public ResponseEntity<ResultResponse> signupTrainer(@RequestBody CommonRegistrationRequest commonRegistrationRequest,
-                                                        @PathVariable String role) {
+    public ResponseEntity<ResultResponse> signupTrainer(@RequestBody @Valid CommonRegistrationRequest commonRegistrationRequest,
+                                                        @PathVariable
+                                                        @Pattern(
+                                                                regexp = "^(trainer|trainee)$",
+                                                                message = "role은 \"trainer\" 또는 \"trainee\"만 허용합니다.")
+                                                        String role) {
         RegistrationResponse registrationResponse = accountService.registerAccount(commonRegistrationRequest, role);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_CREATE_SUCCESS, registrationResponse));
     }

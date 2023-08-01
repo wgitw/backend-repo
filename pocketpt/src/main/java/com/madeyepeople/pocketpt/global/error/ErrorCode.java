@@ -12,11 +12,11 @@ import java.util.function.Predicate;
 public enum ErrorCode {
     // Global
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E001", "서버 오류"),
-    INPUT_INVALID_VALUE(HttpStatus.BAD_REQUEST, "E002", "잘못된 입력"),
+    INPUT_INVALID_VALUE(HttpStatus.NOT_ACCEPTABLE, "E002", "잘못된 입력"),
 
     // Account 도메인
-    EXAMPLE_USER_ERROR(HttpStatus.BAD_REQUEST, "A001", "테스트용 예시 에러코드"),
-    JWT_VALIDATION_ERROR(HttpStatus.UNAUTHORIZED, "A001", "JWT 유효성 예외 발생"),
+    EXAMPLE_USER_ERROR(HttpStatus.BAD_REQUEST, "E099", "테스트용 예시 에러코드"),
+    JWT_VALIDATION_ERROR(HttpStatus.UNAUTHORIZED, "E003", "JWT 유효성 예외 발생"),
     ;
 
     private final HttpStatus status;

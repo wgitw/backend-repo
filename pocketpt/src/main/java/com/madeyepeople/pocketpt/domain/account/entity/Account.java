@@ -31,7 +31,8 @@ public class Account extends BaseEntity {
     private Long oauth2Id;
   
     @Enumerated(EnumType.STRING)
-    private Role role;
+    @Column(name = "account_role")
+    private Role accountRole;
 
     @Nonnull
     private String provider;
@@ -60,11 +61,13 @@ public class Account extends BaseEntity {
 
 
     @Builder
-    public Account(Long oauth2Id, String email, String provider, String nickname, String oauthAccessToken, String password, String profilePictureUrl) {
-        this.name = name;
+    public Account(Long oauth2Id, Role accountRole, String email, String provider, String name, String phoneNumber, String nickname, String oauthAccessToken, String password, String profilePictureUrl) {
         this.oauth2Id = oauth2Id;
+        this.accountRole = accountRole;
         this.provider = provider;
         this.email = email;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
         this.nickname = nickname;
         this.oauthAccessToken = oauthAccessToken;
         this.profilePictureUrl = profilePictureUrl;
@@ -77,10 +80,10 @@ public class Account extends BaseEntity {
         return this;
     }
 
-    public Account updateByRegistrationRequest(String name, String phoneNumber, Role role) {
+    public Account updateByRegistrationRequest(String name, String phoneNumber, Role accountRole) {
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.role = role;
+        this.accountRole = accountRole;
         return this;
     }
 }
