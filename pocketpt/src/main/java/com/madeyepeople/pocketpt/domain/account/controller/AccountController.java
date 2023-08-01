@@ -1,7 +1,9 @@
 package com.madeyepeople.pocketpt.domain.account.controller;
 
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
+import com.madeyepeople.pocketpt.domain.account.dto.response.AccountGetResponse;
 import com.madeyepeople.pocketpt.domain.account.dto.response.RegistrationResponse;
+import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.service.AccountService;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
@@ -37,6 +39,12 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_CREATE_SUCCESS, registrationResponse));
     }
 
+    @GetMapping("/account")
+    public ResponseEntity<ResultResponse> getAccount() {
+        Account account = securityUtil.getLoginAccountEntity();
+        AccountGetResponse accountGetResponse = accountService.getAccount(account);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_GET_SUCCESS, accountGetResponse));
+    }
 
     /**
      * 테스트용 api

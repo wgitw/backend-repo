@@ -2,9 +2,11 @@ package com.madeyepeople.pocketpt.domain.account.service;
 
 import com.madeyepeople.pocketpt.domain.account.constants.Role;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
+import com.madeyepeople.pocketpt.domain.account.dto.response.AccountGetResponse;
 import com.madeyepeople.pocketpt.domain.account.dto.response.RegistrationResponse;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToAccountEntity;
+import com.madeyepeople.pocketpt.domain.account.mapper.ToAccountGetResponse;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
@@ -23,6 +25,7 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final ToRegistrationResponse toRegistrationResponse;
+    private final ToAccountGetResponse toAccountGetResponse;
     private final SecurityUtil securityUtil;
 
     @Transactional
@@ -44,5 +47,9 @@ public class AccountService {
             log.error(msg);
             throw new RuntimeException(msg);
         }
+    }
+
+    public AccountGetResponse getAccount(Account account) {
+        return toAccountGetResponse.fromAccountEntity(account);
     }
 }

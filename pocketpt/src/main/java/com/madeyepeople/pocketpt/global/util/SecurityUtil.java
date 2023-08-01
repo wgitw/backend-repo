@@ -2,6 +2,7 @@ package com.madeyepeople.pocketpt.global.util;
 
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
+import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -25,8 +26,8 @@ public class SecurityUtil {
             if (authentication != null && authentication.isAuthenticated()) {
                 UserDetails accountPrincipal = (UserDetails) authentication.getPrincipal();
                 username = accountPrincipal.getUsername();
-                Long accountId = isAccountExist(username);
-                return accountId;
+                Account account = isAccountExist(username);
+                return account.getAccountId();
             }
         } catch (Exception e) {
             // TODO: exception handling
@@ -35,13 +36,29 @@ public class SecurityUtil {
         return null;
     }
 
-    public Long isAccountExist(String email) throws Exception {
+    public Account getLoginAccountEntity() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username;
+        try {
+            if (authentication != null && authentication.isAuthenticated()) {
+                UserDetails accountPrincipal = (UserDetails) authentication.getPrincipal();
+                username = accountPrincipal.getUsername();
+                Account account = isAccountExist(username);
+                return account;
+            }
+        } catch (Exception e) {
+            // TODO: exception handling
+            throw new RuntimeException("User not authenticated");
+        }
+        return null;
+    }
+
+    public Account isAccountExist(String email) throws Exception {
         Optional<Account> account = accountRepository.findByEmailAndIsDeletedFalse(email);
 
         if (account.isPresent()) {
-            return account.get().getAccountId();
+            return account.get();
         }
-
-        throw new Exception("해당 이메일의 사용자가 존재하지 않습니다.");
+        throw new Exception(CustomExceptionMessage.AUTHENTICATED_USER_NOT_FOUND.getMessage());
     }
 }
