@@ -89,12 +89,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         if (oauth2ProviderInfo.getAccountOptional().isEmpty()) {
             String encodedPassword = passwordEncoder.encode(UUID.randomUUID().toString());
-            saved = accountRepository.save(toAccountEntity.toAccountEntityFromOAuth2Info(oauth2ProviderInfo, encodedPassword));
+            saved = accountRepository.save(toAccountEntity.fromOAuth2Info(oauth2ProviderInfo, encodedPassword));
         } else {
             log.info("\n\n이미 가입된 회원입니다. nickname을 업데이트합니다.\n\n");
             saved = oauth2ProviderInfo.getAccountOptional().get();
             saved = accountRepository.save(saved
-                    .update(
+                    .updateByOAuthInfo(
                             oauth2ProviderInfo.getNickname(),
                             oauth2ProviderInfo.getOauth2ProviderAccessToken()
                     )

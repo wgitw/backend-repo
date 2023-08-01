@@ -1,15 +1,15 @@
 package com.madeyepeople.pocketpt.domain.account.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.madeyepeople.pocketpt.domain.account.dto.CommonRegistrationInfo;
+import com.madeyepeople.pocketpt.domain.account.dto.CommonAccountInfo;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
-public class TrainerRegistrationRequest {
-    private CommonRegistrationInfo commonRegistrationInfo;
+public class TrainerInfoUpdateRequest {
+    private CommonAccountInfo commonAccountInfo;
     @JsonIgnore
     private MultipartFile careerCertificate;
     private String career;

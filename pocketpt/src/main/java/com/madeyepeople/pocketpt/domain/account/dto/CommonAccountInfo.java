@@ -12,7 +12,7 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 @ToString
-public class CommonRegistrationInfo {
+public class CommonAccountInfo {
     private String name;
     private String phoneNumber;
     private String nickname;

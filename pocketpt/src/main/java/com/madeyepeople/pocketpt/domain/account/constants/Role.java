@@ -1,10 +1,12 @@
 package com.madeyepeople.pocketpt.domain.account.constants;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum Role {
 
     ADMIN("admin"),
     TRAINER("trainer"),
-    MEMBER("member");
+    TRAINEE("trainee");
 
     private final String key;
 
@@ -12,7 +14,12 @@ public enum Role {
         this.key = key;
     }
 
-    public String key() {
-        return key;
+    public String getKey() {
+        return this.key;
+    }
+
+    @JsonValue
+    public String getJsonValue() {
+        return this.key;
     }
 }
