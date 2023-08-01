@@ -1,6 +1,7 @@
 package com.madeyepeople.pocketpt.domain.account.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.madeyepeople.pocketpt.domain.account.constants.LowercaseEnumConverter;
 import com.madeyepeople.pocketpt.domain.account.constants.Role;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
@@ -30,7 +31,7 @@ public class Account extends BaseEntity {
     @Column(name = "oauth2_id")
     private Long oauth2Id;
   
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = LowercaseEnumConverter.class)
     @Column(name = "account_role")
     private Role accountRole;
 
@@ -80,9 +81,10 @@ public class Account extends BaseEntity {
         return this;
     }
 
-    public Account updateByRegistrationRequest(String name, String phoneNumber, Role accountRole) {
+    public Account updateByRegistrationRequest(String name, String phoneNumber, String nickname, Role accountRole) {
         this.name = name;
         this.phoneNumber = phoneNumber;
+        this.nickname = nickname;
         this.accountRole = accountRole;
         return this;
     }

@@ -31,7 +31,7 @@ public class AccountController {
                                                         @PathVariable
                                                         @Pattern(
                                                                 regexp = "^(trainer|trainee)$",
-                                                                message = "role은 \"trainer\" 또는 \"trainee\"만 허용합니다.")
+                                                                message = "role은 'trainer' 또는 'trainee'만 허용합니다.")
                                                         String role) {
         RegistrationResponse registrationResponse = accountService.registerAccount(commonRegistrationRequest, role);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_CREATE_SUCCESS, registrationResponse));

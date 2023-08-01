@@ -20,11 +20,20 @@ public class ToAccountEntity {
                 .build();
     }
 
-    public Account fromRegistrationRequest(CommonRegistrationRequest commonRegistrationRequest, Role accountRole) {
-        return Account.builder()
-                .name(commonRegistrationRequest.getName())
-                .phoneNumber(commonRegistrationRequest.getPhoneNumber())
-                .accountRole(accountRole)
-                .build();
-    }
+    /**
+     * [목적]
+     * 2차 회원가입 시, request의 정보대로 Account Entity 객체를 수정.
+     *
+     * [삭제 사유]
+     * 기존 entity를 update하는 용도로 사용할 것이면, Entity 객체 내에서 update 함수를 이용.
+     * builder() 이용하면 새로운 객체 생성하니 낭비라 생각.
+     */
+//    public Account fromRegistrationRequest(CommonRegistrationRequest commonRegistrationRequest, Role accountRole) {
+//        return Account.builder()
+//                .name(commonRegistrationRequest.getName())
+//                .phoneNumber(commonRegistrationRequest.getPhoneNumber())
+//                .nickname(commonRegistrationRequest.getNickname())
+//                .accountRole(accountRole)
+//                .build();
+//    }
 }

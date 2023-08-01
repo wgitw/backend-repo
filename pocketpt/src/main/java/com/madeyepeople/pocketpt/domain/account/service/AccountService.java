@@ -5,7 +5,9 @@ import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRe
 import com.madeyepeople.pocketpt.domain.account.dto.response.RegistrationResponse;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToAccountEntity;
+import com.madeyepeople.pocketpt.domain.account.mapper.ToRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
+import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
 import com.madeyepeople.pocketpt.global.util.SecurityUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +22,7 @@ import java.util.Optional;
 public class AccountService {
 
     private final AccountRepository accountRepository;
-    private final ToAccountEntity toAccountEntity;
+    private final ToRegistrationResponse toRegistrationResponse;
     private final SecurityUtil securityUtil;
 
     @Transactional
@@ -28,14 +30,19 @@ public class AccountService {
         Long accountId = securityUtil.getLoginAccountId();
         Optional<Account> account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
 
-//        if (account.isPresent()) {
-//            Account newAccount = toAccountEntity.fromRegistrationRequest(commonRegistrationRequest, Role.valueOf(role));
-//            accountRepository.save(newAccount);
-//            return RegistrationResponse.builder()
-//                    .accountId(newAccount.getAccountId())
-//                    .build();
-//        }
-
-        return null;
+        if (account.isPresent()) {
+            Account changed = account.get().updateByRegistrationRequest(
+                    commonRegistrationRequest.getName(),
+                    commonRegistrationRequest.getPhoneNumber(),
+                    commonRegistrationRequest.getNickname(),
+                    Role.valueOf(role.toUpperCase())
+            );
+            Account saved = accountRepository.save(changed);
+            return toRegistrationResponse.fromAccountEntity(saved);
+        } else {
+            String msg = CustomExceptionMessage.AUTHENTICATED_USER_NOT_FOUND.getMessage();
+            log.error(msg);
+            throw new RuntimeException(msg);
+        }
     }
 }
