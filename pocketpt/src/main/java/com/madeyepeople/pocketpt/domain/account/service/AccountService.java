@@ -11,6 +11,7 @@ import com.madeyepeople.pocketpt.domain.account.mapper.ToRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
 import com.madeyepeople.pocketpt.global.util.SecurityUtil;
+import com.madeyepeople.pocketpt.global.util.UniqueCodeGenerator;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +28,7 @@ public class AccountService {
     private final ToRegistrationResponse toRegistrationResponse;
     private final ToAccountGetResponse toAccountGetResponse;
     private final SecurityUtil securityUtil;
+    private final UniqueCodeGenerator uniqueCodeGenerator;
 
     @Transactional
     public RegistrationResponse registerAccount(CommonRegistrationRequest commonRegistrationRequest, String role) {
@@ -38,7 +40,8 @@ public class AccountService {
                     commonRegistrationRequest.getName(),
                     commonRegistrationRequest.getPhoneNumber(),
                     commonRegistrationRequest.getNickname(),
-                    Role.valueOf(role.toUpperCase())
+                    Role.valueOf(role.toUpperCase()),
+                    uniqueCodeGenerator.getUniqueCode()
             );
             Account saved = accountRepository.save(changed);
             return toRegistrationResponse.fromAccountEntity(saved);

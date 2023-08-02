@@ -96,7 +96,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             saved = accountRepository.save(saved
                     .updateByOAuthInfo(
                             oauth2ProviderInfo.getNickname(),
-                            oauth2ProviderInfo.getOauth2ProviderAccessToken()
+                            oauth2ProviderInfo.getOauth2ProviderAccessToken(),
+                            oauth2ProviderInfo.getImageUrl()
                     )
             );
         }
