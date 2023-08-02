@@ -8,14 +8,15 @@ import com.madeyepeople.pocketpt.domain.account.service.AccountService;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
 import com.madeyepeople.pocketpt.global.util.SecurityUtil;
+import com.madeyepeople.pocketpt.global.util.UniqueCodeGenerator;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
+
 
 
 @Validated
@@ -26,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AccountController {
 
     private final SecurityUtil securityUtil;
+    private final UniqueCodeGenerator uniqueCodeGenerator;
     private final AccountService accountService;
 
     @PostMapping("/signup/{role}")
@@ -44,6 +46,14 @@ public class AccountController {
         Account account = securityUtil.getLoginAccountEntity();
         AccountGetResponse accountGetResponse = accountService.getAccount(account);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_GET_SUCCESS, accountGetResponse));
+    }
+
+    @GetMapping("/account/test")
+    public ResponseEntity<ResultResponse> test() {
+        for(int i=0; i<10; i++) {
+            System.out.println(" -> " + uniqueCodeGenerator.getUniqueCode());
+        }
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_GET_SUCCESS, null));
     }
 
     /**
