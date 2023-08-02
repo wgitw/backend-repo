@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.madeyepeople.pocketpt.domain.account.constants.LowercaseEnumConverter;
 import com.madeyepeople.pocketpt.domain.account.constants.Role;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
+//import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
@@ -31,6 +32,12 @@ public class Account extends BaseEntity {
 
     @OneToMany(mappedBy = "account")
     private List<ChattingParticipant> chattingParticipantList;
+
+//    @OneToMany(mappedBy = "trainer")
+//    private List<PtMatching> ptMatchingListOfTrainer;
+//
+//    @OneToMany(mappedBy = "trainee")
+//    private List<PtMatching> ptMatchingListOfTrainee;
   
     @Convert(converter = LowercaseEnumConverter.class)
     @Column(name = "account_role")
@@ -98,9 +105,10 @@ public class Account extends BaseEntity {
         this.password = password;
     }
 
-    public Account updateByOAuthInfo(String nickname, String oauthAccessToken) {
+    public Account updateByOAuthInfo(String nickname, String oauthAccessToken, String imageUrl) {
         this.nickname = nickname;
         this.oauthAccessToken = oauthAccessToken;
+        this.profilePictureUrl = imageUrl;
         return this;
     }
 
