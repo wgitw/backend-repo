@@ -2,3 +2,8 @@ INSERT INTO account (account_id, oauth2_id, provider, email, account_role, nickn
 INSERT INTO account (account_id, oauth2_id, provider, email, account_role, nickname, profile_picture_url, introduce, is_deleted) VALUES (2, 4512111, 'kakao', 'kimtks456@naver.com', null, 'mtkim', 'http://k.kakaocdn.net/dn/clo68T/btspFmrXX3y/CRDzUnmfmkr7uRC9bvcU3K/img_640x640.jpg', '헬스 1달차 멸치라 가르치실 맛 나실겁니다 ㅎㅎ', false);
 INSERT INTO account (account_id, oauth2_id, provider, email, account_role, nickname, profile_picture_url, introduce, is_deleted) VALUES (3, 9285012, 'kakao', 'jesus0321@naver.com', null, 'goniham', 'http://k.kakaocdn.net/dn/1V6Pl/btrKhRFdtAT/t0kwN9Yi6d0HjVt9TtJx1K/img_640x640.jpg', '대한 의경의 힘, 보여드리겠습니다', false);
 INSERT INTO account (account_id, oauth2_id, provider, email, account_role, nickname, profile_picture_url, introduce, identification_code, is_deleted) VALUES (4, 2800009, 'kakao', 'lch122@naver.com', null, 'chan_E', 'http://k.kakaocdn.net/dn/1V6Pl/btrKhRFdtAT/t0kwN9Yi6d0HjVt9TtJx1K/img_640x640.jpg', '광주 첨단 1동 바디 헬스장 소속, 트레이너 입니다!', 'JNFNOMjy', false);
+
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (1, 2, false, 0, 2, now());
+
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 1, false, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (2, 1, true, false, 0, now());

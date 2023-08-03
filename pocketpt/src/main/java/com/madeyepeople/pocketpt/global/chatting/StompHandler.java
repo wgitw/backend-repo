@@ -60,11 +60,17 @@ public class StompHandler implements ChannelInterceptor {
             log.error(accessor.toString());
             String simpSessionId = message.getHeaders().get("simpSessionId").toString();
             chattingRoomService.chattingRoomExit(simpSessionId);
-        } else if (StompCommand.MESSAGE.equals(accessor.getCommand())) {
-            log.error("MESSAGE");
+        }
+//        else if (StompCommand.MESSAGE.equals(accessor.getCommand())) {
+//            log.error("MESSAGE");
+//            log.error(accessor.toString());
+//            String simpSessionId = message.getHeaders().get("simpSessionId").toString();
+//        }
+        else if (StompCommand.SEND.equals(accessor.getCommand())) {
+            log.error("SEND");
             log.error(accessor.toString());
             String simpSessionId = message.getHeaders().get("simpSessionId").toString();
-        } else {
+        }else {
             log.error("StompCommand : " + accessor.getCommand());
             log.error(accessor.toString());
         }
