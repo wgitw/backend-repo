@@ -2,8 +2,8 @@ package com.madeyepeople.pocketpt.domain.ptMatching.entity;
 
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
-import com.madeyepeople.pocketpt.global.constants.LowercaseEnumConverter;
-import com.madeyepeople.pocketpt.global.constants.PtStatus;
+import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatusEnumConverter;
+import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,7 +29,7 @@ public class PtMatching extends BaseEntity {
     @JoinColumn(name = "trainee_account_id")
     private Account trainee;
 
-    @Convert(converter = LowercaseEnumConverter.class)
+    @Convert(converter = PtStatusEnumConverter.class)
     private PtStatus status;
 
     private String traineeName;

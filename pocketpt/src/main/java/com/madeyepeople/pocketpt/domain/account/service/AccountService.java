@@ -1,6 +1,6 @@
 package com.madeyepeople.pocketpt.domain.account.service;
 
-import com.madeyepeople.pocketpt.global.constants.Role;
+import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.response.AccountDetailGetResponse;
 import com.madeyepeople.pocketpt.domain.account.dto.response.AccountRegistrationResponse;

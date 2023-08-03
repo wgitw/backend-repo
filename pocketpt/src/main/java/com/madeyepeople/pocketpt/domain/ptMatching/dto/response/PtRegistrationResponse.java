@@ -1,6 +1,6 @@
 package com.madeyepeople.pocketpt.domain.ptMatching.dto.response;
 
-import com.madeyepeople.pocketpt.global.constants.PtStatus;
+import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import lombok.Builder;
 import lombok.Getter;
 

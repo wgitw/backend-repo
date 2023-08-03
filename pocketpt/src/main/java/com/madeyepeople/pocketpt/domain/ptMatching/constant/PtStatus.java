@@ -1,4 +1,4 @@
-package com.madeyepeople.pocketpt.global.constants;
+package com.madeyepeople.pocketpt.domain.ptMatching.constant;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;

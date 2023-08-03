@@ -1,9 +1,8 @@
 package com.madeyepeople.pocketpt.domain.ptMatching.mapper;
 
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
-import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PtRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
-import com.madeyepeople.pocketpt.global.constants.PtStatus;
+import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import org.springframework.stereotype.Component;
 
 @Component

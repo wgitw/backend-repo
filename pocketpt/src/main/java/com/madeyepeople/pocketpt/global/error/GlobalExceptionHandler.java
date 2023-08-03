@@ -53,6 +53,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(response, ErrorCode.INPUT_INVALID_VALUE.getStatus());
     }
 
+    // 따로 만들었으나, 기존 handleExceptionInternal 메소드를 사용하도록 수정
 //    @ExceptionHandler
 //    public ResponseEntity<Object> business(BusinessException e, WebRequest request) {
 //        ErrorCode errorCode = e.getErrorCode();

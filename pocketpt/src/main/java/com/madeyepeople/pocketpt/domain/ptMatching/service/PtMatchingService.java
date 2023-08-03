@@ -34,7 +34,9 @@ public class PtMatchingService {
     public PtRegistrationResponse registerPt(PtRegistrationRequest ptRegistrationRequest) throws ConstraintViolationException, BusinessException {
         Optional<Account> trainer = accountRepository.findByIdentificationCodeAndIsDeletedFalse(ptRegistrationRequest.getTrainerCode());
         if (trainer.isEmpty()) {
-            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, CustomExceptionMessage.TRAINER_IDENTIFICATION_CODE_NOT_FOUND.getMessage());
+            throw new BusinessException(ErrorCode.TRAINER_IDENTIFICATION_CODE_NOT_FOUND, CustomExceptionMessage.TRAINER_IDENTIFICATION_CODE_NOT_FOUND.getMessage());
+        } else if (!trainer.get().getAccountRole().getValue().equals("trainer")) {
+            throw new BusinessException(ErrorCode.TRAINER_IDENTIFICATION_CODE_NOT_FOUND, CustomExceptionMessage.IDENTIFICATION_CODE_IS_NOT_TRAINER.getMessage());
         }
 
         Account trainee = securityUtil.getLoginAccountEntity();

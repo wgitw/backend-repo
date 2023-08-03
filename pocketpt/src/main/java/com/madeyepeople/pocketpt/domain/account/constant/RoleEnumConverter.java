@@ -1,10 +1,10 @@
-package com.madeyepeople.pocketpt.global.constants;
+package com.madeyepeople.pocketpt.domain.account.constant;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
 @Converter(autoApply = true)
-public class LowercaseEnumConverter implements AttributeConverter<Role, String> {
+public class RoleEnumConverter implements AttributeConverter<Role, String> {
 
     @Override
     public String convertToDatabaseColumn(Role attribute) {
