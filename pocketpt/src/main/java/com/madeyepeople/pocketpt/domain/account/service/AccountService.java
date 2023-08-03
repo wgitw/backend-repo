@@ -42,6 +42,8 @@ public class AccountService {
                     Role.valueOf(role.toUpperCase()),
                     uniqueCodeGenerator.getUniqueCode()
             );
+            // TODO: save 과정에서 identificationCode 중복이 발생할 수 있음.
+            //  Account entity에 unique constraint 적용해뒀으니 exception handling 필요. 다시 code 생성하던가.
             Account saved = accountRepository.save(changed);
             return toRegistrationResponse.fromAccountEntity(saved);
         } else {

@@ -47,6 +47,7 @@ public class Account extends BaseEntity {
     private String provider;
 
     @Nonnull
+    @Column(unique = true)
     private String email;
 
     private String name;
@@ -68,6 +69,7 @@ public class Account extends BaseEntity {
     private Float height;
     private Float weight;
     private String expertise;
+    @Column(unique = true)
     private String identificationCode;
     private String recommenderCode;
     private String careerCertificateUrl;
