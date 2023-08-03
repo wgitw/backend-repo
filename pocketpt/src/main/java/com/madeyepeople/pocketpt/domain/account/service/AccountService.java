@@ -52,7 +52,8 @@ public class AccountService {
         }
     }
 
-    public AccountGetResponse getAccount(Account account) {
+    public AccountGetResponse getAccount() {
+        Account account = securityUtil.getLoginAccountEntity();
         return toAccountGetResponse.fromAccountEntity(account);
     }
 }

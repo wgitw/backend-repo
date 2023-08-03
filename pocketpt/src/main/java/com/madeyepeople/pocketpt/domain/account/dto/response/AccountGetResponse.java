@@ -19,4 +19,5 @@ public class AccountGetResponse {
     private String profilePictureUrl;
     private String gender;
     private Date birthdate;
+    private String introduce;
 }

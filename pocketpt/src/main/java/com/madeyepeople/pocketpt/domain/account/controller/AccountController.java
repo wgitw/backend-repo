@@ -43,18 +43,11 @@ public class AccountController {
 
     @GetMapping("/account")
     public ResponseEntity<ResultResponse> getAccount() {
-        Account account = securityUtil.getLoginAccountEntity();
-        AccountGetResponse accountGetResponse = accountService.getAccount(account);
+        AccountGetResponse accountGetResponse = accountService.getAccount();
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_GET_SUCCESS, accountGetResponse));
     }
 
-    @GetMapping("/account/test")
-    public ResponseEntity<ResultResponse> test() {
-        for(int i=0; i<10; i++) {
-            System.out.println(" -> " + uniqueCodeGenerator.getUniqueCode());
-        }
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_GET_SUCCESS, null));
-    }
+
 
     /**
      * 테스트용 api

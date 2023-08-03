@@ -18,6 +18,7 @@ public class ToAccountGetResponse {
                 .profilePictureUrl(account.getProfilePictureUrl())
                 .gender(account.getGender())
                 .birthdate(account.getBirthdate())
+                .introduce(account.getIntroduce())
                 .build();
     }
 }
