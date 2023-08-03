@@ -45,12 +45,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
      * Controller에서 path variable 또는 Entity의 @Valid 유효성 검증 실패시 발생
-     * @param e
-     * @param request
+     * @param e ConstraintViolationException
      * @return
      */
     @ExceptionHandler
-    public ResponseEntity<Object> validation(ConstraintViolationException e, WebRequest request) {
+    public ResponseEntity<Object> validation(ConstraintViolationException e) {
         BindingResult bindingResult = extractErrorMessages(e);
         final ErrorResponse response = ErrorResponse.of(ErrorCode.INPUT_INVALID_VALUE, bindingResult);
         return new ResponseEntity<>(response, ErrorCode.INPUT_INVALID_VALUE.getStatus());

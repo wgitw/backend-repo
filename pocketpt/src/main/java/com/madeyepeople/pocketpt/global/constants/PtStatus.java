@@ -1,16 +1,14 @@
-package com.madeyepeople.pocketpt.domain.account.constants;
+package com.madeyepeople.pocketpt.global.constants;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum Role {
-
-    ADMIN("admin"),
-    TRAINER("trainer"),
-    TRAINEE("trainee");
+public enum PtStatus {
+    WAIT("wait"),
+    ACTIVE("active");
 
     private final String key;
 
-    Role(String key) {
+    PtStatus(String key) {
         this.key = key;
     }
 

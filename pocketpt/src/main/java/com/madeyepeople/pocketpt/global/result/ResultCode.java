@@ -13,6 +13,9 @@ public enum ResultCode {
     ACCOUNT_CREATE_SUCCESS("A001", "회원 가입 성공"),
     ACCOUNT_GET_SUCCESS("A002", "특정 회원 상세 조회 성공"),
 
+    // ptMatching
+    PT_REGISTRATION_CREATE_SUCCESS("PM001", "PT 요청 성공"),
+
     // group
     GROUP_CREATE_SUCCESS("G001", "그룹 생성 성공"),
 
