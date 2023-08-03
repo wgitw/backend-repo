@@ -1,6 +1,6 @@
 package com.madeyepeople.pocketpt.domain.account.dto.response;
 
-import com.madeyepeople.pocketpt.domain.account.constants.Role;
+import com.madeyepeople.pocketpt.global.constants.Role;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Getter
 @Builder
-public class AccountGetResponse {
+public class AccountDetailGetResponse {
     private Long accountId;
     private Role role;
     private String provider;
@@ -19,4 +19,5 @@ public class AccountGetResponse {
     private String profilePictureUrl;
     private String gender;
     private Date birthdate;
+    private String introduce;
 }

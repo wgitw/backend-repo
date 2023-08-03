@@ -1,12 +1,12 @@
 package com.madeyepeople.pocketpt.domain.account.dto.response;
 
-import com.madeyepeople.pocketpt.domain.account.constants.Role;
+import com.madeyepeople.pocketpt.global.constants.Role;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
-public class RegistrationResponse {
+public class AccountRegistrationResponse {
     private Long accountId;
     private Role role;
     private String email;

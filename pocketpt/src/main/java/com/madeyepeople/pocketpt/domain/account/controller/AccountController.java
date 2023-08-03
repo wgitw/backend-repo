@@ -1,9 +1,8 @@
 package com.madeyepeople.pocketpt.domain.account.controller;
 
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
-import com.madeyepeople.pocketpt.domain.account.dto.response.AccountGetResponse;
-import com.madeyepeople.pocketpt.domain.account.dto.response.RegistrationResponse;
-import com.madeyepeople.pocketpt.domain.account.entity.Account;
+import com.madeyepeople.pocketpt.domain.account.dto.response.AccountDetailGetResponse;
+import com.madeyepeople.pocketpt.domain.account.dto.response.AccountRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.account.service.AccountService;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
@@ -21,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Validated
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/account")
 @Slf4j
 @RequiredArgsConstructor
 public class AccountController {
@@ -30,31 +29,26 @@ public class AccountController {
     private final UniqueCodeGenerator uniqueCodeGenerator;
     private final AccountService accountService;
 
-    @PostMapping("/signup/{role}")
+    @PostMapping("/{role}")
     public ResponseEntity<ResultResponse> signupTrainer(@RequestBody @Valid CommonRegistrationRequest commonRegistrationRequest,
                                                         @PathVariable
                                                         @Pattern(
                                                                 regexp = "^(trainer|trainee)$",
                                                                 message = "role은 'trainer' 또는 'trainee'만 허용합니다.")
                                                         String role) {
-        RegistrationResponse registrationResponse = accountService.registerAccount(commonRegistrationRequest, role);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_CREATE_SUCCESS, registrationResponse));
+        AccountRegistrationResponse accountRegistrationResponse = accountService.registerAccount(commonRegistrationRequest, role);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_CREATE_SUCCESS, accountRegistrationResponse));
     }
 
-    @GetMapping("/account")
+    @GetMapping("/detail")
     public ResponseEntity<ResultResponse> getAccount() {
-        Account account = securityUtil.getLoginAccountEntity();
-        AccountGetResponse accountGetResponse = accountService.getAccount(account);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_GET_SUCCESS, accountGetResponse));
+        AccountDetailGetResponse accountDetailGetResponse = accountService.getAccount();
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_GET_SUCCESS, accountDetailGetResponse));
     }
 
-    @GetMapping("/account/test")
-    public ResponseEntity<ResultResponse> test() {
-        for(int i=0; i<10; i++) {
-            System.out.println(" -> " + uniqueCodeGenerator.getUniqueCode());
-        }
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_GET_SUCCESS, null));
-    }
+    // TODO: 회원정보 간단 조회
+//    @GetMapping("/summary")
+
 
     /**
      * 테스트용 api

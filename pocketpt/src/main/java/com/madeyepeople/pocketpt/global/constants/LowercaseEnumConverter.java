@@ -1,4 +1,4 @@
-package com.madeyepeople.pocketpt.domain.account.constants;
+package com.madeyepeople.pocketpt.global.constants;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

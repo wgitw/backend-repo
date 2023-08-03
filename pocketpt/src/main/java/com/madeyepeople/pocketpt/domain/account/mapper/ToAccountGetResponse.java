@@ -1,13 +1,13 @@
 package com.madeyepeople.pocketpt.domain.account.mapper;
 
-import com.madeyepeople.pocketpt.domain.account.dto.response.AccountGetResponse;
+import com.madeyepeople.pocketpt.domain.account.dto.response.AccountDetailGetResponse;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ToAccountGetResponse {
-    public AccountGetResponse fromAccountEntity(Account account) {
-        return AccountGetResponse.builder()
+    public AccountDetailGetResponse fromAccountEntity(Account account) {
+        return AccountDetailGetResponse.builder()
                 .accountId(account.getAccountId())
                 .role(account.getAccountRole())
                 .provider(account.getProvider())
@@ -18,6 +18,7 @@ public class ToAccountGetResponse {
                 .profilePictureUrl(account.getProfilePictureUrl())
                 .gender(account.getGender())
                 .birthdate(account.getBirthdate())
+                .introduce(account.getIntroduce())
                 .build();
     }
 }

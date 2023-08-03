@@ -1,8 +1,6 @@
 package com.madeyepeople.pocketpt.domain.account.mapper;
 
-import com.madeyepeople.pocketpt.domain.account.constants.Role;
 import com.madeyepeople.pocketpt.domain.account.dto.Oauth2ProviderInfo;
-import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import org.springframework.stereotype.Component;
 

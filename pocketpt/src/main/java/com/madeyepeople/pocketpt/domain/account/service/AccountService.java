@@ -1,11 +1,10 @@
 package com.madeyepeople.pocketpt.domain.account.service;
 
-import com.madeyepeople.pocketpt.domain.account.constants.Role;
+import com.madeyepeople.pocketpt.global.constants.Role;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
-import com.madeyepeople.pocketpt.domain.account.dto.response.AccountGetResponse;
-import com.madeyepeople.pocketpt.domain.account.dto.response.RegistrationResponse;
+import com.madeyepeople.pocketpt.domain.account.dto.response.AccountDetailGetResponse;
+import com.madeyepeople.pocketpt.domain.account.dto.response.AccountRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
-import com.madeyepeople.pocketpt.domain.account.mapper.ToAccountEntity;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToAccountGetResponse;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
@@ -31,7 +30,7 @@ public class AccountService {
     private final UniqueCodeGenerator uniqueCodeGenerator;
 
     @Transactional
-    public RegistrationResponse registerAccount(CommonRegistrationRequest commonRegistrationRequest, String role) {
+    public AccountRegistrationResponse registerAccount(CommonRegistrationRequest commonRegistrationRequest, String role) {
         Long accountId = securityUtil.getLoginAccountId();
         Optional<Account> account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
 
@@ -52,7 +51,8 @@ public class AccountService {
         }
     }
 
-    public AccountGetResponse getAccount(Account account) {
+    public AccountDetailGetResponse getAccount() {
+        Account account = securityUtil.getLoginAccountEntity();
         return toAccountGetResponse.fromAccountEntity(account);
     }
 }
