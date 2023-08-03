@@ -41,13 +41,17 @@ public class ChattingMessageService {
         // [1] 채팅방 유효성 검사
         ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(roomId).orElseThrow();
 
+        log.error("pub 서비스까지 왔다?");
+        log.error("foundChattingRoom : {}", foundChattingRoom);
         // [2] 채팅 sender 유효성 검사
         Account account = accountRepository.findByEmailAndIsDeletedFalse(accountUsername).orElseThrow();
         ChattingParticipant foundChattingParticipant = chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow();
 
+        log.error("foundChattingParticipant : {}", foundChattingParticipant);
         // [3] ChattingMessage 초기화
         ChattingMessage chattingMessage = toChattingMessageEntity.toChattingMessageCreateEntity(foundChattingParticipant, chattingMessageContentCreateRequest);
 
+        log.error("chattingMessage : {}", chattingMessage);
         // [4] 채팅방에 참여 중인 사람이 현재 채팅방 참여 중인지 체크 - 채팅 읽음 처리 로직
         List<ChattingParticipant> chattingParticipantList = chattingParticipantRepository.findAllByChattingRoomIdAndNotInAccountIdAndIsDeletedFalse(roomId, foundChattingParticipant.getAccount().getAccountId());
         int notViewCount = foundChattingRoom.getNumberOfParticipant() - 1; // 본인을 제외한 나머지 수로 초기 세팅
@@ -68,6 +72,8 @@ public class ChattingMessageService {
         ChattingMessage savedChattingMessage = chattingMessageRepository.save(chattingMessage);
         ChattingMessageCreateResponse chattingMessageCreateResponse = toChattingMessageResponse.toChattingMessageCreateResponse(foundChattingRoom, account, savedChattingMessage);
 
+        log.error("savedChattingMessage : {}", savedChattingMessage);
+        log.error("chattingMessageCreateResponse : {}", chattingMessageCreateResponse);
         // [5] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageCreateResponse
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_CREATE_SUCCESS, chattingMessageCreateResponse);
 

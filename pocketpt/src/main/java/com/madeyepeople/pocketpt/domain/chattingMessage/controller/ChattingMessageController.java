@@ -28,9 +28,13 @@ public class ChattingMessageController {
     // 채팅방 메시지 보내기
     @MessageMapping("/chatting/rooms/{chattingRoomId}") // MessageMapping은 RequestMapping의 영향을 받지 않는 듯함
     public void sendChattingMessage(@DestinationVariable Long chattingRoomId, ChattingMessageContentCreateRequest chattingMessageContentCreateRequest, StompHeaderAccessor headerAccessor) {
+        log.error("pub Controller까지 왔다???\n");
+        log.error("chattingRoomId: " + chattingRoomId);
         String accountUsername = headerAccessor.getUser().getName();
         ResultResponse resultResponse = chattingMessageService.createChattingMessage(chattingMessageContentCreateRequest, chattingRoomId, accountUsername);
+        log.error("resultResponse: " + resultResponse);
         template.convertAndSend("/sub/channel/" + chattingRoomId, resultResponse);
+        log.error("template 보냈다???");
     }
 
     // 채팅방 파일 보내기
