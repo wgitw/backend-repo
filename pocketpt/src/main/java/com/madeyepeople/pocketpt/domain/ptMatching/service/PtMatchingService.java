@@ -41,7 +41,7 @@ public class PtMatchingService {
 
         Account trainee = securityUtil.getLoginAccountEntity();
 
-        PtMatching saved = ptMatchingRepository.save(toPtMatchingEntity.fromAccountEntities(trainer.get(), trainee));
+        PtMatching saved = ptMatchingRepository.save(toPtMatchingEntity.fromAccountEntities(trainer.get(), trainee, ptRegistrationRequest.getSubscriptionPeriod()));
         return toPtRegistrationResponse.fromPtMatchingEntity(saved);
     }
 }

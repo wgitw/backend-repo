@@ -19,7 +19,7 @@ public enum ErrorCode {
     JWT_VALIDATION_ERROR(HttpStatus.UNAUTHORIZED, "E003", "JWT 유효성 예외 발생"),
 
     // PtMatching 도메인
-    TRAINER_IDENTIFICATION_CODE_NOT_FOUND(HttpStatus.NOT_FOUND, "PT001", "Trainer code 오류"),
+    TRAINER_IDENTIFICATION_CODE_NOT_FOUND(HttpStatus.NOT_ACCEPTABLE, "PT001", "Trainer code 오류"),
     ;
 
     private final HttpStatus status;

@@ -8,7 +8,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum PtStatus {
     PENDING("pending"),
-    ACTIVE("active");
+    ACTIVE("active"),
+    EXPIRED("expired");
 
     private final String key;
 

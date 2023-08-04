@@ -24,13 +24,12 @@ public class PtMatchingController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.PT_REGISTRATION_CREATE_SUCCESS, ptRegistrationResponse));
     }
 
-    // TODO: 요청 목록 조회
 //    @GetMapping("/requested")
 
     // TODO: 요청 수락
 //    @GetMapping("/accept")
 
-    // TODO: 매칭 목록 조회 -> 친구 목록
+    // TODO: 매칭 목록 조회 -> 채팅 친구 목록 조회와 동일
 //    @GetMapping
 
 }

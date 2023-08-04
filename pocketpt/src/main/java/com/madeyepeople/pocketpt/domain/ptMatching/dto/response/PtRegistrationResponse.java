@@ -10,5 +10,6 @@ public class PtRegistrationResponse {
     private Long ptMatchingId;
     private Long trainerId;
     private Long traineeId;
+    private Integer subscriptionPeriod;
     private PtStatus status;
 }

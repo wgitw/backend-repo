@@ -7,10 +7,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ToPtMatchingEntity {
-    public PtMatching fromAccountEntities(Account trainer, Account trainee) {
+    public PtMatching fromAccountEntities(Account trainer, Account trainee, Integer subscriptionPeriod) {
         return PtMatching.builder()
                 .trainer(trainer)
                 .trainee(trainee)
+                .subscriptionPeriod(subscriptionPeriod)
                 .status(PtStatus.PENDING)
                 .build();
     }
