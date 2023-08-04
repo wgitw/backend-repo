@@ -5,6 +5,7 @@ import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingFileCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingMessageContentCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageCreateResponse;
+import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageGetListPaginationRespnse;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageGetResponse;
 import com.madeyepeople.pocketpt.domain.chattingMessage.entity.ChattingMessage;
 import com.madeyepeople.pocketpt.domain.chattingMessage.mapper.ToChattingMessageEntity;
@@ -14,6 +15,9 @@ import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParti
 import com.madeyepeople.pocketpt.domain.chattingParticipant.repository.ChattingParticipantRepository;
 import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
 import com.madeyepeople.pocketpt.domain.chattingRoom.repository.ChattingRoomRepository;
+import com.madeyepeople.pocketpt.global.common.ScrollPagination;
+import com.madeyepeople.pocketpt.global.common.ScrollPaginationFile;
+import com.madeyepeople.pocketpt.global.common.ScrollPaginationMessage;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
 import com.madeyepeople.pocketpt.global.s3.S3FileService;
@@ -117,36 +121,57 @@ public class ChattingMessageService {
 
     // 채팅 메시지 리스트 최신 100개
     @Transactional
-    public ResultResponse getChattingMessageListByRoom(Long chattingRoomId) {
-        // TODO: 페이지네이션 진행할 것
+    public ResultResponse getChattingMessageListByRoom(Long chattingRoomId, int page, int size, Integer totalRecord) {
         // [1] 채팅방 유효성 검사
         ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
 
         // [2] ChattingMessage list 가져와서 정보 담기
-        List<ChattingMessage> chattingMessageList = chattingMessageRepository.findAllByChattingRoomOrderByChattingMessageIdDesc(foundChattingRoom.getChattingRoomId());
+        if (totalRecord == null) {
+            // 페이지네이션 전, total page 구하기
+            totalRecord = chattingMessageRepository.findAllCountByChattingRoomOrderByChattingMessageId(foundChattingRoom.getChattingRoomId());
+        }
+        ScrollPagination scrollPagination = new ScrollPaginationMessage(size, page, totalRecord);
+        List<ChattingMessage> chattingMessageList = chattingMessageRepository
+                .findAllByChattingRoomOrderByChattingMessageIdDesc(foundChattingRoom.getChattingRoomId(), scrollPagination.getStartNum(), scrollPagination.getPageSize());
         List<ChattingMessageGetResponse> chattingMessageGetResponseList = new ArrayList<>();
         chattingMessageList.forEach(c -> chattingMessageGetResponseList.add(toChattingMessageResponse.toChattingMessageGetResponse(c)));
 
-        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_LIST_GET_SUCCESS, chattingMessageGetResponseList);
+        ChattingMessageGetListPaginationRespnse chattingMessageGetListPaginationRespnse = toChattingMessageResponse.toChattingMessageGetListPaginationResponse(chattingMessageGetResponseList, scrollPagination);
+
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_LIST_GET_SUCCESS, chattingMessageGetListPaginationRespnse);
 
         return resultResponse;
     }
 
     // 채팅방 파일 리스트 최신 100개
     @Transactional
-    public ResultResponse getChattingFileListByRoom(Long chattingRoomId) {
-        // TODO: 페이지네이션 진행할 것
+    public ResultResponse getChattingFileListByRoom(Long chattingRoomId, int page, int size, Integer totalRecord) {
         // [1] 채팅방 유효성 검사
         ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
 
         // [2] ChattingMessage list 가져와서 정보 담기
-        List<ChattingMessage> chattingMessageList = chattingMessageRepository.findAllFileUrlByChattingRoom(foundChattingRoom.getChattingRoomId());
+        if (totalRecord == null) {
+            // 페이지네이션 전, total page 구하기
+            totalRecord = chattingMessageRepository.findAllFileUrlCountByChattingRoomOrderByChattingMessageId(foundChattingRoom.getChattingRoomId());
+        }
+        ScrollPagination scrollPagination = new ScrollPaginationFile(size, page, totalRecord);
+        log.info(scrollPagination.toString());
+        List<ChattingMessage> chattingMessageList = chattingMessageRepository
+                .findAllFileUrlByChattingRoom(foundChattingRoom.getChattingRoomId(), scrollPagination.getStartNum(), scrollPagination.getPageSize());
         List<ChattingMessageGetResponse> chattingMessageGetResponseList = new ArrayList<>();
         chattingMessageList.forEach(c -> chattingMessageGetResponseList.add(toChattingMessageResponse.toChattingMessageGetResponse(c)));
 
-        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_FILE_LIST_GET_SUCCESS, chattingMessageGetResponseList);
+        ChattingMessageGetListPaginationRespnse chattingMessageGetListPaginationRespnse = toChattingMessageResponse.toChattingMessageGetListPaginationResponse(chattingMessageGetResponseList, scrollPagination);
+
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_FILE_LIST_GET_SUCCESS, chattingMessageGetListPaginationRespnse);
 
         return resultResponse;
+    }
+
+    @Transactional
+    public ResultResponse updateChattingMessageBookmark() {
+
+        return null;
     }
 
 }
