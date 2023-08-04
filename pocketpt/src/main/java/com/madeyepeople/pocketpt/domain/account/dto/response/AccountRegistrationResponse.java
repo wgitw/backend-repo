@@ -1,6 +1,6 @@
 package com.madeyepeople.pocketpt.domain.account.dto.response;
 
-import com.madeyepeople.pocketpt.global.constants.Role;
+import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import lombok.Builder;
 import lombok.Getter;
 

@@ -1,14 +1,18 @@
 package com.madeyepeople.pocketpt.domain.ptMatching.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
-import com.madeyepeople.pocketpt.global.constants.LowercaseEnumConverter;
-import com.madeyepeople.pocketpt.global.constants.PtStatus;
+import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatusEnumConverter;
+import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,18 +27,20 @@ public class PtMatching extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trainer_account_id")
+    @JsonIgnore
     private Account trainer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trainee_account_id")
+    @JsonIgnore
     private Account trainee;
 
-    @Convert(converter = LowercaseEnumConverter.class)
+    @Convert(converter = PtStatusEnumConverter.class)
     private PtStatus status;
 
-    private String traineeName;
-
     private Integer subscriptionPeriod;
+
+    private Date expiredDate;
 
     private Integer paymentAmount;
 
@@ -45,15 +51,20 @@ public class PtMatching extends BaseEntity {
     private String precaution;
 
     @Builder
-    public PtMatching(Account trainer, Account trainee, PtStatus status, String traineeName, Integer subscriptionPeriod, Integer paymentAmount, String ContactType, String precaution) {
+    public PtMatching(Account trainer, Account trainee, Integer subscriptionPeriod, PtStatus status) {
         this.trainer = trainer;
         this.trainee = trainee;
-        this.status = status;
-        this.traineeName = traineeName;
         this.subscriptionPeriod = subscriptionPeriod;
-        this.paymentAmount = paymentAmount;
-        this.IsNewSubscription = true;
-        this.ContactType = ContactType;
-        this.precaution = precaution;
+        this.status = status;
+    }
+
+    public Account getAccountByRole(Role role) {
+        if (role.equals(Role.TRAINER)) {
+            return this.trainer;
+        } else if (role.equals(Role.TRAINEE)) {
+            return this.trainee;
+        } else {
+            throw new IllegalArgumentException("Role enum 객체가 아닙니다.");
+        }
     }
 }

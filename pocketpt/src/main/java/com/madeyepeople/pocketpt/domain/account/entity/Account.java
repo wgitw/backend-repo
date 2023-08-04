@@ -1,8 +1,8 @@
 package com.madeyepeople.pocketpt.domain.account.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.madeyepeople.pocketpt.global.constants.LowercaseEnumConverter;
-import com.madeyepeople.pocketpt.global.constants.Role;
+import com.madeyepeople.pocketpt.domain.account.constant.RoleEnumConverter;
+import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
@@ -39,7 +39,7 @@ public class Account extends BaseEntity {
     @OneToMany(mappedBy = "trainee")
     private List<PtMatching> ptMatchingListOfTrainee;
   
-    @Convert(converter = LowercaseEnumConverter.class)
+    @Convert(converter = RoleEnumConverter.class)
     @Column(name = "account_role")
     private Role accountRole;
 
@@ -47,6 +47,7 @@ public class Account extends BaseEntity {
     private String provider;
 
     @Nonnull
+    @Column(unique = true)
     private String email;
 
     private String name;
@@ -68,6 +69,7 @@ public class Account extends BaseEntity {
     private Float height;
     private Float weight;
     private String expertise;
+    @Column(unique = true)
     private String identificationCode;
     private String recommenderCode;
     private String careerCertificateUrl;

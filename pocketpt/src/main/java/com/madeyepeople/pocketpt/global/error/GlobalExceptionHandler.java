@@ -2,7 +2,6 @@ package com.madeyepeople.pocketpt.global.error;
 
 
 import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -11,7 +10,6 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -20,9 +18,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice(annotations = {RestController.class})
@@ -40,6 +36,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             MethodArgumentNotValidException e, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         BindingResult bindingResult = e.getBindingResult();
         final ErrorResponse response = ErrorResponse.of(ErrorCode.INPUT_INVALID_VALUE, bindingResult);
+        log.error(e.getMessage());
         return new ResponseEntity<>(response, ErrorCode.INPUT_INVALID_VALUE.getStatus());
     }
 
@@ -52,9 +49,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> validation(ConstraintViolationException e) {
         BindingResult bindingResult = extractErrorMessages(e);
         final ErrorResponse response = ErrorResponse.of(ErrorCode.INPUT_INVALID_VALUE, bindingResult);
+        log.error(e.getMessage());
         return new ResponseEntity<>(response, ErrorCode.INPUT_INVALID_VALUE.getStatus());
-//        return handleExceptionInternal(e, ErrorCode.INPUT_INVALID_VALUE, request);
     }
+
+    // 따로 만들었으나, 기존 handleExceptionInternal 메소드를 사용하도록 수정
+//    @ExceptionHandler
+//    public ResponseEntity<Object> business(BusinessException e, WebRequest request) {
+//        ErrorCode errorCode = e.getErrorCode();
+//        ErrorResponse errorResponse = ErrorResponse.of(errorCode, errorCode.getMessage(e));
+//        return ResponseEntity.status(errorCode.getStatus()).body(errorResponse);
+//    }
 
     @ExceptionHandler
     public ResponseEntity<Object> business(BusinessException e, WebRequest request) {
@@ -68,15 +73,21 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> handleExceptionInternal(
             Exception e, ErrorCode errorCode, WebRequest request) {
-        log.error(e.getMessage(), e);
+        log.error(e.getMessage());
         return handleExceptionInternal(e, errorCode, errorCode.getStatus(), request);
     }
 
     private ResponseEntity<Object> handleExceptionInternal(
             Exception e, ErrorCode errorCode, HttpStatus status, WebRequest request) {
         return super.handleExceptionInternal(
-                e, ErrorResponse.of(errorCode), HttpHeaders.EMPTY, status, request);
+                e, ErrorResponse.of(errorCode, e), HttpHeaders.EMPTY, status, request);
     }
+
+//    private ResponseEntity<Object> handleExceptionInternal(
+//            Exception e, ErrorCode errorCode, HttpStatus status, WebRequest request) {
+//        return super.handleExceptionInternal(
+//                e, ErrorResponse.of(errorCode), HttpHeaders.EMPTY, status, request);
+//    }
 
     private BindingResult extractErrorMessages(ConstraintViolationException e) {
         List<FieldError> fieldErrors = e.getConstraintViolations().stream()
@@ -84,7 +95,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                         constraintViolation.getRootBeanClass().getSimpleName(),
                         constraintViolation.getPropertyPath().toString(),
                         constraintViolation.getMessage()))
-                .collect(Collectors.toList());
+                .toList();
         BindingResult bindingResult = new BindException(new ErrorResponse(), "errorResponse");
         fieldErrors.forEach(bindingResult::addError);
         return bindingResult;

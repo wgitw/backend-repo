@@ -17,6 +17,9 @@ public enum ErrorCode {
     // Account 도메인
     EXAMPLE_USER_ERROR(HttpStatus.BAD_REQUEST, "E099", "테스트용 예시 에러코드"),
     JWT_VALIDATION_ERROR(HttpStatus.UNAUTHORIZED, "E003", "JWT 유효성 예외 발생"),
+
+    // PtMatching 도메인
+    TRAINER_IDENTIFICATION_CODE_NOT_FOUND(HttpStatus.NOT_ACCEPTABLE, "PT001", "Trainer code 오류"),
     ;
 
     private final HttpStatus status;
