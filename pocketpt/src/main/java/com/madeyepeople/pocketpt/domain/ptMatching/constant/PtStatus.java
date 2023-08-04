@@ -11,10 +11,14 @@ public enum PtStatus {
     ACTIVE("active"),
     EXPIRED("expired");
 
-    private final String key;
+    private final String value;
+
+    public String getKey() {
+        return name();
+    }
 
     @JsonValue
     public String getJsonValue() {
-        return this.key;
+        return this.value;
     }
 }

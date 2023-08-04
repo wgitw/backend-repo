@@ -5,6 +5,7 @@ import com.madeyepeople.pocketpt.domain.ptMatching.dto.response.PtRegistrationRe
 import com.madeyepeople.pocketpt.domain.ptMatching.service.PtMatchingService;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +25,20 @@ public class PtMatchingController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.PT_REGISTRATION_CREATE_SUCCESS, ptRegistrationResponse));
     }
 
-//    @GetMapping("/requested")
+    @GetMapping
+    public ResponseEntity<ResultResponse> getPtMatchingList(@RequestParam
+                                                                @Pattern(
+                                                                        regexp = "^(all|pending|active|expired)$",
+                                                                        message = "mode 'all', 'pending', 'active', 'expired'만 허용합니다.")
+                                                            String mode) {
+        ResultResponse resultResponse = ptMatchingService.getPtMatchingList(mode);
+        return ResponseEntity.ok(resultResponse);
+    }
 
     // TODO: 요청 수락
 //    @GetMapping("/accept")
 
-    // TODO: 매칭 목록 조회 -> 채팅 친구 목록 조회와 동일
+    // TODO: 매칭 목록 조회 -> 채팅 친구 목록 조회와 동ㄴ
 //    @GetMapping
 
 }

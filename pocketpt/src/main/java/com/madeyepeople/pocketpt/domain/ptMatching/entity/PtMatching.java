@@ -1,5 +1,7 @@
 package com.madeyepeople.pocketpt.domain.ptMatching.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatusEnumConverter;
@@ -9,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,18 +27,20 @@ public class PtMatching extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trainer_account_id")
+    @JsonIgnore
     private Account trainer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trainee_account_id")
+    @JsonIgnore
     private Account trainee;
 
     @Convert(converter = PtStatusEnumConverter.class)
     private PtStatus status;
 
-    private String traineeName;
-
     private Integer subscriptionPeriod;
+
+    private Date expiredDate;
 
     private Integer paymentAmount;
 
@@ -50,5 +56,15 @@ public class PtMatching extends BaseEntity {
         this.trainee = trainee;
         this.subscriptionPeriod = subscriptionPeriod;
         this.status = status;
+    }
+
+    public Account getAccountByRole(Role role) {
+        if (role.equals(Role.TRAINER)) {
+            return this.trainer;
+        } else if (role.equals(Role.TRAINEE)) {
+            return this.trainee;
+        } else {
+            throw new IllegalArgumentException("Role enum 객체가 아닙니다.");
+        }
     }
 }

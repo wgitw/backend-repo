@@ -31,6 +31,7 @@ public class AccountService {
 
     @Transactional
     public AccountRegistrationResponse registerAccount(CommonRegistrationRequest commonRegistrationRequest, String role) {
+        // TODO: 중복 회원가입 막기 (Role != null 이면 회원가입 완료된 것이므로 예외 발생 시켜)
         Long accountId = securityUtil.getLoginAccountId();
         Optional<Account> account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId);
 
