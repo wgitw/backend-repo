@@ -32,7 +32,7 @@ INSERT INTO account (account_id, oauth2_id, provider, identification_code, email
 -- PtMatching
 INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (1, 1, 13, 'pending', 6);
 INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (2, 1, 15, 'pending', 6);
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (3, 1, 14, 'pending', 6);
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (3, 1, 14, 'active', 6);
 INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (4, 1, 18, 'pending', 13);
 INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (5, 1, 19, 'pending', 16);
 INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (6, 1, 20, 'active', 11);
@@ -43,11 +43,11 @@ INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id,
 INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (11, 1, 25, 'active', 11);
 INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (12, 1, 16, 'active', 11);
 
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (13, 2, 14, 'pending', 6);
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (13, 2, 14, 'active', 6);
 
 
 -- Chatting
-INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (1, 2, false, 0, 2, now());
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (1, 2, false, 0, 1, now());
 
 INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 1, false, false, 0, now());
-INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (2, 1, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (14, 1, true, false, 0, now());
