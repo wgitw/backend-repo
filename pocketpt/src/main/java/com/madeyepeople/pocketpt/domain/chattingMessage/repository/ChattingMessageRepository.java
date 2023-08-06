@@ -1,6 +1,7 @@
 package com.madeyepeople.pocketpt.domain.chattingMessage.repository;
 
 import com.madeyepeople.pocketpt.domain.chattingMessage.entity.ChattingMessage;
+import com.madeyepeople.pocketpt.domain.chattingMessageBookmark.entity.ChattingMessageBookmark;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

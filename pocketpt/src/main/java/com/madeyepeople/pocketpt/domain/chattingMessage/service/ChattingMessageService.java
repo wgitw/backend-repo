@@ -155,7 +155,6 @@ public class ChattingMessageService {
             totalRecord = chattingMessageRepository.findAllFileUrlCountByChattingRoomOrderByChattingMessageId(foundChattingRoom.getChattingRoomId());
         }
         ScrollPagination scrollPagination = new ScrollPaginationFile(size, page, totalRecord);
-        log.info(scrollPagination.toString());
         List<ChattingMessage> chattingMessageList = chattingMessageRepository
                 .findAllFileUrlByChattingRoom(foundChattingRoom.getChattingRoomId(), scrollPagination.getStartNum(), scrollPagination.getPageSize());
         List<ChattingMessageGetResponse> chattingMessageGetResponseList = new ArrayList<>();

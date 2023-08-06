@@ -51,7 +51,7 @@ public class ChattingMessageController {
     // 채팅방 메시지 리스트 가져오기
     @GetMapping
     public ResponseEntity<ResultResponse> getChattingMessageListByRoom(@PathVariable Long chattingRoomId,
-                                                                        @RequestParam(name = "page", defaultValue = "1") int page,
+                                                                        @RequestParam(name = "page", defaultValue = "0") int page,
                                                                         @RequestParam(name = "size", defaultValue = "10") int size,
                                                                         @RequestParam(name = "totalRecord", defaultValue = "") Integer totalRecord) {
         ResultResponse resultResponse = chattingMessageService.getChattingMessageListByRoom(chattingRoomId, page, size, totalRecord);
@@ -61,7 +61,7 @@ public class ChattingMessageController {
     // 채팅방 파일 리스트 가져오기
     @GetMapping("/files")
     public ResponseEntity<ResultResponse> getChattingFileListByRoom(@PathVariable Long chattingRoomId,
-                                                                     @RequestParam(name = "page", defaultValue = "1") int page,
+                                                                     @RequestParam(name = "page", defaultValue = "0") int page,
                                                                      @RequestParam(name = "size", defaultValue = "10") int size,
                                                                      @RequestParam(name = "totalRecord", defaultValue = "") Integer totalRecord) {
         ResultResponse resultResponse = chattingMessageService.getChattingFileListByRoom(chattingRoomId, page, size, totalRecord);
