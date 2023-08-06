@@ -24,6 +24,7 @@ import com.madeyepeople.pocketpt.global.s3.S3FileService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -219,6 +220,26 @@ public class ChattingMessageService {
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_DELETE_SUCCESS, "delete success");
 
         return resultResponse;
+    }
+
+    @Transactional
+    public ResponseEntity<byte[]> downloadChattingFile(Long accountId, Long chattingRoomId, Long chattingMessageId) {
+        // [1] 채팅방 유효성 검사
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
+
+        // [2] 채팅 sender 유효성 검사
+        Account account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId).orElseThrow();
+        chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow();
+
+        // [3] 채팅 message 유효성 검사
+        ChattingMessage chattingMessage = chattingMessageRepository.findByIdAndRoomIdAndAccountIdAndIsDeletedFalse(
+                foundChattingRoom.getChattingRoomId(), accountId, chattingMessageId).orElseThrow(); // 삭제한 메시지는 다시 삭제할 수 없도록 is_deleted == false인 메시지만 조회
+
+        // [4] 채팅 파일 다운로드
+        try {
+            return s3FileService.downloadFile(chattingMessage.getFileUrl());
+        } catch (Exception e) {}
+        return null;
     }
 
 }
