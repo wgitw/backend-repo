@@ -1,6 +1,7 @@
 package com.madeyepeople.pocketpt.domain.account.dto;
 
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
+import jakarta.validation.constraints.Email;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

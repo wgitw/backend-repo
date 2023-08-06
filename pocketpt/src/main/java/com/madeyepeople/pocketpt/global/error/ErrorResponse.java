@@ -2,10 +2,7 @@ package com.madeyepeople.pocketpt.global.error;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.validation.BindingResult;
 
 import java.util.ArrayList;
@@ -15,6 +12,7 @@ import java.util.stream.Collectors;
 @Builder
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 public class ErrorResponse {
     private String code;
     private String message;
@@ -32,12 +30,22 @@ public class ErrorResponse {
         this.errors = new ArrayList<>();
     }
 
+    private ErrorResponse(ErrorCode code, Exception e) {
+        this.code = code.getCode();
+        this.message = code.getMessage(e);
+        this.errors = new ArrayList<>();
+    }
+
     public static ErrorResponse of(final ErrorCode code, final BindingResult bindingResult) {
         return new ErrorResponse(code, FieldError.of(bindingResult));
     }
 
     public static ErrorResponse of(ErrorCode code) {
         return new ErrorResponse(code);
+    }
+
+    public static ErrorResponse of(ErrorCode code, Exception e) {
+        return new ErrorResponse(code, e);
     }
 
     @Getter

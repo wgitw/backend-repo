@@ -3,12 +3,14 @@ package com.madeyepeople.pocketpt.domain.chattingMessage.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Builder
+@ToString
 public class ChattingMessageCreateResponse {
     private Long chattingRoomId;
     private Long chattingAccountId;

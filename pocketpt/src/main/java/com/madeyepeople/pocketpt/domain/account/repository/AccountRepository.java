@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface AccountRepository extends JpaRepository<Account, Long> {
     Optional<Account> findByEmailAndIsDeletedFalse(String email);
     Optional<Account> findByAccountIdAndIsDeletedFalse(Long accountId);
+    Optional<Account> findByIdentificationCodeAndIsDeletedFalse(String identificationCode);
 }
