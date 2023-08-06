@@ -42,10 +42,6 @@ public class ChattingMessage extends BaseEntity {
     @Builder.Default
     private Boolean isEdited = Boolean.FALSE;
 
-    @Column(name = "is_bookmarked", nullable = false)
-    @Builder.Default
-    private Boolean isBookmarked = Boolean.FALSE;
-
     @Column(name = "not_view_count", nullable = false)
     @Builder.Default
     private int notViewCount = 0;
