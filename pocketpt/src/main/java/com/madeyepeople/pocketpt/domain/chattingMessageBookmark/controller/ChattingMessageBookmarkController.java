@@ -22,7 +22,7 @@ public class ChattingMessageBookmarkController {
     // 톡서랍으로 저장
     @PostMapping("/{chattingMessageId}")
     public ResponseEntity<ResultResponse> updateChattingMessageBookmark(@PathVariable Long chattingRoomId, @PathVariable Long chattingMessageId){
-        Long accountId = securityUtil.getLoginUsername();
+        Long accountId = securityUtil.getLoginAccountId();
         ResultResponse resultResponse = chattingMessageBookmarkService.createChattingMessageBookmark(chattingRoomId, accountId, chattingMessageId);
         return ResponseEntity.ok(resultResponse);
     }
@@ -31,7 +31,7 @@ public class ChattingMessageBookmarkController {
     @GetMapping
     public ResponseEntity<ResultResponse> getChattingMessageBookmarkList(@PathVariable Long chattingRoomId,
                                                                          @PageableDefault(size=10, page=0, sort="chattingMessage", direction = Sort.Direction.DESC) Pageable pageable){
-        Long accountId = securityUtil.getLoginUsername();
+        Long accountId = securityUtil.getLoginAccountId();
         ResultResponse resultResponse = chattingMessageBookmarkService.getChattingMessageBookmarkListByRoomAndAccount(chattingRoomId, accountId, pageable);
         return ResponseEntity.ok(resultResponse);
     }
@@ -39,7 +39,7 @@ public class ChattingMessageBookmarkController {
     // 톡서랍에서 삭제
     @DeleteMapping("/{chattingMessageId}")
     public ResponseEntity<ResultResponse> removeChattingMessageBookmark(@PathVariable Long chattingRoomId, @PathVariable Long chattingMessageId){
-        Long accountId = securityUtil.getLoginUsername();
+        Long accountId = securityUtil.getLoginAccountId();
         ResultResponse resultResponse = chattingMessageBookmarkService.removeChattingMessageBookmark(chattingRoomId, accountId, chattingMessageId);
         return ResponseEntity.ok(resultResponse);
     }
