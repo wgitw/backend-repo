@@ -5,6 +5,7 @@ import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingMess
 import com.madeyepeople.pocketpt.domain.chattingMessage.service.ChattingMessageService;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
 import com.madeyepeople.pocketpt.global.util.SecurityUtil;
+import com.nimbusds.jose.shaded.gson.JsonArray;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,12 @@ public class ChattingMessageController {
     private final SimpMessageSendingOperations template;
     private final ChattingMessageService chattingMessageService;
     private final SecurityUtil securityUtil;
+
+    @MessageMapping("/chatting/rooms/{chattingRoomId}/enter") // MessageMapping은 RequestMapping의 영향을 받지 않는 듯함
+    public void sendChattingMessageEnter(@DestinationVariable Long chattingRoomId, StompHeaderAccessor headerAccessor) {
+        String accountUsername = headerAccessor.getUser().getName();
+        template.convertAndSend("/sub/channel/" + chattingRoomId, accountUsername+ " enter");
+    }
 
     // 채팅방 메시지 보내기
     @MessageMapping("/chatting/rooms/{chattingRoomId}") // MessageMapping은 RequestMapping의 영향을 받지 않는 듯함
@@ -48,15 +55,33 @@ public class ChattingMessageController {
 
     // 채팅방 메시지 리스트 가져오기
     @GetMapping
-    public  ResponseEntity<ResultResponse> getChattingMessageListByRoom(@PathVariable Long chattingRoomId) {
-        ResultResponse resultResponse = chattingMessageService.getChattingMessageListByRoom(chattingRoomId);
+    public ResponseEntity<ResultResponse> getChattingMessageListByRoom(@PathVariable Long chattingRoomId,
+                                                                        @RequestParam(name = "page", defaultValue = "1") int page,
+                                                                        @RequestParam(name = "size", defaultValue = "10") int size,
+                                                                        @RequestParam(name = "totalRecord", defaultValue = "") Integer totalRecord) {
+        ResultResponse resultResponse = chattingMessageService.getChattingMessageListByRoom(chattingRoomId, page, size, totalRecord);
         return ResponseEntity.ok(resultResponse);
     }
 
     // 채팅방 파일 리스트 가져오기
     @GetMapping("/files")
-    public  ResponseEntity<ResultResponse> getChattingFileListByRoom(@PathVariable Long chattingRoomId) {
-        ResultResponse resultResponse = chattingMessageService.getChattingFileListByRoom(chattingRoomId);
+    public ResponseEntity<ResultResponse> getChattingFileListByRoom(@PathVariable Long chattingRoomId,
+                                                                     @RequestParam(name = "page", defaultValue = "1") int page,
+                                                                     @RequestParam(name = "size", defaultValue = "10") int size,
+                                                                     @RequestParam(name = "totalRecord", defaultValue = "") Integer totalRecord) {
+        ResultResponse resultResponse = chattingMessageService.getChattingFileListByRoom(chattingRoomId, page, size, totalRecord);
         return ResponseEntity.ok(resultResponse);
+    }
+
+    // 메시지 수정
+    @PutMapping("/{chattingMessageId}")
+    public ResponseEntity<ResultResponse> updateChattingMessage(){
+        return null;
+    }
+
+    // 메시지 삭제
+    @DeleteMapping("/{chattingMessageId}")
+    public ResponseEntity<ResultResponse> deleteChattingMessage() {
+        return null;
     }
 }
