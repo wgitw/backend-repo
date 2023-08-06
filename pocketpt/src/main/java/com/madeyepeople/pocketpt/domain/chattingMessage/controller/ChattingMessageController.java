@@ -1,12 +1,10 @@
 package com.madeyepeople.pocketpt.domain.chattingMessage.controller;
 
-import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingFileCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingMessageContentCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingMessage.service.ChattingMessageService;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
 import com.madeyepeople.pocketpt.global.util.SecurityUtil;
-import com.nimbusds.jose.shaded.gson.JsonArray;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -89,5 +87,12 @@ public class ChattingMessageController {
         Long accountId = securityUtil.getLoginAccountId();
         ResultResponse resultResponse = chattingMessageService.deleteChattingMessage(accountId, chattingRoomId, chattingMessageId);
         return ResponseEntity.ok(resultResponse);
+    }
+
+    // 채팅 파일 다운로드
+    @GetMapping("/{chattingMessageId}/files")
+    public ResponseEntity<byte[]> downloadChattingFile(@PathVariable Long chattingRoomId, @PathVariable Long chattingMessageId) {
+        Long accountId = securityUtil.getLoginAccountId();
+        return chattingMessageService.downloadChattingFile(accountId, chattingRoomId, chattingMessageId);
     }
 }
