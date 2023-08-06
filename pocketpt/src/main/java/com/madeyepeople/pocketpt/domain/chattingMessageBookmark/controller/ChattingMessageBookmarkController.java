@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/chatting/rooms/{chattingRoomId}/messages/bookmark")
+@RequestMapping("/api/v1/chatting/rooms/{chattingRoomId}")
 @Slf4j
 public class ChattingMessageBookmarkController {
     private final SecurityUtil securityUtil;
     private final ChattingMessageBookmarkService chattingMessageBookmarkService;
 
     // 톡서랍으로 저장
-    @PostMapping("/{chattingMessageId}")
+    @PostMapping("/messages/{chattingMessageId}/bookmarks")
     public ResponseEntity<ResultResponse> updateChattingMessageBookmark(@PathVariable Long chattingRoomId, @PathVariable Long chattingMessageId){
         Long accountId = securityUtil.getLoginAccountId();
         ResultResponse resultResponse = chattingMessageBookmarkService.createChattingMessageBookmark(chattingRoomId, accountId, chattingMessageId);
@@ -28,7 +28,7 @@ public class ChattingMessageBookmarkController {
     }
 
     // 톡서랍 모아보기
-    @GetMapping
+    @GetMapping("/bookmarks")
     public ResponseEntity<ResultResponse> getChattingMessageBookmarkList(@PathVariable Long chattingRoomId,
                                                                          @PageableDefault(size=10, page=0, sort="chattingMessage", direction = Sort.Direction.DESC) Pageable pageable){
         Long accountId = securityUtil.getLoginAccountId();
@@ -37,7 +37,7 @@ public class ChattingMessageBookmarkController {
     }
 
     // 톡서랍에서 삭제
-    @DeleteMapping("/{chattingMessageId}")
+    @DeleteMapping("/messages/{chattingMessageId}/bookmarks")
     public ResponseEntity<ResultResponse> removeChattingMessageBookmark(@PathVariable Long chattingRoomId, @PathVariable Long chattingMessageId){
         Long accountId = securityUtil.getLoginAccountId();
         ResultResponse resultResponse = chattingMessageBookmarkService.removeChattingMessageBookmark(chattingRoomId, accountId, chattingMessageId);
