@@ -25,6 +25,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
 
@@ -78,7 +79,7 @@ public class ChattingMessageService {
 
         log.info("savedChattingMessage content : {}", savedChattingMessage.getContent());
         log.info("chattingMessageCreateResponse : {}", chattingMessageCreateResponse.toString());
-        // [5] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageCreateResponse
+        // [6] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageCreateResponse
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_CREATE_SUCCESS, chattingMessageCreateResponse);
 
         return resultResponse;
@@ -174,9 +175,50 @@ public class ChattingMessageService {
     }
 
     @Transactional
-    public ResultResponse updateChattingMessageBookmark() {
+    public ResultResponse updateChattingMessage(Long accountId, Long chattingRoomId, Long chattingMessageId, ChattingMessageContentCreateRequest chattingMessageContentCreateRequest) {
+        // [1] 채팅방 유효성 검사
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
 
-        return null;
+        // [2] 채팅 sender 유효성 검사
+        Account account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId).orElseThrow();
+        chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow();
+
+        // [3] 채팅 message 유효성 검사
+        ChattingMessage chattingMessage = chattingMessageRepository.findByIdAndRoomIdAndAccountIdAndIsDeletedFalse(
+                foundChattingRoom.getChattingRoomId(), accountId, chattingMessageId).orElseThrow(); // 삭제한 메시지는 수정할 수 없도록 is_deleted == false인 메시지만 조회
+
+        // [4] 채팅 메시지 수정 및 정보 담기
+        chattingMessage.setContent(chattingMessageContentCreateRequest.getContent());
+        chattingMessage.setIsEdited(Boolean.TRUE);
+        ChattingMessage savedChattingMessage = chattingMessageRepository.save(chattingMessage);
+        ChattingMessageGetResponse chattingMessageUpdateResponse = toChattingMessageResponse.toChattingMessageGetResponse(savedChattingMessage);
+
+        // [5] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageCreateResponse
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_UPDATE_SUCCESS, chattingMessageUpdateResponse);
+
+        return resultResponse;
+    }
+
+    @Transactional
+    public ResultResponse deleteChattingMessage(Long accountId, Long chattingRoomId, Long chattingMessageId) {
+        // [1] 채팅방 유효성 검사
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
+
+        // [2] 채팅 sender 유효성 검사
+        Account account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId).orElseThrow();
+        chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow();
+
+        // [3] 채팅 message 유효성 검사
+        ChattingMessage chattingMessage = chattingMessageRepository.findByIdAndRoomIdAndAccountIdAndIsDeletedFalse(
+                foundChattingRoom.getChattingRoomId(), accountId, chattingMessageId).orElseThrow(); // 삭제한 메시지는 다시 삭제할 수 없도록 is_deleted == false인 메시지만 조회
+
+        // [4] 채팅 메시지 삭제
+        chattingMessageRepository.deleteByIdAndRoomIdAndAccountIdAndIsDeletedFalse(foundChattingRoom.getChattingRoomId(), accountId, chattingMessageId);
+
+        // [5] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageCreateResponse
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_DELETE_SUCCESS, "delete success");
+
+        return resultResponse;
     }
 
 }

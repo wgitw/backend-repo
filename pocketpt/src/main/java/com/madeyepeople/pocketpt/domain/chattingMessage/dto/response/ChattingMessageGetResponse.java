@@ -18,7 +18,6 @@ public class ChattingMessageGetResponse {
     private String content;
     private String fileUrl;
     private Boolean isEdited;
-    private Boolean isBookmarked;
     private int notViewCount;
     private Boolean isDeleted;
     private LocalDateTime createdAt;

@@ -1,7 +1,6 @@
 package com.madeyepeople.pocketpt.domain.chattingMessage.repository;
 
 import com.madeyepeople.pocketpt.domain.chattingMessage.entity.ChattingMessage;
-import com.madeyepeople.pocketpt.domain.chattingMessageBookmark.entity.ChattingMessageBookmark;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -24,6 +23,18 @@ public interface ChattingMessageRepository extends JpaRepository<ChattingMessage
                     ORDER BY m.created_at DESC LIMIT 1
             """, nativeQuery = true)
     Optional<ChattingMessage> findLatestChattingMessageByRoom(Long chattingRoom);
+
+    // 삭제되지 않은 메시지
+    @Query(value=
+            """
+                SELECT *
+                FROM chatting_message m
+                WHERE m.chatting_room = :chattingRoom
+                    AND m.chatting_message_id = :chattingMessage
+                    AND account = :account
+                    AND is_deleted = FALSE
+            """, nativeQuery = true)
+    Optional<ChattingMessage> findByIdAndRoomIdAndAccountIdAndIsDeletedFalse(Long chattingRoom, Long account, Long chattingMessage);
 
     // 채팅방의 메시지 총개수
     @Query(value =
@@ -86,5 +97,19 @@ public interface ChattingMessageRepository extends JpaRepository<ChattingMessage
             """, nativeQuery = true)
     int updateAllByNotViewCountMinusOneByRoomIdAndChattingAccountId(Long chattingRoomId, Long accountId);
 
-    // delete - TODO: is_deleted = true와 content 내용 null 처리 진행할 것
+    // delete
+    @Modifying
+    @Query(value =
+            """
+                UPDATE chatting_message m
+                SET
+                    m.is_deleted = TRUE,
+                    m.content = "삭제된 메시지입니다.",
+                    m.file_url = NULL
+                WHERE m.chatting_room = :chattingRoom
+                    AND m.chatting_message_id = :chattingMessage
+                    AND account = :account
+                    AND m.is_deleted = FALSE
+            """, nativeQuery = true)
+    int deleteByIdAndRoomIdAndAccountIdAndIsDeletedFalse(Long chattingRoom, Long account, Long chattingMessage);
 }
