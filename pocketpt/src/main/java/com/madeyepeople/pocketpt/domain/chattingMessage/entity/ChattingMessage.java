@@ -1,9 +1,12 @@
 package com.madeyepeople.pocketpt.domain.chattingMessage.entity;
 
+import com.madeyepeople.pocketpt.domain.chattingMessageBookmark.entity.ChattingMessageBookmark;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,6 +28,9 @@ public class ChattingMessage extends BaseEntity {
             @JoinColumn(name = "account", referencedColumnName = "account_id")
     }, foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private ChattingParticipant chattingParticipant;
+
+    @OneToMany(mappedBy = "chattingMessage")
+    private List<ChattingMessageBookmark> chattingMessageBookmarkList;
 
     @Column(name = "content")
     private String content;

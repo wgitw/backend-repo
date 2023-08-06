@@ -10,6 +10,6 @@ public class ScrollPaginationFile extends ScrollPagination{
 
     @Override
     void calculateStartNum() {
-        startNum = (int) (pageSize * (pageNum - 1));
+        startNum = (int) (pageSize * pageNum);
     }
 }

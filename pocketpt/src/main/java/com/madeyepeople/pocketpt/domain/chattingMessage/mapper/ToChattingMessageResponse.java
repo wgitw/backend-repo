@@ -69,7 +69,6 @@ public class ToChattingMessageResponse {
                 .chattingMessageGetResponseList(chattingMessageGetResponseList)
                 .pageSize(scrollPagination.getPageSize())
                 .pageNum(scrollPagination.getPageNum())
-                .startNum(scrollPagination.getStartNum())
                 .totalRecord(scrollPagination.getTotalRecord())
                 .hasPreviousPage(scrollPagination.isHasPreviousPage())
                 .hasNextPage(scrollPagination.isHasNextPage())

@@ -1,6 +1,7 @@
 package com.madeyepeople.pocketpt.domain.account.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.madeyepeople.pocketpt.domain.chattingMessageBookmark.entity.ChattingMessageBookmark;
 import com.madeyepeople.pocketpt.domain.account.constant.RoleEnumConverter;
 import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
@@ -32,6 +33,9 @@ public class Account extends BaseEntity {
 
     @OneToMany(mappedBy = "account")
     private List<ChattingParticipant> chattingParticipantList;
+
+    @OneToMany(mappedBy = "account")
+    private List<ChattingMessageBookmark> chattingMessageBookmarkList;
 
     @OneToMany(mappedBy = "trainer")
     private List<PtMatching> ptMatchingListOfTrainer;
