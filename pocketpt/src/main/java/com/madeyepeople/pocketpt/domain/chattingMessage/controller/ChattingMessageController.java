@@ -1,5 +1,6 @@
 package com.madeyepeople.pocketpt.domain.chattingMessage.controller;
 
+import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingFileCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingMessageContentCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingMessage.service.ChattingMessageService;
@@ -74,14 +75,19 @@ public class ChattingMessageController {
     }
 
     // 메시지 수정
-    @PutMapping("/{chattingMessageId}")
-    public ResponseEntity<ResultResponse> updateChattingMessage(){
-        return null;
+    @PatchMapping("/{chattingMessageId}")
+    public ResponseEntity<ResultResponse> updateChattingMessage(@PathVariable Long chattingRoomId, @PathVariable Long chattingMessageId,
+                                                                @RequestBody ChattingMessageContentCreateRequest chattingMessageContentCreateRequest){
+        Long accountId = securityUtil.getLoginAccountId();
+        ResultResponse resultResponse = chattingMessageService.updateChattingMessage(accountId, chattingRoomId, chattingMessageId, chattingMessageContentCreateRequest);
+        return ResponseEntity.ok(resultResponse);
     }
 
     // 메시지 삭제
     @DeleteMapping("/{chattingMessageId}")
-    public ResponseEntity<ResultResponse> deleteChattingMessage() {
-        return null;
+    public ResponseEntity<ResultResponse> deleteChattingMessage(@PathVariable Long chattingRoomId, @PathVariable Long chattingMessageId) {
+        Long accountId = securityUtil.getLoginAccountId();
+        ResultResponse resultResponse = chattingMessageService.deleteChattingMessage(accountId, chattingRoomId, chattingMessageId);
+        return ResponseEntity.ok(resultResponse);
     }
 }
