@@ -1,5 +1,6 @@
 package com.madeyepeople.pocketpt.domain.chattingRoom.entity;
 
+import com.madeyepeople.pocketpt.domain.chattingMessageBookmark.entity.ChattingMessageBookmark;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.persistence.*;
@@ -27,6 +28,9 @@ public class ChattingRoom extends BaseEntity {
 
     @OneToMany(mappedBy = "chattingRoom")
     private List<ChattingParticipant> chattingParticipantList;
+
+    @OneToMany(mappedBy = "chattingRoom")
+    private List<ChattingMessageBookmark> chattingMessageBookmarkList;
 
     // 두 명 대상인 경우: 채팅 상대방의 이름으로 설정 -> 상대방 이름이 변경될 경우 동기화 필요
     // 세 명 이상일 경우: 채팅방 이름 수정 가능

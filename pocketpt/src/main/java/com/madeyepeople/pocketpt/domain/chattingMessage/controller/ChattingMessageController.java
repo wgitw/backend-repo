@@ -25,6 +25,12 @@ public class ChattingMessageController {
     private final ChattingMessageService chattingMessageService;
     private final SecurityUtil securityUtil;
 
+    @MessageMapping("/chatting/rooms/{chattingRoomId}/enter") // MessageMapping은 RequestMapping의 영향을 받지 않는 듯함
+    public void sendChattingMessageEnter(@DestinationVariable Long chattingRoomId, StompHeaderAccessor headerAccessor) {
+        String accountUsername = headerAccessor.getUser().getName();
+        template.convertAndSend("/sub/channel/" + chattingRoomId, accountUsername+ " enter");
+    }
+
     // 채팅방 메시지 보내기
     @MessageMapping("/chatting/rooms/{chattingRoomId}") // MessageMapping은 RequestMapping의 영향을 받지 않는 듯함
     public void sendChattingMessage(@DestinationVariable Long chattingRoomId, ChattingMessageContentCreateRequest chattingMessageContentCreateRequest, StompHeaderAccessor headerAccessor) {
@@ -48,15 +54,45 @@ public class ChattingMessageController {
 
     // 채팅방 메시지 리스트 가져오기
     @GetMapping
-    public  ResponseEntity<ResultResponse> getChattingMessageListByRoom(@PathVariable Long chattingRoomId) {
-        ResultResponse resultResponse = chattingMessageService.getChattingMessageListByRoom(chattingRoomId);
+    public ResponseEntity<ResultResponse> getChattingMessageListByRoom(@PathVariable Long chattingRoomId,
+                                                                        @RequestParam(name = "page", defaultValue = "0") int page,
+                                                                        @RequestParam(name = "size", defaultValue = "10") int size,
+                                                                        @RequestParam(name = "totalRecord", defaultValue = "") Integer totalRecord) {
+        ResultResponse resultResponse = chattingMessageService.getChattingMessageListByRoom(chattingRoomId, page, size, totalRecord);
         return ResponseEntity.ok(resultResponse);
     }
 
     // 채팅방 파일 리스트 가져오기
     @GetMapping("/files")
-    public  ResponseEntity<ResultResponse> getChattingFileListByRoom(@PathVariable Long chattingRoomId) {
-        ResultResponse resultResponse = chattingMessageService.getChattingFileListByRoom(chattingRoomId);
+    public ResponseEntity<ResultResponse> getChattingFileListByRoom(@PathVariable Long chattingRoomId,
+                                                                     @RequestParam(name = "page", defaultValue = "0") int page,
+                                                                     @RequestParam(name = "size", defaultValue = "10") int size,
+                                                                     @RequestParam(name = "totalRecord", defaultValue = "") Integer totalRecord) {
+        ResultResponse resultResponse = chattingMessageService.getChattingFileListByRoom(chattingRoomId, page, size, totalRecord);
         return ResponseEntity.ok(resultResponse);
+    }
+
+    // 메시지 수정
+    @PatchMapping("/{chattingMessageId}")
+    public ResponseEntity<ResultResponse> updateChattingMessage(@PathVariable Long chattingRoomId, @PathVariable Long chattingMessageId,
+                                                                @RequestBody ChattingMessageContentCreateRequest chattingMessageContentCreateRequest){
+        Long accountId = securityUtil.getLoginAccountId();
+        ResultResponse resultResponse = chattingMessageService.updateChattingMessage(accountId, chattingRoomId, chattingMessageId, chattingMessageContentCreateRequest);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    // 메시지 삭제
+    @DeleteMapping("/{chattingMessageId}")
+    public ResponseEntity<ResultResponse> deleteChattingMessage(@PathVariable Long chattingRoomId, @PathVariable Long chattingMessageId) {
+        Long accountId = securityUtil.getLoginAccountId();
+        ResultResponse resultResponse = chattingMessageService.deleteChattingMessage(accountId, chattingRoomId, chattingMessageId);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    // 채팅 파일 다운로드
+    @GetMapping("/{chattingMessageId}/files")
+    public ResponseEntity<byte[]> downloadChattingFile(@PathVariable Long chattingRoomId, @PathVariable Long chattingMessageId) {
+        Long accountId = securityUtil.getLoginAccountId();
+        return chattingMessageService.downloadChattingFile(accountId, chattingRoomId, chattingMessageId);
     }
 }

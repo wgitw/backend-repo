@@ -1,9 +1,13 @@
 package com.madeyepeople.pocketpt.domain.chattingMessage.entity;
 
+import com.madeyepeople.pocketpt.domain.chattingMessageBookmark.entity.ChattingMessageBookmark;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -26,6 +30,9 @@ public class ChattingMessage extends BaseEntity {
     }, foreignKey = @ForeignKey(value = ConstraintMode.NO_CONSTRAINT))
     private ChattingParticipant chattingParticipant;
 
+    @OneToMany(mappedBy = "chattingMessage")
+    private List<ChattingMessageBookmark> chattingMessageBookmarkList;
+
     @Column(name = "content")
     private String content;
 
@@ -35,10 +42,6 @@ public class ChattingMessage extends BaseEntity {
     @Column(name = "is_edited", nullable = false)
     @Builder.Default
     private Boolean isEdited = Boolean.FALSE;
-
-    @Column(name = "is_bookmarked", nullable = false)
-    @Builder.Default
-    private Boolean isBookmarked = Boolean.FALSE;
 
     @Column(name = "not_view_count", nullable = false)
     @Builder.Default

@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface ChattingMessageRepository extends JpaRepository<ChattingMessage, Long> {
 
     // select - is_deleted = true여도 "삭제된 메시지입니다"로 보여줘야 해서 내보내야 함
+
+    // 채팅방의 가장 최근 메시지
     @Query(value=
             """
                 SELECT *
@@ -22,26 +24,68 @@ public interface ChattingMessageRepository extends JpaRepository<ChattingMessage
             """, nativeQuery = true)
     Optional<ChattingMessage> findLatestChattingMessageByRoom(Long chattingRoom);
 
+    // 삭제되지 않은 메시지
+    @Query(value=
+            """
+                SELECT *
+                FROM chatting_message m
+                WHERE m.chatting_room = :chattingRoom
+                    AND m.chatting_message_id = :chattingMessage
+                    AND account = :account
+                    AND is_deleted = FALSE
+            """, nativeQuery = true)
+    Optional<ChattingMessage> findByIdAndRoomIdAndAccountIdAndIsDeletedFalse(Long chattingRoom, Long account, Long chattingMessage);
+
+    // 채팅방의 메시지 총개수
+    @Query(value =
+            """
+                SELECT count(*)
+                FROM chatting_message m
+                WHERE m.chatting_room = :chattingRoom
+                    AND 0 < m.chatting_message_id
+                    ORDER BY chatting_message_id DESC
+            """, nativeQuery = true)
+    int findAllCountByChattingRoomOrderByChattingMessageId(Long chattingRoom);
+
+    // 채팅방의 메시지 리스트 가져오기
     @Query(value =
             """
                 SELECT *
                 FROM chatting_message m
                 WHERE m.chatting_room = :chattingRoom
+                    AND :startNum >= m.chatting_message_id
+                    ORDER BY chatting_message_id DESC
+                    LIMIT :pageSize
+            """, nativeQuery = true)
+    List<ChattingMessage> findAllByChattingRoomOrderByChattingMessageIdDesc(Long chattingRoom, int startNum, int pageSize);
+
+    // 채팅방의 파일 총개수 - is_deleted == True여도 삭제된 파일입니다로 보여주는 것을 의도하여 내보냄
+    @Query(value =
+            """
+                SELECT count(*)
+                FROM chatting_message m
+                WHERE m.chatting_room = :chattingRoom
+                    AND m.file_url IS NOT NULL
+                    AND 0 < m.chatting_message_id
                     ORDER BY chatting_message_id DESC
             """, nativeQuery = true)
-    List<ChattingMessage> findAllByChattingRoomOrderByChattingMessageIdDesc(Long chattingRoom);
+    int findAllFileUrlCountByChattingRoomOrderByChattingMessageId(Long chattingRoom);
 
+    // 채팅방의 파일 리스트 - is_deleted == True여도 삭제된 파일입니다로 보여주는 것을 의도하여 내보냄
     @Query(value =
             """
                 SELECT *
                 FROM chatting_message m
                 WHERE m.chatting_room = :chattingRoom
                     AND m.file_url IS NOT NULL
-                    ORDER BY chatting_message_id DESC
+                    ORDER BY m.chatting_message_id DESC
+                    LIMIT :pageSize OFFSET :startNum
             """, nativeQuery = true)
-    List<ChattingMessage> findAllFileUrlByChattingRoom(Long chattingRoom);
+    List<ChattingMessage> findAllFileUrlByChattingRoom(Long chattingRoom, int startNum, int pageSize);
 
     // update
+
+    // 읽은 메시지로 업데이트
     @Modifying
     @Query(value =
             """
@@ -53,5 +97,19 @@ public interface ChattingMessageRepository extends JpaRepository<ChattingMessage
             """, nativeQuery = true)
     int updateAllByNotViewCountMinusOneByRoomIdAndChattingAccountId(Long chattingRoomId, Long accountId);
 
-    // delete - TODO: is_deleted = true와 content 내용 null 처리 진행할 것
+    // delete
+    @Modifying
+    @Query(value =
+            """
+                UPDATE chatting_message m
+                SET
+                    m.is_deleted = TRUE,
+                    m.content = "삭제된 메시지입니다.",
+                    m.file_url = NULL
+                WHERE m.chatting_room = :chattingRoom
+                    AND m.chatting_message_id = :chattingMessage
+                    AND account = :account
+                    AND m.is_deleted = FALSE
+            """, nativeQuery = true)
+    int deleteByIdAndRoomIdAndAccountIdAndIsDeletedFalse(Long chattingRoom, Long account, Long chattingMessage);
 }

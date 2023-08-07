@@ -29,9 +29,16 @@ public enum ResultCode {
     CHATTING_FILE_CREATE_SUCCESS("CM002", "채팅 파일 생성 성공"),
     CHATTING_MESSAGE_LIST_GET_SUCCESS("CM003", "채팅 메시지 리스트 가져오기 성공"),
     CHATTING_FILE_LIST_GET_SUCCESS("CM004", "채팅 파일 리스트 가져오기 성공"),
+    CHATTING_MESSAGE_UPDATE_SUCCESS("CM005", "채팅 메시지 수정 성공"),
+    CHATTING_MESSAGE_DELETE_SUCCESS("CM006", "채팅 메시지 삭제 성공"),
 
     // file
-    FILE_UPLOAD_SUCCESS("F001", "파일 업로드 성공");
+    FILE_UPLOAD_SUCCESS("F001", "파일 업로드 성공"),
+
+    // chatting message bookmark
+    CHATTING_MESSAGE_BOOKMARK_CREATE_SUCCESS("CB001", "채팅 북마크 성공"),
+    CHATTING_MESSAGE_BOOKMARK_LIST_GET_SUCCESS("CB002", "채팅 북마크 리스트 가져오기 성공"),
+    CHATTING_MESSAGE_BOOKMARK_DELETE_SUCCESS("CB003", "채팅 북마크 삭제 성공");
 
     private final String code;
     private final String message;
