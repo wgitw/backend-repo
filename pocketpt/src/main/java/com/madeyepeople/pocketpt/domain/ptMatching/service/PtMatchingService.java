@@ -60,7 +60,7 @@ public class PtMatchingService {
 
         // TODO: subscriptionPeriod로 expiredDate도 계산해야 함
         PtMatching saved = ptMatchingRepository.save(toPtMatchingEntity.fromAccountEntities(trainer.get(), trainee, ptRegistrationRequest.getSubscriptionPeriod()));
-        log.error("saved: {}", saved.toString());
+
         // TODO: ResultResponse 사용하도록 변경, Account 로직들도 마찬가지
         return toPtRegistrationResponse.fromPtMatchingEntity(saved);
     }
@@ -92,29 +92,28 @@ public class PtMatchingService {
 
     @Transactional
     public ResultResponse acceptPtMatching(Long ptMatchingId) {
-//        // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
-//        Account account = securityUtil.getLoginAccountEntity();
-//        if (!account.getAccountRole().equals(Role.TRAINER)) {
-//            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.AUTHENTICATED_USER_IS_NOT_TRAINER.getMessage());
-//        }
-//
-//        // 해당 ptMatchingId가 존재하는지 확인
-//        PtMatching ptMatching = ptMatchingRepository.findByIdAndIsDeletedFalse(ptMatchingId)
-//                .orElseThrow(() -> new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_NOT_FOUND.getMessage()));
-//
-//        // pt matching status가 pending인지 확인
-//        if (!ptMatching.getStatus().equals(PtStatus.PENDING)) {
-//            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_STATUS_IS_NOT_PENDING.getMessage());
-//        }
-//
-//        // pt matching의 trainerId가 로그인한 계정의 accountId와 일치하는지 확인
-//        if (!ptMatching.getTrainee().getAccountId().equals(account.getAccountId())) {
-//            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_TRAINER_ID_IS_NOT_MATCHED.getMessage());
-//        }
-//
-//        // pt matching의 status를 active로 변경
-//        PtMatching saved = ptMatchingRepository.save(ptMatching.updateStatus(PtStatus.ACTIVE));
-//        return ResultResponse.of(ResultCode.PT_MATCHING_ACCEPT_SUCCESS, toPtMatchingSummary.fromPtMatchingEntity(saved, account.getAccountId()));
-        return null;
+        // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
+        Account account = securityUtil.getLoginAccountEntity();
+        if (!account.getAccountRole().equals(Role.TRAINER)) {
+            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.AUTHENTICATED_USER_IS_NOT_TRAINER.getMessage());
+        }
+
+        // 해당 ptMatchingId가 존재하는지 확인
+        PtMatching ptMatching = ptMatchingRepository.findByPtMatchingIdAndIsDeletedFalse(ptMatchingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_NOT_FOUND.getMessage()));
+
+        // pt matching의 trainerId가 로그인한 계정의 accountId와 일치하는지 확인
+        if (!ptMatching.getTrainer().getAccountId().equals(account.getAccountId())) {
+            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_TRAINER_ID_IS_NOT_MATCHED.getMessage());
+        }
+
+        // pt matching status가 pending인지 확인
+        if (!ptMatching.getStatus().equals(PtStatus.PENDING)) {
+            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_STATUS_IS_NOT_PENDING.getMessage());
+        }
+
+        // pt matching의 status를 active로 변경
+        PtMatching saved = ptMatchingRepository.save(ptMatching.updateStatus(PtStatus.ACTIVE));
+        return ResultResponse.of(ResultCode.PT_MATCHING_ACCEPT_SUCCESS, toPtMatchingSummary.fromPtMatchingEntity(saved, account.getAccountId()));
     }
 }

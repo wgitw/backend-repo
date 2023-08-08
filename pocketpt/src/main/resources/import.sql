@@ -42,8 +42,9 @@ INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id,
 INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (10, 1, 24, 'active', 11);
 INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (11, 1, 25, 'active', 11);
 INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (12, 1, 16, 'active', 11);
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (13, 2, 16, 'pending', 11);
 
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (13, 2, 14, 'active', 6);
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (14, 2, 14, 'active', 6);
 
 
 -- Chatting

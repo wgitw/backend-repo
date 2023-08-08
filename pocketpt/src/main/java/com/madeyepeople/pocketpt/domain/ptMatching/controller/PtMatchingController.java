@@ -19,12 +19,14 @@ public class PtMatchingController {
 
     private final PtMatchingService ptMatchingService;
 
+    // PT 매칭 요청
     @PostMapping
     public ResponseEntity<ResultResponse> registerPt(@RequestBody PtRegistrationRequest ptRegistrationRequest) {
         PtRegistrationResponse ptRegistrationResponse = ptMatchingService.registerPt(ptRegistrationRequest);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.PT_REGISTRATION_CREATE_SUCCESS, ptRegistrationResponse));
     }
 
+    // PT 매칭 리스트 조회
     @GetMapping
     public ResponseEntity<ResultResponse> getPtMatchingList(@RequestParam
                                                                 @Pattern(
@@ -35,14 +37,11 @@ public class PtMatchingController {
         return ResponseEntity.ok(resultResponse);
     }
 
-    // TODO: 요청 수락
-    @GetMapping("/accept")
-    public ResponseEntity<ResultResponse> acceptPtMatching(@RequestParam Long ptMatchingId) {
+    // 요청된 PT 수락 (trainer only)
+    @GetMapping("/accept/{ptMatchingId}")
+    public ResponseEntity<ResultResponse> acceptPtMatching(@PathVariable Long ptMatchingId) {
+        log.error("ptMatchingId: {}", ptMatchingId);
         ResultResponse resultResponse = ptMatchingService.acceptPtMatching(ptMatchingId);
         return ResponseEntity.ok(resultResponse);
     }
-
-    // TODO: 매칭 목록 조회 -> 채팅 친구 목록 조회와 동ㄴ
-//    @GetMapping
-
 }
