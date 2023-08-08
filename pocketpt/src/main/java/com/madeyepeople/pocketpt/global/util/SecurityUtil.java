@@ -3,6 +3,7 @@ package com.madeyepeople.pocketpt.global.util;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -10,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.security.Principal;
 import java.util.Optional;
 
 @Component
@@ -53,9 +55,19 @@ public class SecurityUtil {
         return null;
     }
 
+    public Account getLoginAccountEntity(String username) {
+        try {
+            Account account = isAccountExist(username);
+            return  account;
+        } catch (Exception e) {
+            // TODO: exception handling
+            e.printStackTrace();
+            throw new RuntimeException("User not authenticated");
+        }
+    }
+
     public Account isAccountExist(String email) throws Exception {
         Optional<Account> account = accountRepository.findByEmailAndIsDeletedFalse(email);
-
         if (account.isPresent()) {
             return account.get();
         }

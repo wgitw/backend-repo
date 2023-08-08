@@ -5,6 +5,7 @@ import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMes
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageGetListPaginationRespnse;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageGetResponse;
 import com.madeyepeople.pocketpt.domain.chattingMessage.entity.ChattingMessage;
+import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
 import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
 import com.madeyepeople.pocketpt.global.common.ScrollPagination;
 import org.springframework.stereotype.Component;
@@ -54,6 +55,26 @@ public class ToChattingMessageResponse {
                 .fileUrl(chattingMessage.getFileUrl())
                 .isEdited(chattingMessage.getIsEdited())
                 .notViewCount(chattingMessage.getNotViewCount())
+                .isDeleted(chattingMessage.getIsDeleted())
+                .createdAt(chattingMessage.getCreatedAt())
+                .updatedAt(chattingMessage.getUpdatedAt())
+                .build();
+    }
+
+    public ChattingMessageGetResponse toChattingMessageGetResponseForUpdateChattingRoomList(ChattingMessage chattingMessage, ChattingParticipant chattingParticipant) {
+        ChattingRoom chattingRoom = chattingMessage.getChattingParticipant().getChattingRoom();
+        Account account = chattingMessage.getChattingParticipant().getAccount();
+
+        return ChattingMessageGetResponse.builder()
+                .chattingRoomId(chattingRoom.getChattingRoomId())
+                .chattingAccountId(account.getAccountId())
+                .chattingAccountName(account.getNickname())
+                .chattingAccountProfilePictureUrl(account.getProfilePictureUrl())
+                .chattingMessageId(chattingMessage.getChattingMessageId())
+                .content(chattingMessage.getContent())
+                .fileUrl(chattingMessage.getFileUrl())
+                .isEdited(chattingMessage.getIsEdited())
+                .notViewCount(chattingParticipant.getNotViewCount())
                 .isDeleted(chattingMessage.getIsDeleted())
                 .createdAt(chattingMessage.getCreatedAt())
                 .updatedAt(chattingMessage.getUpdatedAt())
