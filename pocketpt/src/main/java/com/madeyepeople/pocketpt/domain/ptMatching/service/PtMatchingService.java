@@ -125,7 +125,8 @@ public class PtMatchingService {
         ResultResponse resultResponse = chattingRoomService.createChattingRoomFromPtMatching(ptMatching.getTrainer(), ptMatching.getTrainee());
 
         // 채팅방 생성 응답 전송
-        template.convertAndSend("/sub/accounts/" + account.getAccountId(), resultResponse);
+        template.convertAndSend("/sub/accounts/" + ptMatching.getTrainer().getAccountId(), resultResponse);
+        template.convertAndSend("/sub/accounts/" + ptMatching.getTrainee().getAccountId(), resultResponse);
 
         return ResultResponse.of(ResultCode.PT_MATCHING_ACCEPT_SUCCESS, toPtMatchingSummary.fromPtMatchingEntity(saved, account.getAccountId()));
     }
