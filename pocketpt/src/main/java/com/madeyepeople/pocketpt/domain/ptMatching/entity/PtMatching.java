@@ -6,6 +6,7 @@ import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatusEnumConverter;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
+import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -58,6 +59,11 @@ public class PtMatching extends BaseEntity {
         this.status = status;
     }
 
+    public PtMatching updateStatus(PtStatus status) {
+        this.status = status;
+        return this;
+    }
+
     public Account getAccountByRole(Role role) {
         if (role.equals(Role.TRAINER)) {
             return this.trainer;
@@ -65,6 +71,16 @@ public class PtMatching extends BaseEntity {
             return this.trainee;
         } else {
             throw new IllegalArgumentException("Role enum 객체가 아닙니다.");
+        }
+    }
+
+    public Account getOpponentAccountByMyAccountId(Long myAccountId) {
+        if (this.trainer.getAccountId().equals(myAccountId)) {
+            return this.trainee;
+        } else if (this.trainee.getAccountId().equals(myAccountId)) {
+            return this.trainer;
+        } else {
+            throw new IllegalArgumentException(CustomExceptionMessage.ACCOUNT_ID_NOT_EXIST_IN_PT_MATCHING.getMessage());
         }
     }
 }

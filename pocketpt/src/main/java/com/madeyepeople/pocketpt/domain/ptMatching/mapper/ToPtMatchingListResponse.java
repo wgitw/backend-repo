@@ -15,10 +15,10 @@ import java.util.stream.Collectors;
 public class ToPtMatchingListResponse {
 
     private final ToPtMatchingSummary toPtMatchingSummary;
-    public List<PtMatchingSummary> fromPtMatchingEntityList(List<PtMatching> ptMatchingList, Role requesterRole) {
-        Role recieverRole = requesterRole == Role.TRAINER ? Role.TRAINEE : Role.TRAINER;
+    public List<PtMatchingSummary> fromPtMatchingEntityList(List<PtMatching> ptMatchingList, Long requestorAccountId) {
         List<PtMatchingSummary> ptMatchingSummaryList = ptMatchingList.stream()
-                .map(ptMatching -> toPtMatchingSummary.fromPtMatchingEntity(ptMatching, recieverRole))
+                // TODO: trainer도 pt를 신청할 수 있으므로, trainee는 Role이 아닌, AccountId로 비교해야함
+                .map(ptMatching -> toPtMatchingSummary.fromPtMatchingEntity(ptMatching, requestorAccountId))
                 .collect(Collectors.toList());
 
         return ptMatchingSummaryList;
