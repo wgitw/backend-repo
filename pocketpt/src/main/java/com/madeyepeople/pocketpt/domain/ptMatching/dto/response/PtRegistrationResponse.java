@@ -9,7 +9,9 @@ import lombok.Getter;
 public class PtRegistrationResponse {
     private Long ptMatchingId;
     private Long trainerId;
+    private String trainerName;
     private Long traineeId;
+    private String traineeName;
     private Integer subscriptionPeriod;
     private PtStatus status;
 }

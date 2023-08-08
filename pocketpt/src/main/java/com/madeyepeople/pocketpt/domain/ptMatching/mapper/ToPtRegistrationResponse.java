@@ -10,7 +10,9 @@ public class ToPtRegistrationResponse {
         return PtRegistrationResponse.builder()
                 .ptMatchingId(ptMatching.getPtMatchingId())
                 .trainerId(ptMatching.getTrainer().getAccountId())
+                .trainerName(ptMatching.getTrainer().getName())
                 .traineeId(ptMatching.getTrainee().getAccountId())
+                .traineeName(ptMatching.getTrainee().getName())
                 .subscriptionPeriod(ptMatching.getSubscriptionPeriod())
                 .status(ptMatching.getStatus())
                 .build();

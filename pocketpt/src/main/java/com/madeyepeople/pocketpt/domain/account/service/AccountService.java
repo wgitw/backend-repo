@@ -54,6 +54,7 @@ public class AccountService {
         }
     }
 
+    @Transactional
     public AccountDetailGetResponse getAccount() {
         Account account = securityUtil.getLoginAccountEntity();
         return toAccountGetResponse.fromAccountEntity(account);

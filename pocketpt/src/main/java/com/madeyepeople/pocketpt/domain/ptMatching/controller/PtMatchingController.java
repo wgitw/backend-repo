@@ -36,7 +36,11 @@ public class PtMatchingController {
     }
 
     // TODO: 요청 수락
-//    @GetMapping("/accept")
+    @GetMapping("/accept")
+    public ResponseEntity<ResultResponse> acceptPtMatching(@RequestParam Long ptMatchingId) {
+        ResultResponse resultResponse = ptMatchingService.acceptPtMatching(ptMatchingId);
+        return ResponseEntity.ok(resultResponse);
+    }
 
     // TODO: 매칭 목록 조회 -> 채팅 친구 목록 조회와 동ㄴ
 //    @GetMapping

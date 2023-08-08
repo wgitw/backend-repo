@@ -16,6 +16,7 @@ public enum ResultCode {
     // ptMatching
     PT_REGISTRATION_CREATE_SUCCESS("PM001", "PT 요청 성공"),
     PT_MATCHING_LIST_GET_SUCCESS("PM002", "PT 매칭 리스트 가져오기 성공"),
+    PT_MATCHING_ACCEPT_SUCCESS("PM003", "PT 매칭 수락 성공"),
 
     // group
     GROUP_CREATE_SUCCESS("G001", "그룹 생성 성공"),
