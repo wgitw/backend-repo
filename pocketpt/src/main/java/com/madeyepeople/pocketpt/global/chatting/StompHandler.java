@@ -50,9 +50,27 @@ public class StompHandler implements ChannelInterceptor {
             log.info(accessor.toString());
             String accountUsername = accessor.getUser().getName();
             String simpSessionId = message.getHeaders().get("simpSessionId").toString();
-            String destination = message.getHeaders().get("simpDestination").toString();
-            destination = destination.split("/")[3];
-            chattingRoomService.chattingRoomEnter(accountUsername, Long.parseLong(destination), simpSessionId);
+            String simpDestination = message.getHeaders().get("simpDestination").toString();
+            String destination = accessor.getNativeHeader("destination").toString();
+
+            String str = destination.split("/")[2];
+            if (str.equals("channel")) {
+                // 채팅방 입장
+                log.info("=============================");
+                log.info("채팅방 입장");
+                log.info("=============================");
+                simpDestination = simpDestination.split("/")[3];
+                chattingRoomService.chattingRoomEnter(accountUsername, Long.parseLong(simpDestination), simpSessionId);
+            } else if (str.equals("accounts")) {
+                // 채팅방 리스트 입장
+                log.info("=============================");
+                log.info("채팅방 리스트 입장");
+                String username = accessor.getUser().getName();
+                log.info(username);
+                log.info("=============================");
+                // do nothing
+            }
+
 //            headerAccessor.getSessionAttributes().put("userUUID", userUUID);
 //            headerAccessor.getSessionAttributes().put("roomId", chat.getRoomId());
         } else if (StompCommand.DISCONNECT.equals(accessor.getCommand())) {
