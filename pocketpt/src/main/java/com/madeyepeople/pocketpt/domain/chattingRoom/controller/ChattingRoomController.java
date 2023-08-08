@@ -46,13 +46,23 @@ public class ChattingRoomController {
         return ResponseEntity.ok(resultResponse);
     }
 
-    // 채팅방 리스트 변경사항 전송
+    // 채팅방 리스트 변경사항 전송 - 새로운 메시지
     @MessageMapping("/chatting/rooms/{chattingRoomId}/messages/{latestChattingMessageId}")
     @Transactional
-    public void updateChattingRoomInfo(@DestinationVariable Long chattingRoomId, @DestinationVariable Long latestChattingMessageId, StompHeaderAccessor headerAccessor) {
+    public void updateChattingRoomInfoForNewMessage(@DestinationVariable Long chattingRoomId, @DestinationVariable Long latestChattingMessageId, StompHeaderAccessor headerAccessor) {
         String accountUsername = headerAccessor.getUser().getName();
         Account account = securityUtil.getLoginAccountEntity(accountUsername);
-        ResultResponse resultResponse = chattingRoomService.updateChattingRoomInfo(account, chattingRoomId, latestChattingMessageId);
+        ResultResponse resultResponse = chattingRoomService.updateChattingRoomInfoForNewMessage(account, chattingRoomId, latestChattingMessageId);
+        template.convertAndSend("/sub/accounts/" + account.getAccountId(), resultResponse);
+    }
+
+    // 채팅방 리스트 변경사항 전송 - 새로운 방 생성
+    @MessageMapping("/chatting/rooms/{chattingRoomId}/accounts/{hostAccountId}")
+    @Transactional
+    public void updateChattingRoomInfoForNewRoom(@DestinationVariable Long chattingRoomId, @DestinationVariable Long hostAccountId, StompHeaderAccessor headerAccessor) {
+        String accountUsername = headerAccessor.getUser().getName();
+        Account account = securityUtil.getLoginAccountEntity(accountUsername);
+        ResultResponse resultResponse = chattingRoomService.updateChattingRoomInfoForNewRoom(account, chattingRoomId, hostAccountId);
         template.convertAndSend("/sub/accounts/" + account.getAccountId(), resultResponse);
     }
 

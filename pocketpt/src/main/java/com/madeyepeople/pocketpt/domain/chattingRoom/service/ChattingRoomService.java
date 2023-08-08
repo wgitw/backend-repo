@@ -3,6 +3,7 @@ package com.madeyepeople.pocketpt.domain.chattingRoom.service;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageGetResponse;
+import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageGetResponseForCreateRoom;
 import com.madeyepeople.pocketpt.domain.chattingMessage.entity.ChattingMessage;
 import com.madeyepeople.pocketpt.domain.chattingMessage.mapper.ToChattingMessageResponse;
 import com.madeyepeople.pocketpt.domain.chattingMessage.repository.ChattingMessageRepository;
@@ -175,7 +176,7 @@ public class ChattingRoomService {
     }
 
     @Transactional
-    public ResultResponse updateChattingRoomInfo(Account account, Long chattingRoomId, Long latestChattingMessageId) {
+    public ResultResponse updateChattingRoomInfoForNewMessage(Account account, Long chattingRoomId, Long latestChattingMessageId) {
         // [1] 채팅방 유효성 검사
         ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
 
@@ -187,7 +188,26 @@ public class ChattingRoomService {
         ChattingMessageGetResponse chattingMessageGetResponse = toChattingMessageResponse.toChattingMessageGetResponseForUpdateChattingRoomList(chattingMessage, foundChattingParticipant);
 
         // [5] resultResponse 만들기
-        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_LIST_UPDATE_INFO_GET_SUCCESS, chattingMessageGetResponse);
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_LIST_UPDATE_INFO_FOR_MESSAGE_GET_SUCCESS, chattingMessageGetResponse);
+
+        return resultResponse;
+    }
+
+    @Transactional
+    public ResultResponse updateChattingRoomInfoForNewRoom(Account account, Long chattingRoomId, Long hostAccountId) {
+        // [1] 채팅방 유효성 검사
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
+
+        // [2] account 유효성 검사
+        ChattingParticipant foundChattingParticipant = chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow();
+
+        // [3] hostAccount 유효성 검사
+        Account hostAccount = accountRepository.findByAccountIdAndIsDeletedFalse(hostAccountId).orElseThrow();
+        ChattingParticipant foundHostChattingParticipant = chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(hostAccount, foundChattingRoom).orElseThrow();
+
+        // [4] resultResponse 만들기
+        ChattingMessageGetResponseForCreateRoom chattingMessageGetResponseForCreateRoom = toChattingMessageResponse.toChattingMessageGetResponseForRoom(foundChattingRoom, foundHostChattingParticipant);
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_LIST_UPDATE_INFO_FOR_ROOM_GET_SUCCESS, chattingMessageGetResponseForCreateRoom);
 
         return resultResponse;
     }

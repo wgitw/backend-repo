@@ -4,6 +4,7 @@ import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageCreateResponse;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageGetListPaginationRespnse;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageGetResponse;
+import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageGetResponseForCreateRoom;
 import com.madeyepeople.pocketpt.domain.chattingMessage.entity.ChattingMessage;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
 import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
@@ -78,6 +79,19 @@ public class ToChattingMessageResponse {
                 .isDeleted(chattingMessage.getIsDeleted())
                 .createdAt(chattingMessage.getCreatedAt())
                 .updatedAt(chattingMessage.getUpdatedAt())
+                .build();
+    }
+
+    public ChattingMessageGetResponseForCreateRoom toChattingMessageGetResponseForRoom(ChattingRoom chattingRoom, ChattingParticipant hostCattingParticipant) {
+        Account account = hostCattingParticipant.getAccount();
+
+        return ChattingMessageGetResponseForCreateRoom.builder()
+                .chattingRoomId(chattingRoom.getChattingRoomId())
+                .hostChattingAccountId(account.getAccountId())
+                .hostChattingAccountName(account.getNickname())
+                .hostChattingAccountProfilePictureUrl(account.getProfilePictureUrl())
+                .createdAt(chattingRoom.getCreatedAt())
+                .updatedAt(chattingRoom.getUpdatedAt())
                 .build();
     }
 
