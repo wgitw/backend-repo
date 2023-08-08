@@ -3,6 +3,8 @@ package com.madeyepeople.pocketpt.domain.ptMatching.service;
 import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
+import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
+import com.madeyepeople.pocketpt.domain.chattingRoom.service.ChattingRoomService;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.PtMatchingSummary;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PtRegistrationRequest;
@@ -23,6 +25,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,6 +36,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 public class PtMatchingService {
+    private final ChattingRoomService chattingRoomService;
 
     private final AccountRepository accountRepository;
     private final PtMatchingRepository ptMatchingRepository;
@@ -43,6 +47,8 @@ public class PtMatchingService {
     private final ToPtMatchingSummary toPtMatchingSummary;
 
     private final SecurityUtil securityUtil;
+
+    private final SimpMessageSendingOperations template;
 
     @Transactional
     public PtRegistrationResponse registerPt(PtRegistrationRequest ptRegistrationRequest) throws ConstraintViolationException, BusinessException {
@@ -114,6 +120,13 @@ public class PtMatchingService {
 
         // pt matching의 status를 active로 변경
         PtMatching saved = ptMatchingRepository.save(ptMatching.updateStatus(PtStatus.ACTIVE));
+
+        // 채팅방 생성
+        ResultResponse resultResponse = chattingRoomService.createChattingRoomFromPtMatching(ptMatching.getTrainer(), ptMatching.getTrainee());
+
+        // 채팅방 생성 응답 전송
+        template.convertAndSend("/sub/accounts/" + account.getAccountId(), resultResponse);
+
         return ResultResponse.of(ResultCode.PT_MATCHING_ACCEPT_SUCCESS, toPtMatchingSummary.fromPtMatchingEntity(saved, account.getAccountId()));
     }
 }

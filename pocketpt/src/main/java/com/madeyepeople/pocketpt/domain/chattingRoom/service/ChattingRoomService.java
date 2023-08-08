@@ -89,6 +89,41 @@ public class ChattingRoomService {
         return resultResponse;
     }
 
+    @Transactional
+    public ResultResponse createChattingRoomFromPtMatching(Account trainerAccount, Account traineeAccount) {
+        // [1] ChattingRoom 내용 저장 - 이미 hostParticipantId는 검증된 상태에서 오기 때문에 이 단계에서 검증은 불필요
+        ChattingRoom chattingRoom = toChattingRoomEntity.toChattingRoomCreateEntity(traineeAccount.getAccountId());
+        ChattingRoom savedChattingRoom = chattingRoomRepository.save(chattingRoom);
+
+        // [2] ChattingParticipant List 저장 맟 정보 담기
+        List<ChattingParticipantResponse> chattingParticipantResponseList = new ArrayList<>();
+
+        // [2-1] Chatting Host 저장 및 정보 담기
+        // participant에 SAVE
+        ChattingParticipant chattingHost = toChattingParticipantEntity.toChattingHostCreateEntity(savedChattingRoom, trainerAccount);
+        ChattingParticipant savedChattingHost = chattingParticipantRepository.save(chattingHost);
+        // response로 변환
+        ChattingParticipantResponse chattingHostResponse = toChattingParticipantResponse.toChattingRoomCreateResponse(savedChattingHost);
+        // list에 추가
+        chattingParticipantResponseList.add(chattingHostResponse);
+
+        // [2-2] Chatting Participant 저장 및 정보 담기
+        // participant에 SAVE
+        ChattingParticipant chattingParticipant = toChattingParticipantEntity.toChattingParticipantCreateEntity(savedChattingRoom, traineeAccount);
+        ChattingParticipant savedChattingParticipant = chattingParticipantRepository.save(chattingParticipant);
+        // response로 변환
+        ChattingParticipantResponse chattingParticipantResponse = toChattingParticipantResponse.toChattingRoomCreateResponse(savedChattingParticipant);
+        // list에 추가
+        chattingParticipantResponseList.add(chattingParticipantResponse);
+
+        // [3] Response 만들기
+        ChattingRoomResponse chattingRoomResponse = toChattingRoomResponse.toChattingRoomCreateResponse(savedChattingRoom, chattingParticipantResponseList, traineeAccount.getNickname());
+
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_CREATE_SUCCESS, chattingRoomResponse);
+
+        return resultResponse;
+    }
+
     // 채팅방 입장
     @Transactional
     public void chattingRoomEnter(String accountUsername, Long chattingRoomId, String simpSessionId) {
