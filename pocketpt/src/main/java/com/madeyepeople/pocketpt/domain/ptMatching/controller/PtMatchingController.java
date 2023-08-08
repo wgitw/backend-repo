@@ -40,7 +40,6 @@ public class PtMatchingController {
     // 요청된 PT 수락 (trainer only)
     @GetMapping("/accept/{ptMatchingId}")
     public ResponseEntity<ResultResponse> acceptPtMatching(@PathVariable Long ptMatchingId) {
-        log.error("ptMatchingId: {}", ptMatchingId);
         ResultResponse resultResponse = ptMatchingService.acceptPtMatching(ptMatchingId);
         return ResponseEntity.ok(resultResponse);
     }

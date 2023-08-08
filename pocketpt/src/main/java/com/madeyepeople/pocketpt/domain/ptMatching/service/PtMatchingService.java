@@ -118,13 +118,10 @@ public class PtMatchingService {
             throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_STATUS_IS_NOT_PENDING.getMessage());
         }
 
-        // pt matching의 status를 active로 변경
         PtMatching saved = ptMatchingRepository.save(ptMatching.updateStatus(PtStatus.ACTIVE));
 
-        // 채팅방 생성
+        // 채팅방 생성 및 생성 응답 전송
         ResultResponse resultResponse = chattingRoomService.createChattingRoomFromPtMatching(ptMatching.getTrainer(), ptMatching.getTrainee());
-
-        // 채팅방 생성 응답 전송
         template.convertAndSend("/sub/accounts/" + ptMatching.getTrainer().getAccountId(), resultResponse);
         template.convertAndSend("/sub/accounts/" + ptMatching.getTrainee().getAccountId(), resultResponse);
 

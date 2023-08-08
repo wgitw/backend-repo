@@ -16,6 +16,7 @@ public class ToPtMatchingSummary {
                 .status(ptMatching.getStatus().getValue())
                 .subscriptionPeriod(ptMatching.getSubscriptionPeriod())
                 .expiredDate(ptMatching.getExpiredDate())
+                .accountId(opponent.getAccountId())
                 .name(opponent.getName())
                 .phoneNumber(opponent.getPhoneNumber())
                 .email(opponent.getEmail())
