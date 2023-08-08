@@ -22,3 +22,4 @@ public class CommonRegistrationRequest {
     @Size(max = 25, message = "닉네임은 25 character를 넘을 수 없습니다.")
     private String nickname;
 }
+ 1

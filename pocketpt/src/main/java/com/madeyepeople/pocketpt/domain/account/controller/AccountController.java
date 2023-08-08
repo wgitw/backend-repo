@@ -29,7 +29,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping("/{role}")
-    public ResponseEntity<ResultResponse> signupTrainer(@RequestBody @Valid CommonRegistrationRequest commonRegistrationRequest,
+    public ResponseEntity<ResultResponse> signup(@RequestBody @Valid CommonRegistrationRequest commonRegistrationRequest,
                                                         @PathVariable
                                                         @Pattern(
                                                                 regexp = "^(trainer|trainee)$",

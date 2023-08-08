@@ -40,9 +40,11 @@ public class CustomAuthorizationFilter extends GenericFilterBean {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (JwtException e) {
+            log.error(e.getMessage());
             throw e;
         } catch (Exception e) {
             log.error("Security Context에서 사용자 인증을 설정할 수 없습니다.", e);
+            log.error(e.getMessage());
         }
         chain.doFilter(request, response);
     }
