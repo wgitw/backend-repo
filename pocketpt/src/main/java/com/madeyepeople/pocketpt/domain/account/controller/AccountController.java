@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 public class AccountController {
 
     private final SecurityUtil securityUtil;
-    private final UniqueCodeGenerator uniqueCodeGenerator;
     private final AccountService accountService;
 
     @PostMapping("/{role}")

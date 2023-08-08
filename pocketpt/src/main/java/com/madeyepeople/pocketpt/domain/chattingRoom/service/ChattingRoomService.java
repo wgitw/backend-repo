@@ -3,6 +3,7 @@ package com.madeyepeople.pocketpt.domain.chattingRoom.service;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageGetResponse;
+import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageGetResponseForCreateRoom;
 import com.madeyepeople.pocketpt.domain.chattingMessage.entity.ChattingMessage;
 import com.madeyepeople.pocketpt.domain.chattingMessage.mapper.ToChattingMessageResponse;
 import com.madeyepeople.pocketpt.domain.chattingMessage.repository.ChattingMessageRepository;
@@ -11,6 +12,7 @@ import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParti
 import com.madeyepeople.pocketpt.domain.chattingParticipant.mapper.ToChattingParticipantEntity;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.mapper.ToChattingParticipantResponse;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.repository.ChattingParticipantRepository;
+import com.madeyepeople.pocketpt.domain.chattingRoom.comparator.ChattingRoomListComparator;
 import com.madeyepeople.pocketpt.domain.chattingRoom.dto.request.ChattingRoomCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingRoom.dto.response.ChattingRoomGetResponse;
 import com.madeyepeople.pocketpt.domain.chattingRoom.dto.response.ChattingRoomResponse;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -86,6 +89,41 @@ public class ChattingRoomService {
         return resultResponse;
     }
 
+    @Transactional
+    public ResultResponse createChattingRoomFromPtMatching(Account trainerAccount, Account traineeAccount) {
+        // [1] ChattingRoom 내용 저장 - 이미 hostParticipantId는 검증된 상태에서 오기 때문에 이 단계에서 검증은 불필요
+        ChattingRoom chattingRoom = toChattingRoomEntity.toChattingRoomCreateEntity(traineeAccount.getAccountId());
+        ChattingRoom savedChattingRoom = chattingRoomRepository.save(chattingRoom);
+
+        // [2] ChattingParticipant List 저장 맟 정보 담기
+        List<ChattingParticipantResponse> chattingParticipantResponseList = new ArrayList<>();
+
+        // [2-1] Chatting Host 저장 및 정보 담기
+        // participant에 SAVE
+        ChattingParticipant chattingHost = toChattingParticipantEntity.toChattingHostCreateEntity(savedChattingRoom, trainerAccount);
+        ChattingParticipant savedChattingHost = chattingParticipantRepository.save(chattingHost);
+        // response로 변환
+        ChattingParticipantResponse chattingHostResponse = toChattingParticipantResponse.toChattingRoomCreateResponse(savedChattingHost);
+        // list에 추가
+        chattingParticipantResponseList.add(chattingHostResponse);
+
+        // [2-2] Chatting Participant 저장 및 정보 담기
+        // participant에 SAVE
+        ChattingParticipant chattingParticipant = toChattingParticipantEntity.toChattingParticipantCreateEntity(savedChattingRoom, traineeAccount);
+        ChattingParticipant savedChattingParticipant = chattingParticipantRepository.save(chattingParticipant);
+        // response로 변환
+        ChattingParticipantResponse chattingParticipantResponse = toChattingParticipantResponse.toChattingRoomCreateResponse(savedChattingParticipant);
+        // list에 추가
+        chattingParticipantResponseList.add(chattingParticipantResponse);
+
+        // [3] Response 만들기
+        ChattingRoomResponse chattingRoomResponse = toChattingRoomResponse.toChattingRoomCreateResponse(savedChattingRoom, chattingParticipantResponseList, traineeAccount.getNickname());
+
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_CREATE_SUCCESS, chattingRoomResponse);
+
+        return resultResponse;
+    }
+
     // 채팅방 입장
     @Transactional
     public void chattingRoomEnter(String accountUsername, Long chattingRoomId, String simpSessionId) {
@@ -124,9 +162,7 @@ public class ChattingRoomService {
 
     // 채팅방 리스트 - 메시지순으로 전체 조회
     @Transactional
-    public ResultResponse getChattingRoomListByUser(Long accountId, Pageable pageable) {
-        // TODO: 최신 메시지 created_at desc로 정렬할 것, 최신 메시지가 없다면 방이 만들어진 시간으로 대체
-
+    public ResultResponse getChattingRoomListByUser(Long accountId) {
         // [1] accountId 유효성 체크
         Account account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId).orElseThrow();
 
@@ -165,8 +201,48 @@ public class ChattingRoomService {
             chattingRoomResponseList.add(chattingRoomGetResponse);
         }
 
-        // [5] resultResponse 만들기
+        // [5] 최신 메시지 created_at desc로 정렬, 최신 메시지가 없다면 방이 만들어진 시간으로 대체
+        Collections.sort(chattingRoomResponseList, new ChattingRoomListComparator().reversed());
+
+        // [6] resultResponse 만들기
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_LIST_GET_SUCCESS, chattingRoomResponseList);
+
+        return resultResponse;
+    }
+
+    @Transactional
+    public ResultResponse updateChattingRoomInfoForNewMessage(Account account, Long chattingRoomId, Long latestChattingMessageId) {
+        // [1] 채팅방 유효성 검사
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
+
+        // [2] account 유효성 검사
+        ChattingParticipant foundChattingParticipant = chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow();
+
+        // [3] 최근 ChattingMessage 찾기
+        ChattingMessage chattingMessage = chattingMessageRepository.findById(latestChattingMessageId).orElseThrow();
+        ChattingMessageGetResponse chattingMessageGetResponse = toChattingMessageResponse.toChattingMessageGetResponseForUpdateChattingRoomList(chattingMessage, foundChattingParticipant);
+
+        // [5] resultResponse 만들기
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_LIST_UPDATE_INFO_FOR_MESSAGE_GET_SUCCESS, chattingMessageGetResponse);
+
+        return resultResponse;
+    }
+
+    @Transactional
+    public ResultResponse updateChattingRoomInfoForNewRoom(Account account, Long chattingRoomId, Long hostAccountId) {
+        // [1] 채팅방 유효성 검사
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
+
+        // [2] account 유효성 검사
+        ChattingParticipant foundChattingParticipant = chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow();
+
+        // [3] hostAccount 유효성 검사
+        Account hostAccount = accountRepository.findByAccountIdAndIsDeletedFalse(hostAccountId).orElseThrow();
+        ChattingParticipant foundHostChattingParticipant = chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(hostAccount, foundChattingRoom).orElseThrow();
+
+        // [4] resultResponse 만들기
+        ChattingMessageGetResponseForCreateRoom chattingMessageGetResponseForCreateRoom = toChattingMessageResponse.toChattingMessageGetResponseForRoom(foundChattingRoom, foundHostChattingParticipant);
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_LIST_UPDATE_INFO_FOR_ROOM_GET_SUCCESS, chattingMessageGetResponseForCreateRoom);
 
         return resultResponse;
     }
