@@ -6,19 +6,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
-import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Enumeration;
 
 @Component
 @RequiredArgsConstructor
@@ -44,14 +41,19 @@ public class CustomAuthorizationFilter extends GenericFilterBean {
             throw e;
         } catch (Exception e) {
             log.error("Security Context에서 사용자 인증을 설정할 수 없습니다.", e);
-            log.error(e.getMessage());
         }
         chain.doFilter(request, response);
     }
 
     // Request Header 에서 토큰 정보 추출
     private String resolveToken(HttpServletRequest request) {
+        Enumeration<String> paramKeys = request.getParameterNames();
+        while (paramKeys.hasMoreElements()) {
+            String key = paramKeys.nextElement();
+            log.info(key + " : " + request.getParameter(key));
+        }
         String bearerToken = request.getHeader("Authorization");
+        log.info("bearerToken: {}", bearerToken);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
             return bearerToken.substring(7);
         }
