@@ -27,7 +27,6 @@ public class ChattingRoomController {
     private final SecurityUtil securityUtil;
     private final SimpMessageSendingOperations template;
     private final ChattingRoomService chattingRoomService;
-    private final AccountService accountService;
 
     //  채팅방 만들기
     @PostMapping
