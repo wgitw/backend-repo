@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Enumeration;
 
@@ -47,13 +48,25 @@ public class CustomAuthorizationFilter extends GenericFilterBean {
 
     // Request Header 에서 토큰 정보 추출
     private String resolveToken(HttpServletRequest request) {
-        Enumeration<String> paramKeys = request.getParameterNames();
-        while (paramKeys.hasMoreElements()) {
-            String key = paramKeys.nextElement();
-            log.info(key + " : " + request.getParameter(key));
+        Enumeration<String> headerNames = request.getHeaderNames();
+        log.info("Header List");
+        while (headerNames.hasMoreElements()) {
+            String headerName = headerNames.nextElement();
+            String headerValue = request.getHeader(headerName);
+            log.info(headerName + " : " + headerValue);
+        }
+        try (BufferedReader reader = request.getReader()) {
+            StringBuilder requestBody = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                requestBody.append(line);
+            }
+            log.info("Request Body : " + requestBody.toString());
+        } catch (IOException e) {
+            log.error("Error reading request body : " + e.getMessage());
         }
         String bearerToken = request.getHeader("Authorization");
-        log.info("bearerToken: {}", bearerToken);
+        log.info("bearerToken : {}", bearerToken);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
             return bearerToken.substring(7);
         }
