@@ -14,11 +14,12 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E001", "서버 오류"),
     INPUT_INVALID_VALUE(HttpStatus.NOT_ACCEPTABLE, "E002", "잘못된 입력"),
 
-    // Account 도메인
+    // Account
     EXAMPLE_USER_ERROR(HttpStatus.BAD_REQUEST, "E099", "테스트용 예시 에러코드"),
     JWT_VALIDATION_ERROR(HttpStatus.UNAUTHORIZED, "E003", "JWT 유효성 예외 발생"),
+    ACCOUNT_ALREADY_REGISTERED(HttpStatus.CONFLICT, "E004", "이미 회원가입된 사용자입니다."),
 
-    // PtMatching 도메인
+    // PtMatching
     PT_MATCHING_ERROR(HttpStatus.NOT_ACCEPTABLE, "E004", "PT matching 관련 오류"),
 
     ;

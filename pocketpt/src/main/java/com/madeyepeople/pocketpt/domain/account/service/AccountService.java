@@ -11,6 +11,7 @@ import com.madeyepeople.pocketpt.domain.account.mapper.ToAccountGetResponse;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.MonthlyPtPriceRepository;
+import com.madeyepeople.pocketpt.global.error.ErrorCode;
 import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
 import com.madeyepeople.pocketpt.global.util.SecurityUtil;
@@ -39,8 +40,12 @@ public class AccountService {
 
     @Transactional
     public AccountRegistrationResponse registerAccount(CommonRegistrationRequest commonRegistrationRequest, String role) {
-        // TODO: 중복 회원가입 막기 (Role != null 이면 회원가입 완료된 것이므로 예외 발생 시켜)
         Account account = securityUtil.getLoginAccountEntity();
+
+        // 중복 회원가입시, 예외 발생
+        if (account.getAccountRole() != null) {
+            throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_REGISTERED, CustomExceptionMessage.ACCOUNT_ALREADY_REGISTERED.getMessage());
+        }
 
         Account changed = account.updateByRegistrationRequest(
                 commonRegistrationRequest.getName(),
