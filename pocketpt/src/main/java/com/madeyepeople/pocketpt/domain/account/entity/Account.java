@@ -42,6 +42,9 @@ public class Account extends BaseEntity {
 
     @OneToMany(mappedBy = "trainee")
     private List<PtMatching> ptMatchingListOfTrainee;
+
+    @OneToMany(mappedBy = "account")
+    private List<MonthlyPtPrice> monthlyPtPriceList;
   
     @Convert(converter = RoleEnumConverter.class)
     @Column(name = "account_role")
