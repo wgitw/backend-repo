@@ -13,8 +13,8 @@ INSERT INTO account (account_id, oauth2_id, provider, identification_code, email
 INSERT INTO account (account_id, oauth2_id, provider, identification_code, email, account_role, name, phone_number, nickname, profile_picture_url, introduce, is_deleted) VALUES (12, 0123456, 'kakao', 'BCD12345', 'trainer12@example.com', 'trainer', '트레이너12', '01012121212', '트레이너12닉네임', 'https://pocket-pt.s3.ap-northeast-2.amazonaws.com/account/profile-picture/default_profile.jpg', '트레이너12 소개', false);
 
 -- Trainee
-INSERT INTO account (account_id, oauth2_id, provider, identification_code, email, account_role, name, phone_number, nickname, profile_picture_url, introduce, is_deleted) VALUES (13, 5557184, 'kakao', 'FayVXPAO', 'vivian0304@naver.com', 'trainee', '박수현', '01058483331', '수현일상', 'http://k.kakaocdn.net/dn/bcWdCJ/btr5zPtkYvb/Kf0PktHPFxVvrqaTHlXzqK/img_640x640.jpg', '유산소만 합니다! 다이어트 D-210 이요~', false);
-INSERT INTO account (account_id, oauth2_id, provider, identification_code, email, account_role, name, phone_number, nickname, profile_picture_url, introduce, is_deleted) VALUES (14, 9285012, 'kakao', 'lhGbiEGe', 'jesus0321@naver.com', 'trainee', '김일곤', '01066689229', '고니', 'http://k.kakaocdn.net/dn/1V6Pl/btrKhRFdtAT/t0kwN9Yi6d0HjVt9TtJx1K/img_640x640.jpg', '대한 의경의 힘, 보여드리겠습니다', false);
+INSERT INTO account (account_id, oauth2_id, provider, identification_code, email, account_role, name, phone_number, nickname, profile_picture_url, introduce, is_deleted) VALUES (13, 5557184, 'kakao', 'FayVXPAO', 'vivian0304@naver.com', null, '박수현', '01058483331', '수현일상', 'http://k.kakaocdn.net/dn/bcWdCJ/btr5zPtkYvb/Kf0PktHPFxVvrqaTHlXzqK/img_640x640.jpg', '유산소만 합니다! 다이어트 D-210 이요~', false);
+INSERT INTO account (account_id, oauth2_id, provider, identification_code, email, account_role, name, phone_number, nickname, profile_picture_url, introduce, is_deleted) VALUES (14, 9285012, 'kakao', 'lhGbiEGe', 'jesus0321@naver.com', null, '김일곤', '01066689229', '고니', 'http://k.kakaocdn.net/dn/1V6Pl/btrKhRFdtAT/t0kwN9Yi6d0HjVt9TtJx1K/img_640x640.jpg', '대한 의경의 힘, 보여드리겠습니다', false);
 INSERT INTO account (account_id, oauth2_id, provider, identification_code, email, account_role, name, phone_number, nickname, profile_picture_url, introduce, is_deleted) VALUES (15, 1230987, 'kakao', 'jkl67890', 'trainee1@example.com', 'trainee', '트레이니1', '01033333333', '트레이니1닉네임', 'https://pocket-pt.s3.ap-northeast-2.amazonaws.com/account/profile-picture/default_profile.jpg', '트레이니1 소개', false);
 INSERT INTO account (account_id, oauth2_id, provider, identification_code, email, account_role, name, phone_number, nickname, profile_picture_url, introduce, is_deleted) VALUES (16, 2349876, 'kakao', 'mno67890', 'trainee2@example.com', 'trainee', '트레이니2', '01044444444', '트레이니2닉네임', 'https://pocket-pt.s3.ap-northeast-2.amazonaws.com/account/profile-picture/default_profile.jpg', '트레이니2 소개', false);
 INSERT INTO account (account_id, oauth2_id, provider, identification_code, email, account_role, name, phone_number, nickname, profile_picture_url, introduce, is_deleted) VALUES (17, 3498765, 'kakao', 'pqr67890', 'trainee3@example.com', 'trainee', '트레이니3', '01055555555', '트레이니3닉네임', 'https://pocket-pt.s3.ap-northeast-2.amazonaws.com/account/profile-picture/default_profile.jpg', '트레이니3 소개', false);
@@ -46,6 +46,15 @@ INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id,
 
 INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (14, 2, 14, 'active', 6);
 
+
+-- MonthlyPtPrice
+INSERT INTO monthly_pt_price (monthly_pt_price_id, account_id, period, price, created_at) VALUES (1, 1, 1, 30000, now());
+INSERT INTO monthly_pt_price (monthly_pt_price_id, account_id, period, price, created_at) VALUES (2, 1, 6, 20000, now());
+
+INSERT INTO monthly_pt_price (monthly_pt_price_id, account_id, period, price, created_at) VALUES (3, 2, 1, 60000, now());
+INSERT INTO monthly_pt_price (monthly_pt_price_id, account_id, period, price, created_at) VALUES (4, 2, 3, 50000, now());
+INSERT INTO monthly_pt_price (monthly_pt_price_id, account_id, period, price, created_at) VALUES (5, 2, 6, 40000, now());
+INSERT INTO monthly_pt_price (monthly_pt_price_id, account_id, period, price, created_at) VALUES (6, 2, 10, 30000, now());
 
 -- Chatting
 INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (1, 2, false, 0, 1, now());

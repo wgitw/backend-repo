@@ -12,6 +12,8 @@ public enum CustomExceptionMessage {
     // sign up
     OAUTH2_NECESSARY_INFO_NOT_FOUND("Provider로부터 필수 제공 정보를 받아오지 못했습니다."),
     PROFILE_IMAGE_PARSING_ERROR("profile image URL 파싱에서 에러가 발생했습니다."),
+    TRAINER_MUST_HAVE_MONTHLY_PT_PRICE("트레이너는 월별 PT 단가를 반드시 입력해야 합니다."),
+    ACCOUNT_ALREADY_REGISTERED("이미 회원가입된 사용자입니다."),
 
     // pt matching
     TRAINER_IDENTIFICATION_CODE_NOT_FOUND("해당 code를 가진 trainer는 없습니다."),
