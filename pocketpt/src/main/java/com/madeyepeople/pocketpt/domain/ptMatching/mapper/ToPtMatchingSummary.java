@@ -1,6 +1,5 @@
 package com.madeyepeople.pocketpt.domain.ptMatching.mapper;
 
-import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.PtMatchingSummary;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;

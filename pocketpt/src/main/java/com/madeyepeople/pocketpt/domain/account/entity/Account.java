@@ -42,6 +42,9 @@ public class Account extends BaseEntity {
 
     @OneToMany(mappedBy = "trainee")
     private List<PtMatching> ptMatchingListOfTrainee;
+
+    @OneToMany(mappedBy = "account")
+    private List<MonthlyPtPrice> monthlyPtPriceList;
   
     @Convert(converter = RoleEnumConverter.class)
     @Column(name = "account_role")
@@ -118,12 +121,13 @@ public class Account extends BaseEntity {
         return this;
     }
 
-    public Account updateByRegistrationRequest(String name, String phoneNumber, String nickname, Role accountRole, String identificationCode) {
+    public Account updateByRegistrationRequest(String name, String phoneNumber, String nickname, Role accountRole, String identificationCode, List<MonthlyPtPrice> monthlyPtPriceList) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.nickname = nickname;
         this.accountRole = accountRole;
         this.identificationCode = identificationCode;
+//        this.monthlyPtPriceList = monthlyPtPriceList;
         return this;
     }
 }
