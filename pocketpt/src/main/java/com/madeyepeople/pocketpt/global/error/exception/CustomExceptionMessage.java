@@ -22,7 +22,7 @@ public enum CustomExceptionMessage {
     PT_MATCHING_STATUS_IS_NOT_PENDING("해당 PT 매칭의 상태가 pending이 아닙니다."),
     PT_MATCHING_TRAINER_ID_IS_NOT_MATCHED("해당 PT 매칭의 trainerId가 로그인된 사용자의 accountId와 일치하지 않습니다. 즉, 다른 trainer의 PT를 수락하려고 하고 있습니다."),
     ACCOUNT_ID_NOT_EXIST_IN_PT_MATCHING("해당 PT 매칭에 해당 accountId가 존재하지 않습니다."),
-
+    TRAINER_MUST_HAVE_MONTHLY_PT_PRICE("트레이너는 월별 PT 단가를 반드시 입력해야 합니다."),
 
     ;
 

@@ -3,10 +3,7 @@ package com.madeyepeople.pocketpt.domain.account.entity;
 
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Getter
@@ -26,4 +23,11 @@ public class MonthlyPtPrice extends BaseEntity {
     private Integer period;
 
     private Integer price;
+
+    @Builder
+    public MonthlyPtPrice(Account account, Integer period, Integer price) {
+        this.account = account;
+        this.period = period;
+        this.price = price;
+    }
 }

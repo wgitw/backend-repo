@@ -1,10 +1,14 @@
 package com.madeyepeople.pocketpt.domain.account.dto.request;
 
+import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -22,5 +26,5 @@ public class CommonRegistrationRequest {
     @Size(max = 25, message = "닉네임은 25 character를 넘을 수 없습니다.")
     private String nickname;
 
-
+    private List<MonthlyPtPriceDto> monthlyPtPriceDtoList;
 }

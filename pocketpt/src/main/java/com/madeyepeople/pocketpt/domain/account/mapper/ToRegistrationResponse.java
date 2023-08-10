@@ -1,8 +1,12 @@
 package com.madeyepeople.pocketpt.domain.account.mapper;
 
+import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.dto.response.AccountRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
+import com.madeyepeople.pocketpt.domain.account.entity.MonthlyPtPrice;
 import org.springframework.stereotype.Component;
+
+import java.util.stream.Collectors;
 
 @Component
 public class ToRegistrationResponse {
@@ -14,6 +18,14 @@ public class ToRegistrationResponse {
                 .name(account.getName())
                 .phoneNumber(account.getPhoneNumber())
                 .nickname(account.getNickname())
+                .monthlyPtPriceDtoList(
+                        account.getMonthlyPtPriceList().stream()
+                                .map(monthlyPtPrice -> MonthlyPtPriceDto.builder()
+                                .period(monthlyPtPrice.getPeriod())
+                                .price(monthlyPtPrice.getPrice())
+                                .build())
+                                .collect(Collectors.toList())
+                )
                 .build();
     }
 }
