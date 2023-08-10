@@ -47,6 +47,15 @@ INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id,
 INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (14, 2, 14, 'active', 6);
 
 
+-- MonthlyPtPrice
+INSERT INTO monthly_pt_price (monthly_pt_price_id, account_id, period, price, created_at) VALUES (1, 1, 1, 30000, now());
+INSERT INTO monthly_pt_price (monthly_pt_price_id, account_id, period, price, created_at) VALUES (2, 1, 6, 20000, now());
+
+INSERT INTO monthly_pt_price (monthly_pt_price_id, account_id, period, price, created_at) VALUES (3, 2, 1, 60000, now());
+INSERT INTO monthly_pt_price (monthly_pt_price_id, account_id, period, price, created_at) VALUES (4, 2, 3, 50000, now());
+INSERT INTO monthly_pt_price (monthly_pt_price_id, account_id, period, price, created_at) VALUES (5, 2, 6, 40000, now());
+INSERT INTO monthly_pt_price (monthly_pt_price_id, account_id, period, price, created_at) VALUES (6, 2, 10, 30000, now());
+
 -- Chatting
 INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (1, 2, false, 0, 1, now());
 
