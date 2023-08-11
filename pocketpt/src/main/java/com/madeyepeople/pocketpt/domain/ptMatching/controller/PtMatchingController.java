@@ -19,7 +19,7 @@ public class PtMatchingController {
 
     private final PtMatchingService ptMatchingService;
 
-    // PT 매칭 요청
+    // 신규 PT 매칭 요청
     @PostMapping
     public ResponseEntity<ResultResponse> registerPt(@RequestBody PtRegistrationRequest ptRegistrationRequest) {
         PtRegistrationResponse ptRegistrationResponse = ptMatchingService.registerPt(ptRegistrationRequest);
@@ -43,4 +43,10 @@ public class PtMatchingController {
         ResultResponse resultResponse = ptMatchingService.acceptPtMatching(ptMatchingId);
         return ResponseEntity.ok(resultResponse);
     }
+
+    // TODO: 요청된 PT 거절 (trainer only)
+//    @DeleteMapping
+
+    // TODO: 기존 PT 매칭 연장 (trainer only)
+//    @PatchMapping
 }

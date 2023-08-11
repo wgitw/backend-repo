@@ -64,16 +64,7 @@ public class PtMatching extends BaseEntity {
         return this;
     }
 
-    public Account getAccountByRole(Role role) {
-        if (role.equals(Role.TRAINER)) {
-            return this.trainer;
-        } else if (role.equals(Role.TRAINEE)) {
-            return this.trainee;
-        } else {
-            throw new IllegalArgumentException("Role enum 객체가 아닙니다.");
-        }
-    }
-
+//    public PtMatching updateSales(Integer)
     public Account getOpponentAccountByMyAccountId(Long myAccountId) {
         if (this.trainer.getAccountId().equals(myAccountId)) {
             return this.trainee;
@@ -83,4 +74,6 @@ public class PtMatching extends BaseEntity {
             throw new IllegalArgumentException(CustomExceptionMessage.ACCOUNT_ID_NOT_EXIST_IN_PT_MATCHING.getMessage());
         }
     }
+
+    // TODO: 매일 PtMatching table 조회해서 expiredDate가 오늘인 것들의 status = expired로 바꿔주는 로직 추가
 }

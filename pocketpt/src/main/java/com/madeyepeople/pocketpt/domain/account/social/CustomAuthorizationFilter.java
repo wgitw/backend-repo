@@ -68,7 +68,12 @@ public class CustomAuthorizationFilter extends GenericFilterBean {
         String bearerToken = request.getHeader("Authorization");
         log.info("bearerToken : {}", bearerToken);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
-            return bearerToken.substring(7);
+            try {
+                return bearerToken.substring(7);
+            } catch (StringIndexOutOfBoundsException e) {
+                log.error(e.getMessage());
+                throw new JwtException("Bearer prefix 이후에 토큰이 존재하지 않습니다.", e);
+            }
         }
         return null;
     }
