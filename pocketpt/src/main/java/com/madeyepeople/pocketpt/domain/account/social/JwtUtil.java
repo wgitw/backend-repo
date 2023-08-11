@@ -126,6 +126,8 @@ public class JwtUtil {
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
+        } catch (StringIndexOutOfBoundsException e) {
+            throw new JwtException("Bearer prefix 이후에 토큰이 존재하지 않습니다.", e);
         }
     }
 }
