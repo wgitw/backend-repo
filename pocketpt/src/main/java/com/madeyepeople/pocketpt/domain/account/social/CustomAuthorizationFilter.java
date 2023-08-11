@@ -55,18 +55,7 @@ public class CustomAuthorizationFilter extends GenericFilterBean {
             String headerValue = request.getHeader(headerName);
             log.info(headerName + " : " + headerValue);
         }
-        try (BufferedReader reader = request.getReader()) {
-            StringBuilder requestBody = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                requestBody.append(line);
-            }
-            log.info("Request Body : " + requestBody.toString());
-        } catch (IOException e) {
-            log.error("Error reading request body : " + e.getMessage());
-        }
         String bearerToken = request.getHeader("Authorization");
-        log.info("bearerToken : {}", bearerToken);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
             try {
                 return bearerToken.substring(7);
