@@ -10,11 +10,13 @@ import lombok.ToString;
 @ToString
 public class MonthlyPtPriceDto {
 
+    private Long monthlyPtPriceId;
     private Integer period;
     private Integer price;
 
     @Builder
-    public MonthlyPtPriceDto(Integer period, Integer price) {
+    public MonthlyPtPriceDto(Long monthlyPtPriceId, Integer period, Integer price) {
+        this.monthlyPtPriceId = monthlyPtPriceId;
         this.period = period;
         this.price = price;
     }

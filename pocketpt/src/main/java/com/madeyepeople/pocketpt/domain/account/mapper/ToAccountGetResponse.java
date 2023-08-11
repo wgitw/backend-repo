@@ -25,6 +25,7 @@ public class ToAccountGetResponse {
                 .monthlyPtPriceDtoList(
                         account.getMonthlyPtPriceList().stream()
                                 .map(monthlyPtPrice -> MonthlyPtPriceDto.builder()
+                                        .monthlyPtPriceId(monthlyPtPrice.getMonthlyPtPriceId())
                                         .period(monthlyPtPrice.getPeriod())
                                         .price(monthlyPtPrice.getPrice())
                                         .build())

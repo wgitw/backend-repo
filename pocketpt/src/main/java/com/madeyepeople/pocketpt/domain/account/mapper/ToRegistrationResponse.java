@@ -21,9 +21,10 @@ public class ToRegistrationResponse {
                 .monthlyPtPriceDtoList(
                         account.getMonthlyPtPriceList().stream()
                                 .map(monthlyPtPrice -> MonthlyPtPriceDto.builder()
-                                .period(monthlyPtPrice.getPeriod())
-                                .price(monthlyPtPrice.getPrice())
-                                .build())
+                                        .monthlyPtPriceId(monthlyPtPrice.getMonthlyPtPriceId())
+                                        .period(monthlyPtPrice.getPeriod())
+                                        .price(monthlyPtPrice.getPrice())
+                                        .build())
                                 .collect(Collectors.toList())
                 )
                 .build();
