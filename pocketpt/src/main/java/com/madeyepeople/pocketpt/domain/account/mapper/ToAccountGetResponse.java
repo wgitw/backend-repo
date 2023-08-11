@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 @Component
 public class ToAccountGetResponse {
     public AccountDetailGetResponse fromAccountEntity(Account account) {
+
         return AccountDetailGetResponse.builder()
                 .accountId(account.getAccountId())
                 .role(account.getAccountRole())
@@ -22,9 +23,10 @@ public class ToAccountGetResponse {
                 .gender(account.getGender())
                 .birthdate(account.getBirthdate())
                 .introduce(account.getIntroduce())
-                .monthlyPtPriceDtoList(
+                .monthlyPtPriceList(
                         account.getMonthlyPtPriceList().stream()
                                 .map(monthlyPtPrice -> MonthlyPtPriceDto.builder()
+                                        .monthlyPtPriceId(monthlyPtPrice.getMonthlyPtPriceId())
                                         .period(monthlyPtPrice.getPeriod())
                                         .price(monthlyPtPrice.getPrice())
                                         .build())

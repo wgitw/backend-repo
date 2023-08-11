@@ -53,7 +53,7 @@ public class AccountService {
                 commonRegistrationRequest.getNickname(),
                 Role.valueOf(role.toUpperCase()),
                 uniqueCodeGenerator.getUniqueCode(),
-                commonRegistrationRequest.getMonthlyPtPriceDtoList().stream()
+                commonRegistrationRequest.getMonthlyPtPriceList().stream()
                         .map(monthlyPtPriceDto -> MonthlyPtPrice.builder()
                                 .period(monthlyPtPriceDto.getPeriod())
                                 .price(monthlyPtPriceDto.getPrice())
@@ -64,10 +64,10 @@ public class AccountService {
 
         // 트레이너일 경우, 월별 PT 단가가 필수로 입력되어야 함.
         if (account.getAccountRole() == Role.TRAINER) {
-            if (commonRegistrationRequest.getMonthlyPtPriceDtoList() == null) {
+            if (commonRegistrationRequest.getMonthlyPtPriceList() == null) {
                 throw new BusinessException(CustomExceptionMessage.TRAINER_MUST_HAVE_MONTHLY_PT_PRICE.getMessage());
             } else {
-                List<MonthlyPtPriceDto> monthlyPtPriceList = commonRegistrationRequest.getMonthlyPtPriceDtoList();
+                List<MonthlyPtPriceDto> monthlyPtPriceList = commonRegistrationRequest.getMonthlyPtPriceList();
                 for (MonthlyPtPriceDto monthlyPtPriceDto : monthlyPtPriceList) {
                     monthlyPtPriceRepository.save(MonthlyPtPrice.builder()
                             .account(changed)
