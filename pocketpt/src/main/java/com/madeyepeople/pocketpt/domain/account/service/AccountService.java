@@ -5,6 +5,7 @@ import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.response.AccountDetailGetResponse;
 import com.madeyepeople.pocketpt.domain.account.dto.response.AccountRegistrationResponse;
+import com.madeyepeople.pocketpt.domain.account.dto.response.CheckAccountSignupResponse;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.entity.MonthlyPtPrice;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToAccountGetResponse;
@@ -53,7 +54,7 @@ public class AccountService {
                 commonRegistrationRequest.getNickname(),
                 Role.valueOf(role.toUpperCase()),
                 uniqueCodeGenerator.getUniqueCode(),
-                commonRegistrationRequest.getMonthlyPtPriceDtoList().stream()
+                commonRegistrationRequest.getMonthlyPtPriceList().stream()
                         .map(monthlyPtPriceDto -> MonthlyPtPrice.builder()
                                 .period(monthlyPtPriceDto.getPeriod())
                                 .price(monthlyPtPriceDto.getPrice())
@@ -64,10 +65,10 @@ public class AccountService {
 
         // 트레이너일 경우, 월별 PT 단가가 필수로 입력되어야 함.
         if (account.getAccountRole() == Role.TRAINER) {
-            if (commonRegistrationRequest.getMonthlyPtPriceDtoList() == null) {
+            if (commonRegistrationRequest.getMonthlyPtPriceList() == null) {
                 throw new BusinessException(CustomExceptionMessage.TRAINER_MUST_HAVE_MONTHLY_PT_PRICE.getMessage());
             } else {
-                List<MonthlyPtPriceDto> monthlyPtPriceList = commonRegistrationRequest.getMonthlyPtPriceDtoList();
+                List<MonthlyPtPriceDto> monthlyPtPriceList = commonRegistrationRequest.getMonthlyPtPriceList();
                 for (MonthlyPtPriceDto monthlyPtPriceDto : monthlyPtPriceList) {
                     monthlyPtPriceRepository.save(MonthlyPtPrice.builder()
                             .account(changed)
@@ -88,5 +89,13 @@ public class AccountService {
     public AccountDetailGetResponse getAccount() {
         Account account = securityUtil.getLoginAccountEntity();
         return toAccountGetResponse.fromAccountEntity(account);
+    }
+
+    @Transactional
+    public CheckAccountSignupResponse checkSignup() {
+        Account account = securityUtil.getLoginAccountEntity();
+        return CheckAccountSignupResponse.builder()
+                .isAccountSignedUp(account.getAccountRole() != null)
+                .build();
     }
 }

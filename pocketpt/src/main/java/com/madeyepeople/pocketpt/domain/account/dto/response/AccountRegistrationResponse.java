@@ -16,5 +16,5 @@ public class AccountRegistrationResponse {
     private String name;
     private String phoneNumber;
     private String nickname;
-    private List<MonthlyPtPriceDto> monthlyPtPriceDtoList;
+    private List<MonthlyPtPriceDto> monthlyPtPriceList;
 }
