@@ -18,13 +18,13 @@ public class ToRegistrationResponse {
                 .name(account.getName())
                 .phoneNumber(account.getPhoneNumber())
                 .nickname(account.getNickname())
-                .monthlyPtPriceDtoList(
+                .monthlyPtPriceList(
                         account.getMonthlyPtPriceList().stream()
                                 .map(monthlyPtPrice -> MonthlyPtPriceDto.builder()
-                                        .monthlyPtPriceId(monthlyPtPrice.getMonthlyPtPriceId())
-                                        .period(monthlyPtPrice.getPeriod())
-                                        .price(monthlyPtPrice.getPrice())
-                                        .build())
+                                .monthlyPtPriceId(monthlyPtPrice.getMonthlyPtPriceId())
+                                .period(monthlyPtPrice.getPeriod())
+                                .price(monthlyPtPrice.getPrice())
+                                .build())
                                 .collect(Collectors.toList())
                 )
                 .build();

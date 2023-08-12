@@ -3,6 +3,7 @@ package com.madeyepeople.pocketpt.domain.account.controller;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.response.AccountDetailGetResponse;
 import com.madeyepeople.pocketpt.domain.account.dto.response.AccountRegistrationResponse;
+import com.madeyepeople.pocketpt.domain.account.dto.response.CheckAccountSignupResponse;
 import com.madeyepeople.pocketpt.domain.account.service.AccountService;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
@@ -35,6 +36,12 @@ public class AccountController {
                                                         String role) {
         AccountRegistrationResponse accountRegistrationResponse = accountService.registerAccount(commonRegistrationRequest, role);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_CREATE_SUCCESS, accountRegistrationResponse));
+    }
+
+    @GetMapping("/check/signup")
+    public ResponseEntity<ResultResponse> checkSignup() {
+        CheckAccountSignupResponse checkAccountSignupResponse = accountService.checkSignup();
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_CHECK_SIGNED_UP_SUCCESS, checkAccountSignupResponse));
     }
 
     @GetMapping("/detail")
