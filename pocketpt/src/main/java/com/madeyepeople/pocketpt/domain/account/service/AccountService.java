@@ -5,6 +5,7 @@ import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.response.AccountDetailGetResponse;
 import com.madeyepeople.pocketpt.domain.account.dto.response.AccountRegistrationResponse;
+import com.madeyepeople.pocketpt.domain.account.dto.response.CheckAccountSignupResponse;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.entity.MonthlyPtPrice;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToAccountGetResponse;
@@ -88,5 +89,13 @@ public class AccountService {
     public AccountDetailGetResponse getAccount() {
         Account account = securityUtil.getLoginAccountEntity();
         return toAccountGetResponse.fromAccountEntity(account);
+    }
+
+    @Transactional
+    public CheckAccountSignupResponse checkSignup() {
+        Account account = securityUtil.getLoginAccountEntity();
+        return CheckAccountSignupResponse.builder()
+                .isAccountSignedUp(account.getAccountRole() != null)
+                .build();
     }
 }

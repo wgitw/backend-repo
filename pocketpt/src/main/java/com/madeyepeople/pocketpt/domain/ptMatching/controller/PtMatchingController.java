@@ -29,8 +29,7 @@ public class PtMatchingController {
     // PT 매칭 리스트 조회
     @GetMapping
     public ResponseEntity<ResultResponse> getPtMatchingList(@RequestParam
-                                                                @Pattern(
-                                                                        regexp = "^(all|pending|active|expired)$",
+                                                                @Pattern(regexp = "^(all|pending|active|expired)$",
                                                                         message = "mode 'all', 'pending', 'active', 'expired'만 허용합니다.")
                                                             String mode) {
         ResultResponse resultResponse = ptMatchingService.getPtMatchingList(mode);
