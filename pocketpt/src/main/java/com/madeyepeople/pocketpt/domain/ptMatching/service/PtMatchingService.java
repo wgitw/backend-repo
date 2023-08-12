@@ -1,7 +1,9 @@
 package com.madeyepeople.pocketpt.domain.ptMatching.service;
 
 import com.madeyepeople.pocketpt.domain.account.constant.Role;
+import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
+import com.madeyepeople.pocketpt.domain.account.mapper.ToMonthlyPtPriceDtoList;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
 import com.madeyepeople.pocketpt.domain.chattingRoom.service.ChattingRoomService;
@@ -15,6 +17,7 @@ import com.madeyepeople.pocketpt.domain.ptMatching.mapper.ToPtMatchingListRespon
 import com.madeyepeople.pocketpt.domain.ptMatching.mapper.ToPtMatchingSummary;
 import com.madeyepeople.pocketpt.domain.ptMatching.mapper.ToPtRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.ptMatching.repository.PtMatchingRepository;
+import com.madeyepeople.pocketpt.domain.ptMatching.util.PaymentAmountCalculator;
 import com.madeyepeople.pocketpt.global.error.ErrorCode;
 import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
@@ -45,8 +48,10 @@ public class PtMatchingService {
     private final ToPtRegistrationResponse toPtRegistrationResponse;
     private final ToPtMatchingListResponse toPtMatchingListResponse;
     private final ToPtMatchingSummary toPtMatchingSummary;
+    private final ToMonthlyPtPriceDtoList toMonthlyPtPriceDtoList;
 
     private final SecurityUtil securityUtil;
+    private final PaymentAmountCalculator paymentAmountCalculator;
 
     private final SimpMessageSendingOperations template;
 
@@ -63,6 +68,8 @@ public class PtMatchingService {
         }
 
         Account trainee = securityUtil.getLoginAccountEntity();
+        List<MonthlyPtPriceDto> monthlyPtPriceDtoList = toMonthlyPtPriceDtoList.of(trainer.get().getMonthlyPtPriceList());
+        Integer paymentAmount = paymentAmountCalculator.calculate(ptRegistrationRequest.getSubscriptionPeriod(), monthlyPtPriceDtoList);
 
         // TODO: subscriptionPeriod로 expiredDate도 계산해야 함
         PtMatching saved = ptMatchingRepository.save(toPtMatchingEntity.fromAccountEntities(trainer.get(), trainee, ptRegistrationRequest.getSubscriptionPeriod()));
