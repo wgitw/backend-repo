@@ -14,6 +14,7 @@ public class ToPtRegistrationResponse {
                 .traineeId(ptMatching.getTrainee().getAccountId())
                 .traineeName(ptMatching.getTrainee().getName())
                 .subscriptionPeriod(ptMatching.getSubscriptionPeriod())
+                .paymentAmount(ptMatching.getPaymentAmount())
                 .status(ptMatching.getStatus())
                 .build();
     }

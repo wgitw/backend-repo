@@ -52,11 +52,12 @@ public class PtMatching extends BaseEntity {
     private String precaution;
 
     @Builder
-    public PtMatching(Account trainer, Account trainee, Integer subscriptionPeriod, PtStatus status) {
+    public PtMatching(Account trainer, Account trainee, Integer subscriptionPeriod, PtStatus status, Integer paymentAmount) {
         this.trainer = trainer;
         this.trainee = trainee;
         this.subscriptionPeriod = subscriptionPeriod;
         this.status = status;
+        this.paymentAmount = paymentAmount;
     }
 
     public PtMatching updateStatus(PtStatus status) {

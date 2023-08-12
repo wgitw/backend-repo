@@ -30,21 +30,21 @@ INSERT INTO account (account_id, oauth2_id, provider, identification_code, email
 INSERT INTO account (account_id, oauth2_id, provider, identification_code, email, account_role, name, phone_number, nickname, profile_picture_url, introduce, is_deleted) VALUES (27, 1098765, 'kakao', 'Sfo67890', 'trainee13@example.com', 'trainee', '트레이니13', '01313131313', '트레이니13닉네임', 'https://pocket-pt.s3.ap-northeast-2.amazonaws.com/account/profile-picture/default_profile.jpg', '트레이니13 소개', false);
 
 -- PtMatching
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (1, 1, 13, 'pending', 6);
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (2, 1, 15, 'pending', 6);
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (3, 1, 14, 'active', 6);
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (4, 1, 18, 'pending', 13);
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (5, 1, 19, 'pending', 16);
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (6, 1, 20, 'active', 11);
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (7, 1, 21, 'active', 11);
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (8, 1, 22, 'active', 11);
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (9, 1, 23, 'active', 11);
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (10, 1, 24, 'active', 11);
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (11, 1, 25, 'active', 11);
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (12, 1, 16, 'active', 11);
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (13, 2, 16, 'pending', 11);
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (1, 1, 13, 'pending', 6, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (2, 1, 15, 'pending', 6, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (3, 1, 14, 'active', 6, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (4, 1, 18, 'pending', 13, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (5, 1, 19, 'pending', 16, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (6, 1, 20, 'active', 11, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (7, 1, 21, 'active', 11, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (8, 1, 22, 'active', 11, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (9, 1, 23, 'active', 11, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (10, 1, 24, 'active', 11, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (11, 1, 25, 'active', 11, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (12, 1, 16, 'active', 11, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (13, 2, 16, 'pending', 11, now());
 
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period) VALUES (14, 2, 14, 'active', 6);
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (14, 2, 14, 'active', 6, now());
 
 
 -- MonthlyPtPrice

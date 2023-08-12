@@ -11,9 +11,9 @@ import java.util.Optional;
 
 @Repository
 public interface PtMatchingRepository extends JpaRepository<PtMatching, Long> {
-    List<PtMatching> findAllByTrainerAccountIdAndIsDeletedFalse(Long trainerAccountId);
-    List<PtMatching> findAllByTraineeAccountIdAndIsDeletedFalse(Long traineeAccountId);
-    List<PtMatching> findAllByTrainerAccountIdAndIsDeletedFalseAndStatus(Long trainerAccountId, PtStatus status);
-    List<PtMatching> findAllByTraineeAccountIdAndIsDeletedFalseAndStatus(Long traineeAccountId, PtStatus status);
+    List<PtMatching> findAllByTrainerAccountIdAndIsDeletedFalseOrderByCreatedAtDesc(Long trainerAccountId);
+    List<PtMatching> findAllByTraineeAccountIdAndIsDeletedFalseOrderByCreatedAtDesc(Long traineeAccountId);
+    List<PtMatching> findAllByTrainerAccountIdAndIsDeletedFalseAndStatusOrderByCreatedAtDesc(Long trainerAccountId, PtStatus status);
+    List<PtMatching> findAllByTraineeAccountIdAndIsDeletedFalseAndStatusOrderByCreatedAtDesc(Long traineeAccountId, PtStatus status);
     Optional<PtMatching> findByPtMatchingIdAndIsDeletedFalse(Long ptMatchingId);
 }

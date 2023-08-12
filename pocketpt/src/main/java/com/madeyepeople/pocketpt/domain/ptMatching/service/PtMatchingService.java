@@ -72,7 +72,7 @@ public class PtMatchingService {
         Integer paymentAmount = paymentAmountCalculator.calculate(ptRegistrationRequest.getSubscriptionPeriod(), monthlyPtPriceDtoList);
 
         // TODO: subscriptionPeriod로 expiredDate도 계산해야 함
-        PtMatching saved = ptMatchingRepository.save(toPtMatchingEntity.fromAccountEntities(trainer.get(), trainee, ptRegistrationRequest.getSubscriptionPeriod()));
+        PtMatching saved = ptMatchingRepository.save(toPtMatchingEntity.fromAccountEntities(trainer.get(), trainee, ptRegistrationRequest.getSubscriptionPeriod(), paymentAmount));
 
         // TODO: ResultResponse 사용하도록 변경, Account 로직들도 마찬가지
         return toPtRegistrationResponse.fromPtMatchingEntity(saved);
@@ -85,15 +85,15 @@ public class PtMatchingService {
 
         if (account.getAccountRole().equals(Role.TRAINER)) {
             if (mode.equals("all")) {
-                ptMatchingList = ptMatchingRepository.findAllByTrainerAccountIdAndIsDeletedFalse(account.getAccountId());
+                ptMatchingList = ptMatchingRepository.findAllByTrainerAccountIdAndIsDeletedFalseOrderByCreatedAtDesc(account.getAccountId());
             } else {
-                ptMatchingList = ptMatchingRepository.findAllByTrainerAccountIdAndIsDeletedFalseAndStatus(account.getAccountId(), PtStatus.valueOf(mode.toUpperCase()));
+                ptMatchingList = ptMatchingRepository.findAllByTrainerAccountIdAndIsDeletedFalseAndStatusOrderByCreatedAtDesc(account.getAccountId(), PtStatus.valueOf(mode.toUpperCase()));
             }
         } else {
             if (mode.equals("all")) {
-                ptMatchingList = ptMatchingRepository.findAllByTraineeAccountIdAndIsDeletedFalse(account.getAccountId());
+                ptMatchingList = ptMatchingRepository.findAllByTraineeAccountIdAndIsDeletedFalseOrderByCreatedAtDesc(account.getAccountId());
             } else {
-                ptMatchingList = ptMatchingRepository.findAllByTraineeAccountIdAndIsDeletedFalseAndStatus(account.getAccountId(), PtStatus.valueOf(mode.toUpperCase()));
+                ptMatchingList = ptMatchingRepository.findAllByTraineeAccountIdAndIsDeletedFalseAndStatusOrderByCreatedAtDesc(account.getAccountId(), PtStatus.valueOf(mode.toUpperCase()));
             }
         }
 
