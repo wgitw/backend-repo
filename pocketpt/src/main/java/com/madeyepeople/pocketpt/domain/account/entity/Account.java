@@ -10,15 +10,16 @@ import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Date;
 
 
 
 @Entity
 @Getter
-@ToString
+@ToString(exclude = {"chattingParticipantList", "chattingMessageBookmarkList", "ptMatchingListOfTrainer", "ptMatchingListOfTrainee", "monthlyPtPriceList"})
 @NoArgsConstructor
 @AllArgsConstructor
 // TODO: @SQLDelete 로 삭제시 is_deleted = true 로 변경되게 하기
@@ -67,8 +68,7 @@ public class Account extends BaseEntity {
 
     private String gender;
 
-    @Temporal(TemporalType.DATE)
-    private Date birthdate;
+    private LocalDateTime birthdate;
 
     /**
      * 회원 또는 트레이너 한쪽만 필요한 정보
@@ -81,6 +81,7 @@ public class Account extends BaseEntity {
     private String recommenderCode;
     private String careerCertificateUrl;
     private String introduce;
+    @ColumnDefault("0")
     private Integer totalSales;
     private Float serviceFeeRate;
     private Float discountRate;
@@ -121,13 +122,18 @@ public class Account extends BaseEntity {
         return this;
     }
 
-    public Account updateByRegistrationRequest(String name, String phoneNumber, String nickname, Role accountRole, String identificationCode, List<MonthlyPtPrice> monthlyPtPriceList) {
+    public Account updateByRegistrationRequest(String name, String phoneNumber, String nickname, Role accountRole, String identificationCode) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.nickname = nickname;
         this.accountRole = accountRole;
         this.identificationCode = identificationCode;
 //        this.monthlyPtPriceList = monthlyPtPriceList;
+        return this;
+    }
+
+    public Account updateTotalSales(Integer totalSales) {
+        this.totalSales = totalSales;
         return this;
     }
 }

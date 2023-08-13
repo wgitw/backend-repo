@@ -13,11 +13,15 @@ public enum ResultCode {
     ACCOUNT_CREATE_SUCCESS("A001", "회원 가입 성공"),
     ACCOUNT_GET_SUCCESS("A002", "특정 회원 상세 조회 성공"),
     ACCOUNT_CHECK_SIGNED_UP_SUCCESS("A003", "회원 가입 여부 조회 성공"),
+    ACCOUNT_PT_PRICE_GET_SUCCESS("A004", "트레이너의 월간 PT 가격 조회 성공"),
+    ACCOUNT_TOTAL_SALES_GET_SUCCESS("A005", "트레이너의 총 매출 조회 성공"),
+    ACCOUNT_MONTHLY_SALES_GET_SUCCESS("A006", "트레이너의 월별 매출 조회 성공"),
 
     // ptMatching
     PT_REGISTRATION_CREATE_SUCCESS("PM001", "PT 요청 성공"),
     PT_MATCHING_LIST_GET_SUCCESS("PM002", "PT 매칭 리스트 가져오기 성공"),
     PT_MATCHING_ACCEPT_SUCCESS("PM003", "PT 매칭 수락 성공"),
+    PT_MATCHING_PAYMENT_AMOUNT_GET_SUCCESS("PM004", "예상 결제 금액 조회 성공"),
 
     // group
     GROUP_CREATE_SUCCESS("G001", "그룹 생성 성공"),

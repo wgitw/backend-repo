@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class PtRegistrationRequest {
-    private String trainerCode;
+    private Long trainerAccountId;
     private Integer subscriptionPeriod;
+    private Integer paymentAmount;
 }

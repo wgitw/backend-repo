@@ -1,9 +1,8 @@
 package com.madeyepeople.pocketpt.domain.account.controller;
 
+import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
-import com.madeyepeople.pocketpt.domain.account.dto.response.AccountDetailGetResponse;
-import com.madeyepeople.pocketpt.domain.account.dto.response.AccountRegistrationResponse;
-import com.madeyepeople.pocketpt.domain.account.dto.response.CheckAccountSignupResponse;
+import com.madeyepeople.pocketpt.domain.account.dto.response.*;
 import com.madeyepeople.pocketpt.domain.account.service.AccountService;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
@@ -16,6 +15,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 
 @Validated
 @RestController
@@ -26,6 +27,12 @@ public class AccountController {
 
     private final SecurityUtil securityUtil;
     private final AccountService accountService;
+
+    @GetMapping("/check/signup")
+    public ResponseEntity<ResultResponse> checkSignup() {
+        CheckAccountSignupResponse checkAccountSignupResponse = accountService.checkSignup();
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_CHECK_SIGNED_UP_SUCCESS, checkAccountSignupResponse));
+    }
 
     @PostMapping("/{role}")
     public ResponseEntity<ResultResponse> signup(@RequestBody @Valid CommonRegistrationRequest commonRegistrationRequest,
@@ -38,21 +45,33 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_CREATE_SUCCESS, accountRegistrationResponse));
     }
 
-    @GetMapping("/check/signup")
-    public ResponseEntity<ResultResponse> checkSignup() {
-        CheckAccountSignupResponse checkAccountSignupResponse = accountService.checkSignup();
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_CHECK_SIGNED_UP_SUCCESS, checkAccountSignupResponse));
-    }
-
     @GetMapping("/detail")
     public ResponseEntity<ResultResponse> getAccount() {
         AccountDetailGetResponse accountDetailGetResponse = accountService.getAccount();
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_GET_SUCCESS, accountDetailGetResponse));
     }
 
+    @GetMapping("/price")
+    public ResponseEntity<ResultResponse> getTrainerPtPrice(@RequestParam String trainerCode) {
+        MonthlyPtPriceGetResponse monthlyPtPriceGetResponse = accountService.getTrainerPtPrice(trainerCode);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PT_PRICE_GET_SUCCESS, monthlyPtPriceGetResponse));
+    }
+
     // TODO: 회원정보 간단 조회
 //    @GetMapping("/summary")
 
+    @GetMapping("/sales/total")
+    public ResponseEntity<ResultResponse> getTrainerTotalSales() {
+        TrainerTotalSalesGetResponse trainerTotalSalesGetResponse = accountService.getTrainerTotalSales();
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TOTAL_SALES_GET_SUCCESS, trainerTotalSalesGetResponse));
+    }
+
+    @GetMapping("/sales/monthly")
+    public ResponseEntity<ResultResponse> getTrainerMonthlySales(@RequestParam Integer year,
+                                                                 @RequestParam Integer month) {
+        TrainerTotalSalesGetResponse trainerMonthlySalesGetResponse = accountService.getTrainerMonthlySales(year, month);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_MONTHLY_SALES_GET_SUCCESS, trainerMonthlySalesGetResponse));
+    }
 
     /**
      * 테스트용 api
