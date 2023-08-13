@@ -16,6 +16,8 @@ public interface ChattingParticipantRepository extends JpaRepository<ChattingPar
     // select
     Optional<ChattingParticipant> findByAccountAndChattingRoomAndIsDeletedFalse(Account account, ChattingRoom chattingRoom);
 
+    List<ChattingParticipant> findByChattingRoomAndIsDeletedFalse(ChattingRoom chattingRoom);
+
     Optional<ChattingParticipant> findBySimpSessionIdAndIsDeletedFalse(String simpSessionId);
 
     @Query(value=
@@ -40,5 +42,4 @@ public interface ChattingParticipantRepository extends JpaRepository<ChattingPar
             """, nativeQuery = true)
     int updateAllByNotViewCountZeroByRoomIdAndAccountIdAndIsDeletedFalse(Long chattingRoomId, Long accountId);
 
-    // delete
 }

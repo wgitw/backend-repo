@@ -32,6 +32,8 @@ public enum ResultCode {
     CHATTING_ROOM_LIST_UPDATE_INFO_FOR_MESSAGE_GET_SUCCESS("CR003", "채팅방 리스트 -새로운 메시지- 변경사항 전송 성공"),
     CHATTING_ROOM_LIST_UPDATE_INFO_FOR_ROOM_GET_SUCCESS("CR004", "채팅방 리스트 -새로운 채팅방 생성- 변경사항 전송 성공"),
     CHATTING_ROOM_ENTER_SUCCESS("CR005", "채팅방 입장 성공"),
+    CHATTING_ROOM_EXIT_SUCCESS("CR006", "채팅방 퇴장 성공"),
+    CHATTING_ROOM_DELETE_SUCCESS("CR007", "채팅방 삭제 성공"),
 
     // chatting message
     CHATTING_MESSAGE_CREATE_SUCCESS("CM001", "채팅 메시지 생성 성공"),
