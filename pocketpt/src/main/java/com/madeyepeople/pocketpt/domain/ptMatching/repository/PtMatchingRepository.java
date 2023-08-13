@@ -16,4 +16,5 @@ public interface PtMatchingRepository extends JpaRepository<PtMatching, Long> {
     List<PtMatching> findAllByTrainerAccountIdAndIsDeletedFalseAndStatusOrderByCreatedAtDesc(Long trainerAccountId, PtStatus status);
     List<PtMatching> findAllByTraineeAccountIdAndIsDeletedFalseAndStatusOrderByCreatedAtDesc(Long traineeAccountId, PtStatus status);
     Optional<PtMatching> findByPtMatchingIdAndIsDeletedFalse(Long ptMatchingId);
+    Optional<PtMatching> findByTrainerAccountIdAndTraineeAccountIdAndStatusAndIsDeletedFalse(Long trainerAccountId, Long traineeAccountId, PtStatus status);
 }

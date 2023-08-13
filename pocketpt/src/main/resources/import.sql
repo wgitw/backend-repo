@@ -30,7 +30,7 @@ INSERT INTO account (account_id, oauth2_id, provider, identification_code, email
 INSERT INTO account (account_id, oauth2_id, provider, identification_code, email, account_role, name, phone_number, nickname, profile_picture_url, introduce, is_deleted) VALUES (27, 1098765, 'kakao', 'Sfo67890', 'trainee13@example.com', 'trainee', '트레이니13', '01313131313', '트레이니13닉네임', 'https://pocket-pt.s3.ap-northeast-2.amazonaws.com/account/profile-picture/default_profile.jpg', '트레이니13 소개', false);
 
 -- PtMatching
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (1, 1, 13, 'pending', 6, date_add(now(), interval 6 month), 250000, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (1, 1, 13, 'active', 6, date_add(now(), interval 6 month), 250000, now());
 INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (2, 1, 15, 'pending', 4, date_add(now(), interval 4 month), 130000, now());
 INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (3, 1, 14, 'active', 5, date_add(now(), interval 5 month), 210000, now());
 INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (4, 1, 18, 'pending', 13, date_add(now(), interval 13 month), 480000, now());
