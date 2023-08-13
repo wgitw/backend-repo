@@ -1,11 +1,12 @@
 package com.madeyepeople.pocketpt.domain.ptMatching.repository;
 
-import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +23,7 @@ public interface PtMatchingRepository extends JpaRepository<PtMatching, Long> {
     // 중복 PT 요청 체크
     Optional<PtMatching> findByTrainerAccountIdAndTraineeAccountIdAndStatusAndIsDeletedFalse(Long trainerAccountId, Long traineeAccountId, PtStatus status);
 
-    // 총 매출 조회
+    // 매출 조회
     List<PtMatching> findAllByTrainerAccountIdAndIsDeletedFalseAndStatusInOrderByCreatedAtDesc(Long trainerAccountId, List<PtStatus> ptStatusList);
+    List<PtMatching> findAllByTrainerAccountIdAndIsDeletedFalseAndCreatedAtBetweenAndStatusInOrderByCreatedAtDesc(Long trainerAccountId, LocalDateTime startDate, LocalDateTime endDate, List<PtStatus> ptStatusList);
 }

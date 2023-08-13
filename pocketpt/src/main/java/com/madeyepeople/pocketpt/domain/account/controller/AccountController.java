@@ -66,6 +66,13 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TOTAL_SALES_GET_SUCCESS, trainerTotalSalesGetResponse));
     }
 
+    @GetMapping("/sales/monthly")
+    public ResponseEntity<ResultResponse> getTrainerMonthlySales(@RequestParam Integer year,
+                                                                 @RequestParam Integer month) {
+        TrainerTotalSalesGetResponse trainerMonthlySalesGetResponse = accountService.getTrainerMonthlySales(year, month);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_MONTHLY_SALES_GET_SUCCESS, trainerMonthlySalesGetResponse));
+    }
+
     /**
      * 테스트용 api
      */

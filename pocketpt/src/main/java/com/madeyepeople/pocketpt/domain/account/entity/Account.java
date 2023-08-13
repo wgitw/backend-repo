@@ -11,10 +11,9 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicUpdate;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Date;
 
 
 
@@ -69,8 +68,7 @@ public class Account extends BaseEntity {
 
     private String gender;
 
-    @Temporal(TemporalType.DATE)
-    private Date birthdate;
+    private LocalDateTime birthdate;
 
     /**
      * 회원 또는 트레이너 한쪽만 필요한 정보
@@ -124,7 +122,7 @@ public class Account extends BaseEntity {
         return this;
     }
 
-    public Account updateByRegistrationRequest(String name, String phoneNumber, String nickname, Role accountRole, String identificationCode, List<MonthlyPtPrice> monthlyPtPriceList) {
+    public Account updateByRegistrationRequest(String name, String phoneNumber, String nickname, Role accountRole, String identificationCode) {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.nickname = nickname;

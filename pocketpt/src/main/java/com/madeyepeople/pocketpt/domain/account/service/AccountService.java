@@ -12,7 +12,6 @@ import com.madeyepeople.pocketpt.domain.account.mapper.ToRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.MonthlyPtPriceRepository;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
-import com.madeyepeople.pocketpt.domain.ptMatching.dto.PtMatchingSummary;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
 import com.madeyepeople.pocketpt.domain.ptMatching.mapper.ToPtMatchingSummary;
 import com.madeyepeople.pocketpt.domain.ptMatching.repository.PtMatchingRepository;
@@ -26,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -61,13 +62,7 @@ public class AccountService {
                 commonRegistrationRequest.getPhoneNumber(),
                 commonRegistrationRequest.getNickname(),
                 Role.valueOf(role.toUpperCase()),
-                uniqueCodeGenerator.getUniqueCode(),
-                commonRegistrationRequest.getMonthlyPtPriceList().stream()
-                        .map(monthlyPtPriceDto -> MonthlyPtPrice.builder()
-                                .period(monthlyPtPriceDto.getPeriod())
-                                .price(monthlyPtPriceDto.getPrice())
-                                .build())
-                        .collect(Collectors.toList())
+                uniqueCodeGenerator.getUniqueCode()
         );
 
         // 트레이너일 경우, 월별 PT 단가가 필수로 입력되어야 함.
@@ -134,6 +129,27 @@ public class AccountService {
 
         return TrainerTotalSalesGetResponse.builder()
                 .totalSales(trainer.getTotalSales())
+                .ptMatchingSummaryList(ptMatchingList.stream()
+                        .map(ptMatching -> toPtMatchingSummary.fromPtMatchingEntity(ptMatching, trainer.getAccountId()))
+                        .toList())
+                .build();
+    }
+
+    public TrainerTotalSalesGetResponse getTrainerMonthlySales(Integer year, Integer month) {
+        Account trainer = securityUtil.getLoginAccountEntity();
+        LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0);
+        LocalDateTime endOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0).plusMonths(1).minusSeconds(1);
+
+        List<PtMatching> ptMatchingList = ptMatchingRepository.findAllByTrainerAccountIdAndIsDeletedFalseAndCreatedAtBetweenAndStatusInOrderByCreatedAtDesc(
+                trainer.getAccountId(), startOfMonth, endOfMonth, List.of(PtStatus.ACTIVE, PtStatus.EXPIRED)
+        );
+
+        Integer monthlySales = ptMatchingList.stream()
+                .mapToInt(PtMatching::getPaymentAmount)
+                .sum();
+
+        return TrainerTotalSalesGetResponse.builder()
+                .totalSales(monthlySales)
                 .ptMatchingSummaryList(ptMatchingList.stream()
                         .map(ptMatching -> toPtMatchingSummary.fromPtMatchingEntity(ptMatching, trainer.getAccountId()))
                         .toList())
