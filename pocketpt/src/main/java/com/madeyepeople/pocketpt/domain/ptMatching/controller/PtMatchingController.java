@@ -1,5 +1,6 @@
 package com.madeyepeople.pocketpt.domain.ptMatching.controller;
 
+import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PaymentAmountGetRequest;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PtRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.response.PtRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.ptMatching.service.PtMatchingService;
@@ -18,6 +19,12 @@ import org.springframework.web.bind.annotation.*;
 public class PtMatchingController {
 
     private final PtMatchingService ptMatchingService;
+
+    @PostMapping("/payment/amount")
+    public ResponseEntity<ResultResponse> getExpectedPaymentAmount(@RequestBody PaymentAmountGetRequest paymentAmountGetRequest) {
+        Integer expectedPaymentAmount = ptMatchingService.getExpectedPaymentAmount(paymentAmountGetRequest);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.PT_MATCHING_PAYMENT_AMOUNT_GET_SUCCESS, expectedPaymentAmount));
+    }
 
     // 신규 PT 매칭 요청
     @PostMapping

@@ -3,15 +3,18 @@ package com.madeyepeople.pocketpt.domain.account.service;
 import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
-import com.madeyepeople.pocketpt.domain.account.dto.response.AccountDetailGetResponse;
-import com.madeyepeople.pocketpt.domain.account.dto.response.AccountRegistrationResponse;
-import com.madeyepeople.pocketpt.domain.account.dto.response.CheckAccountSignupResponse;
+import com.madeyepeople.pocketpt.domain.account.dto.response.*;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.entity.MonthlyPtPrice;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToAccountGetResponse;
+import com.madeyepeople.pocketpt.domain.account.mapper.ToMonthlyPtPriceDtoList;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.MonthlyPtPriceRepository;
+import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
+import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
+import com.madeyepeople.pocketpt.domain.ptMatching.mapper.ToPtMatchingSummary;
+import com.madeyepeople.pocketpt.domain.ptMatching.repository.PtMatchingRepository;
 import com.madeyepeople.pocketpt.global.error.ErrorCode;
 import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
@@ -22,7 +25,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,10 +37,13 @@ import java.util.stream.Collectors;
 public class AccountService {
 
     private final AccountRepository accountRepository;
+    private final PtMatchingRepository ptMatchingRepository;
     private final MonthlyPtPriceRepository monthlyPtPriceRepository;
 
     private final ToRegistrationResponse toRegistrationResponse;
     private final ToAccountGetResponse toAccountGetResponse;
+    private final ToMonthlyPtPriceDtoList toMonthlyPtPriceDtoList;
+    private final ToPtMatchingSummary toPtMatchingSummary;
 
     private final SecurityUtil securityUtil;
     private final UniqueCodeGenerator uniqueCodeGenerator;
@@ -53,15 +62,8 @@ public class AccountService {
                 commonRegistrationRequest.getPhoneNumber(),
                 commonRegistrationRequest.getNickname(),
                 Role.valueOf(role.toUpperCase()),
-                uniqueCodeGenerator.getUniqueCode(),
-                commonRegistrationRequest.getMonthlyPtPriceList().stream()
-                        .map(monthlyPtPriceDto -> MonthlyPtPrice.builder()
-                                .period(monthlyPtPriceDto.getPeriod())
-                                .price(monthlyPtPriceDto.getPrice())
-                                .build())
-                        .collect(Collectors.toList())
+                uniqueCodeGenerator.getUniqueCode()
         );
-
 
         // 트레이너일 경우, 월별 PT 단가가 필수로 입력되어야 함.
         if (account.getAccountRole() == Role.TRAINER) {
@@ -96,6 +98,61 @@ public class AccountService {
         Account account = securityUtil.getLoginAccountEntity();
         return CheckAccountSignupResponse.builder()
                 .isAccountSignedUp(account.getAccountRole() != null)
+                .build();
+    }
+
+    @Transactional
+    public MonthlyPtPriceGetResponse getTrainerPtPrice(String trainerCode) {
+        Optional<Account> trainer = accountRepository.findByIdentificationCodeAndIsDeletedFalse(trainerCode);
+
+        // 해당 Identification Code 가진 account가 있는지, 있다면 Role = trainer인지 확인
+        if (trainer.isEmpty()) {
+            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.TRAINER_IDENTIFICATION_CODE_NOT_FOUND.getMessage());
+        } else if (!trainer.get().getAccountRole().getValue().equals("trainer")) {
+            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.IDENTIFICATION_CODE_IS_NOT_TRAINER.getMessage());
+        }
+
+        List<MonthlyPtPriceDto> monthlyPtPriceDtoList = toMonthlyPtPriceDtoList.of(trainer.get().getMonthlyPtPriceList());
+
+        return MonthlyPtPriceGetResponse.builder()
+                .trainerAccountId(trainer.get().getAccountId())
+                .monthlyPtPriceList(monthlyPtPriceDtoList)
+                .build();
+    }
+
+    public TrainerTotalSalesGetResponse getTrainerTotalSales() {
+        Account trainer = securityUtil.getLoginAccountEntity();
+        List<PtMatching> ptMatchingList = ptMatchingRepository.findAllByTrainerAccountIdAndIsDeletedFalseAndStatusInOrderByCreatedAtDesc(
+                trainer.getAccountId(), List.of(PtStatus.ACTIVE, PtStatus.EXPIRED)
+        );
+
+
+        return TrainerTotalSalesGetResponse.builder()
+                .totalSales(trainer.getTotalSales())
+                .ptMatchingSummaryList(ptMatchingList.stream()
+                        .map(ptMatching -> toPtMatchingSummary.fromPtMatchingEntity(ptMatching, trainer.getAccountId()))
+                        .toList())
+                .build();
+    }
+
+    public TrainerTotalSalesGetResponse getTrainerMonthlySales(Integer year, Integer month) {
+        Account trainer = securityUtil.getLoginAccountEntity();
+        LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0);
+        LocalDateTime endOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0).plusMonths(1).minusSeconds(1);
+
+        List<PtMatching> ptMatchingList = ptMatchingRepository.findAllByTrainerAccountIdAndIsDeletedFalseAndCreatedAtBetweenAndStatusInOrderByCreatedAtDesc(
+                trainer.getAccountId(), startOfMonth, endOfMonth, List.of(PtStatus.ACTIVE, PtStatus.EXPIRED)
+        );
+
+        Integer monthlySales = ptMatchingList.stream()
+                .mapToInt(PtMatching::getPaymentAmount)
+                .sum();
+
+        return TrainerTotalSalesGetResponse.builder()
+                .totalSales(monthlySales)
+                .ptMatchingSummaryList(ptMatchingList.stream()
+                        .map(ptMatching -> toPtMatchingSummary.fromPtMatchingEntity(ptMatching, trainer.getAccountId()))
+                        .toList())
                 .build();
     }
 }

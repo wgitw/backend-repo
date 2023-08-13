@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 public class ToPtMatchingListResponse {
 
     private final ToPtMatchingSummary toPtMatchingSummary;
-    public List<PtMatchingSummary> fromPtMatchingEntityList(List<PtMatching> ptMatchingList, Long requestorAccountId) {
+    public List<PtMatchingSummary> fromPtMatchingEntityList(List<PtMatching> ptMatchingList, Long requesterAccountId) {
         List<PtMatchingSummary> ptMatchingSummaryList = ptMatchingList.stream()
-                .map(ptMatching -> toPtMatchingSummary.fromPtMatchingEntity(ptMatching, requestorAccountId))
+                .map(ptMatching -> toPtMatchingSummary.fromPtMatchingEntity(ptMatching, requesterAccountId))
                 .collect(Collectors.toList());
 
         return ptMatchingSummaryList;

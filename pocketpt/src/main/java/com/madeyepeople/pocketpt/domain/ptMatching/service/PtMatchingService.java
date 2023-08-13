@@ -2,12 +2,14 @@ package com.madeyepeople.pocketpt.domain.ptMatching.service;
 
 import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
+import com.madeyepeople.pocketpt.domain.account.mapper.ToMonthlyPtPriceDtoList;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
-import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
 import com.madeyepeople.pocketpt.domain.chattingRoom.service.ChattingRoomService;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.PtMatchingSummary;
+import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PaymentAmountGetRequest;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PtRegistrationRequest;
+import com.madeyepeople.pocketpt.domain.ptMatching.dto.response.PtRegistrationAcceptResponse;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.response.PtRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
 import com.madeyepeople.pocketpt.domain.ptMatching.mapper.ToPtMatchingEntity;
@@ -15,6 +17,7 @@ import com.madeyepeople.pocketpt.domain.ptMatching.mapper.ToPtMatchingListRespon
 import com.madeyepeople.pocketpt.domain.ptMatching.mapper.ToPtMatchingSummary;
 import com.madeyepeople.pocketpt.domain.ptMatching.mapper.ToPtRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.ptMatching.repository.PtMatchingRepository;
+import com.madeyepeople.pocketpt.domain.ptMatching.util.PaymentAmountCalculator;
 import com.madeyepeople.pocketpt.global.error.ErrorCode;
 import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
@@ -28,6 +31,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,27 +50,32 @@ public class PtMatchingService {
     private final ToPtRegistrationResponse toPtRegistrationResponse;
     private final ToPtMatchingListResponse toPtMatchingListResponse;
     private final ToPtMatchingSummary toPtMatchingSummary;
+    private final ToMonthlyPtPriceDtoList toMonthlyPtPriceDtoList;
 
     private final SecurityUtil securityUtil;
+    private final PaymentAmountCalculator paymentAmountCalculator;
 
     private final SimpMessageSendingOperations template;
 
     @Transactional
     public PtRegistrationResponse registerPt(PtRegistrationRequest ptRegistrationRequest) throws ConstraintViolationException, BusinessException {
-        // TODO:  중복 등록 불가하게 수정 (trainerId, traineeId, status = pending unique하게 변경)
-        Optional<Account> trainer = accountRepository.findByIdentificationCodeAndIsDeletedFalse(ptRegistrationRequest.getTrainerCode());
-
-        // 해당 Identification Code 가진 account가 있는지, 있다면 Role = trainer인지 확인
-        if (trainer.isEmpty()) {
-            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.TRAINER_IDENTIFICATION_CODE_NOT_FOUND.getMessage());
-        } else if (!trainer.get().getAccountRole().getValue().equals("trainer")) {
-            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.IDENTIFICATION_CODE_IS_NOT_TRAINER.getMessage());
-        }
+        Account trainer = accountRepository.findByAccountIdAndIsDeletedFalse(ptRegistrationRequest.getTrainerAccountId()).
+                orElseThrow(() -> new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.TRAINER_ACCOUNT_ID_NOT_FOUND.getMessage()));
 
         Account trainee = securityUtil.getLoginAccountEntity();
 
-        // TODO: subscriptionPeriod로 expiredDate도 계산해야 함
-        PtMatching saved = ptMatchingRepository.save(toPtMatchingEntity.fromAccountEntities(trainer.get(), trainee, ptRegistrationRequest.getSubscriptionPeriod()));
+        // 중복 PT 등록 예외 처리 : trainer, trainee, status = PENDING 인 row는 유일
+        Optional<PtMatching> ptMatchingOptional = ptMatchingRepository.findByTrainerAccountIdAndTraineeAccountIdAndStatusAndIsDeletedFalse(
+                ptRegistrationRequest.getTrainerAccountId(), trainee.getAccountId(), PtStatus.PENDING
+        );
+        if (ptMatchingOptional.isPresent()) {
+            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_REQUEST_ALREADY_EXIST.getMessage());
+        }
+
+
+        PtMatching saved = ptMatchingRepository.save(
+                toPtMatchingEntity.fromAccountEntities(trainer, trainee, ptRegistrationRequest.getSubscriptionPeriod(), ptRegistrationRequest.getPaymentAmount())
+        );
 
         // TODO: ResultResponse 사용하도록 변경, Account 로직들도 마찬가지
         return toPtRegistrationResponse.fromPtMatchingEntity(saved);
@@ -78,15 +88,15 @@ public class PtMatchingService {
 
         if (account.getAccountRole().equals(Role.TRAINER)) {
             if (mode.equals("all")) {
-                ptMatchingList = ptMatchingRepository.findAllByTrainerAccountIdAndIsDeletedFalse(account.getAccountId());
+                ptMatchingList = ptMatchingRepository.findAllByTrainerAccountIdAndIsDeletedFalseOrderByCreatedAtDesc(account.getAccountId());
             } else {
-                ptMatchingList = ptMatchingRepository.findAllByTrainerAccountIdAndIsDeletedFalseAndStatus(account.getAccountId(), PtStatus.valueOf(mode.toUpperCase()));
+                ptMatchingList = ptMatchingRepository.findAllByTrainerAccountIdAndIsDeletedFalseAndStatusOrderByCreatedAtDesc(account.getAccountId(), PtStatus.valueOf(mode.toUpperCase()));
             }
         } else {
             if (mode.equals("all")) {
-                ptMatchingList = ptMatchingRepository.findAllByTraineeAccountIdAndIsDeletedFalse(account.getAccountId());
+                ptMatchingList = ptMatchingRepository.findAllByTraineeAccountIdAndIsDeletedFalseOrderByCreatedAtDesc(account.getAccountId());
             } else {
-                ptMatchingList = ptMatchingRepository.findAllByTraineeAccountIdAndIsDeletedFalseAndStatus(account.getAccountId(), PtStatus.valueOf(mode.toUpperCase()));
+                ptMatchingList = ptMatchingRepository.findAllByTraineeAccountIdAndIsDeletedFalseAndStatusOrderByCreatedAtDesc(account.getAccountId(), PtStatus.valueOf(mode.toUpperCase()));
             }
         }
 
@@ -98,9 +108,10 @@ public class PtMatchingService {
 
     @Transactional
     public ResultResponse acceptPtMatching(Long ptMatchingId) {
+
         // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
-        Account account = securityUtil.getLoginAccountEntity();
-        if (!account.getAccountRole().equals(Role.TRAINER)) {
+        Account trainer = securityUtil.getLoginAccountEntity();
+        if (!trainer.getAccountRole().equals(Role.TRAINER)) {
             throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.AUTHENTICATED_USER_IS_NOT_TRAINER.getMessage());
         }
 
@@ -109,7 +120,7 @@ public class PtMatchingService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_NOT_FOUND.getMessage()));
 
         // pt matching의 trainerId가 로그인한 계정의 accountId와 일치하는지 확인
-        if (!ptMatching.getTrainer().getAccountId().equals(account.getAccountId())) {
+        if (!ptMatching.getTrainer().getAccountId().equals(trainer.getAccountId())) {
             throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_TRAINER_ID_IS_NOT_MATCHED.getMessage());
         }
 
@@ -118,13 +129,28 @@ public class PtMatchingService {
             throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_STATUS_IS_NOT_PENDING.getMessage());
         }
 
-        PtMatching saved = ptMatchingRepository.save(ptMatching.updateStatus(PtStatus.ACTIVE));
+        Integer updatedTotalSales = trainer.getTotalSales() + ptMatching.getPaymentAmount();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, ptMatching.getSubscriptionPeriod());
+        Date updatedExpiredDate = calendar.getTime();
+
+        PtMatching savedPtMatching = ptMatchingRepository.save(ptMatching.updateStatusAndExpiredDate(PtStatus.ACTIVE, updatedExpiredDate));
+        Account savedTrainer = accountRepository.save(trainer.updateTotalSales(updatedTotalSales));
 
         // 채팅방 생성 및 생성 응답 전송
         ResultResponse resultResponse = chattingRoomService.createChattingRoomFromPtMatching(ptMatching.getTrainer(), ptMatching.getTrainee());
         template.convertAndSend("/sub/accounts/" + ptMatching.getTrainer().getAccountId(), resultResponse);
         template.convertAndSend("/sub/accounts/" + ptMatching.getTrainee().getAccountId(), resultResponse);
 
-        return ResultResponse.of(ResultCode.PT_MATCHING_ACCEPT_SUCCESS, toPtMatchingSummary.fromPtMatchingEntity(saved, account.getAccountId()));
+        PtRegistrationAcceptResponse ptRegistrationAcceptResponse = PtRegistrationAcceptResponse.builder()
+                .ptMatchingSummary(toPtMatchingSummary.fromPtMatchingEntity(savedPtMatching, trainer.getAccountId()))
+                .totalSales(savedTrainer.getTotalSales())
+                .build();
+
+        return ResultResponse.of(ResultCode.PT_MATCHING_ACCEPT_SUCCESS, ptRegistrationAcceptResponse);
+    }
+
+    public Integer getExpectedPaymentAmount(PaymentAmountGetRequest paymentAmountGetRequest) {
+        return paymentAmountCalculator.calculate(paymentAmountGetRequest.getSubscriptionPeriod(), paymentAmountGetRequest.getMonthlyPtPriceList());
     }
 }

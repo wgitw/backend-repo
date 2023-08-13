@@ -1,20 +1,34 @@
 package com.madeyepeople.pocketpt.domain.ptMatching.mapper;
 
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
+import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.PtMatchingSummary;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
 import org.springframework.stereotype.Component;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Component
 public class ToPtMatchingSummary {
 
     public PtMatchingSummary fromPtMatchingEntity(PtMatching ptMatching, Long MyAccountId) {
         Account opponent = ptMatching.getOpponentAccountByMyAccountId(MyAccountId);
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String expiredDate;
+        if (ptMatching.getStatus() == PtStatus.PENDING) {
+            expiredDate = null;
+        } else {
+            expiredDate = dateFormat.format(ptMatching.getExpiredDate());
+        }
+
         return PtMatchingSummary.builder()
                 .ptMatchingId(ptMatching.getPtMatchingId())
                 .status(ptMatching.getStatus().getValue())
                 .subscriptionPeriod(ptMatching.getSubscriptionPeriod())
-                .expiredDate(ptMatching.getExpiredDate())
+                .paymentAmount(ptMatching.getPaymentAmount())
+                .expiredDate(expiredDate)
                 .accountId(opponent.getAccountId())
                 .name(opponent.getName())
                 .phoneNumber(opponent.getPhoneNumber())

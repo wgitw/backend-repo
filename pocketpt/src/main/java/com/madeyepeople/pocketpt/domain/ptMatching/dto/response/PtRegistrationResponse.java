@@ -13,5 +13,6 @@ public class PtRegistrationResponse {
     private Long traineeId;
     private String traineeName;
     private Integer subscriptionPeriod;
+    private Integer paymentAmount;
     private PtStatus status;
 }
