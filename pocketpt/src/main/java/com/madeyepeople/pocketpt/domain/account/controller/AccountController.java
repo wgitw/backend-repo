@@ -2,10 +2,7 @@ package com.madeyepeople.pocketpt.domain.account.controller;
 
 import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
-import com.madeyepeople.pocketpt.domain.account.dto.response.AccountDetailGetResponse;
-import com.madeyepeople.pocketpt.domain.account.dto.response.AccountRegistrationResponse;
-import com.madeyepeople.pocketpt.domain.account.dto.response.CheckAccountSignupResponse;
-import com.madeyepeople.pocketpt.domain.account.dto.response.MonthlyPtPriceGetResponse;
+import com.madeyepeople.pocketpt.domain.account.dto.response.*;
 import com.madeyepeople.pocketpt.domain.account.service.AccountService;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
@@ -55,14 +52,19 @@ public class AccountController {
     }
 
     @GetMapping("/price")
-    public ResponseEntity<ResultResponse> getAccountPrice(@RequestParam String trainerCode) {
-        MonthlyPtPriceGetResponse monthlyPtPriceGetResponse = accountService.getPtPrice(trainerCode);
+    public ResponseEntity<ResultResponse> getTrainerPtPrice(@RequestParam String trainerCode) {
+        MonthlyPtPriceGetResponse monthlyPtPriceGetResponse = accountService.getTrainerPtPrice(trainerCode);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PT_PRICE_GET_SUCCESS, monthlyPtPriceGetResponse));
     }
 
     // TODO: 회원정보 간단 조회
 //    @GetMapping("/summary")
 
+    @GetMapping("/sales/total")
+    public ResponseEntity<ResultResponse> getTrainerTotalSales() {
+        TrainerTotalSalesGetResponse trainerTotalSalesGetResponse = accountService.getTrainerTotalSales();
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TOTAL_SALES_GET_SUCCESS, trainerTotalSalesGetResponse));
+    }
 
     /**
      * 테스트용 api

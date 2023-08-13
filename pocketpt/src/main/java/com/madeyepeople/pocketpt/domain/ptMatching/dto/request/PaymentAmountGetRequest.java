@@ -1,12 +1,12 @@
 package com.madeyepeople.pocketpt.domain.ptMatching.dto.request;
 
 import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Builder
+@NoArgsConstructor
 @Getter
 public class PaymentAmountGetRequest {
     private Integer subscriptionPeriod;

@@ -1,7 +1,6 @@
 package com.madeyepeople.pocketpt.domain.ptMatching.service;
 
 import com.madeyepeople.pocketpt.domain.account.constant.Role;
-import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToMonthlyPtPriceDtoList;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;

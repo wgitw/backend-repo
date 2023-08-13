@@ -3,10 +3,7 @@ package com.madeyepeople.pocketpt.domain.account.service;
 import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
-import com.madeyepeople.pocketpt.domain.account.dto.response.AccountDetailGetResponse;
-import com.madeyepeople.pocketpt.domain.account.dto.response.AccountRegistrationResponse;
-import com.madeyepeople.pocketpt.domain.account.dto.response.CheckAccountSignupResponse;
-import com.madeyepeople.pocketpt.domain.account.dto.response.MonthlyPtPriceGetResponse;
+import com.madeyepeople.pocketpt.domain.account.dto.response.*;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.entity.MonthlyPtPrice;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToAccountGetResponse;
@@ -14,6 +11,11 @@ import com.madeyepeople.pocketpt.domain.account.mapper.ToMonthlyPtPriceDtoList;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.MonthlyPtPriceRepository;
+import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
+import com.madeyepeople.pocketpt.domain.ptMatching.dto.PtMatchingSummary;
+import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
+import com.madeyepeople.pocketpt.domain.ptMatching.mapper.ToPtMatchingSummary;
+import com.madeyepeople.pocketpt.domain.ptMatching.repository.PtMatchingRepository;
 import com.madeyepeople.pocketpt.global.error.ErrorCode;
 import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
@@ -34,11 +36,13 @@ import java.util.stream.Collectors;
 public class AccountService {
 
     private final AccountRepository accountRepository;
+    private final PtMatchingRepository ptMatchingRepository;
     private final MonthlyPtPriceRepository monthlyPtPriceRepository;
 
     private final ToRegistrationResponse toRegistrationResponse;
     private final ToAccountGetResponse toAccountGetResponse;
     private final ToMonthlyPtPriceDtoList toMonthlyPtPriceDtoList;
+    private final ToPtMatchingSummary toPtMatchingSummary;
 
     private final SecurityUtil securityUtil;
     private final UniqueCodeGenerator uniqueCodeGenerator;
@@ -103,7 +107,7 @@ public class AccountService {
     }
 
     @Transactional
-    public MonthlyPtPriceGetResponse getPtPrice(String trainerCode) {
+    public MonthlyPtPriceGetResponse getTrainerPtPrice(String trainerCode) {
         Optional<Account> trainer = accountRepository.findByIdentificationCodeAndIsDeletedFalse(trainerCode);
 
         // 해당 Identification Code 가진 account가 있는지, 있다면 Role = trainer인지 확인
@@ -118,6 +122,21 @@ public class AccountService {
         return MonthlyPtPriceGetResponse.builder()
                 .trainerAccountId(trainer.get().getAccountId())
                 .monthlyPtPriceList(monthlyPtPriceDtoList)
+                .build();
+    }
+
+    public TrainerTotalSalesGetResponse getTrainerTotalSales() {
+        Account trainer = securityUtil.getLoginAccountEntity();
+        List<PtMatching> ptMatchingList = ptMatchingRepository.findAllByTrainerAccountIdAndIsDeletedFalseAndStatusInOrderByCreatedAtDesc(
+                trainer.getAccountId(), List.of(PtStatus.ACTIVE, PtStatus.EXPIRED)
+        );
+
+
+        return TrainerTotalSalesGetResponse.builder()
+                .totalSales(trainer.getTotalSales())
+                .ptMatchingSummaryList(ptMatchingList.stream()
+                        .map(ptMatching -> toPtMatchingSummary.fromPtMatchingEntity(ptMatching, trainer.getAccountId()))
+                        .toList())
                 .build();
     }
 }
