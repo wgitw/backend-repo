@@ -18,6 +18,9 @@ import com.madeyepeople.pocketpt.domain.chattingRoom.repository.ChattingRoomRepo
 import com.madeyepeople.pocketpt.global.common.ScrollPagination;
 import com.madeyepeople.pocketpt.global.common.ScrollPaginationFile;
 import com.madeyepeople.pocketpt.global.common.ScrollPaginationMessage;
+import com.madeyepeople.pocketpt.global.error.ErrorCode;
+import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
+import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
 import com.madeyepeople.pocketpt.global.s3.S3FileService;
@@ -48,12 +51,18 @@ public class ChattingMessageService {
         log.info("CHATTING-MESSAGE-SERVICE: [createChattingMessage] START");
 
         // [1] 채팅방 유효성 검사
-        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(roomId).orElseThrow();
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(roomId).orElseThrow(
+                () -> new BusinessException(ErrorCode.CHATTING_ROOM_NOT_FOUND, CustomExceptionMessage.CHATTING_ROOM_NOT_FOUND.getMessage())
+        );
         log.info("CHATTING-MESSAGE-SERVICE: [createChattingMessage] foundChattingRoomId>> {}", foundChattingRoom.getChattingRoomId());
 
         // [2] 채팅 sender 유효성 검사
-        Account account = accountRepository.findByEmailAndIsDeletedFalse(accountUsername).orElseThrow();
-        ChattingParticipant foundChattingParticipant = chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow();
+        Account account = accountRepository.findByEmailAndIsDeletedFalse(accountUsername).orElseThrow(
+                () -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, CustomExceptionMessage.ACCOUNT_NOT_FOUND.getMessage())
+        );
+        ChattingParticipant foundChattingParticipant = chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow(
+                () -> new BusinessException(ErrorCode.CHATTING_PARTICIPANT_NOT_FOUND, CustomExceptionMessage.CHATTING_PARTICIPANT_NOT_FOUND.getMessage())
+        );
         log.info("CHATTING-MESSAGE-SERVICE: [createChattingMessage] sender ID>> {}", foundChattingParticipant.getAccount().getAccountId());
 
         // [3] ChattingMessage 초기화
@@ -94,12 +103,21 @@ public class ChattingMessageService {
 
     @Transactional
     public ResultResponse createChattingFile(ChattingFileCreateRequest chattingFileCreateRequest, Long roomId, Long accountId) {
+        log.info("=======================");
+        log.info("CHATTING-MESSAGE-SERVICE: [createChattingFile] START");
+
         // [1] 채팅방 유효성 검사
-        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(roomId).orElseThrow();
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(roomId).orElseThrow(
+                () -> new BusinessException(ErrorCode.CHATTING_ROOM_NOT_FOUND, CustomExceptionMessage.CHATTING_ROOM_NOT_FOUND.getMessage())
+        );
 
         // [2] 채팅 sender 유효성 검사
-        Account account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId).orElseThrow();
-        ChattingParticipant foundChattingParticipant = chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow();
+        Account account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId).orElseThrow(
+                () -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, CustomExceptionMessage.ACCOUNT_NOT_FOUND.getMessage())
+        );
+        ChattingParticipant foundChattingParticipant = chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow(
+                () -> new BusinessException(ErrorCode.CHATTING_PARTICIPANT_NOT_FOUND, CustomExceptionMessage.CHATTING_PARTICIPANT_NOT_FOUND.getMessage())
+        );
 
         // [3] 채팅 파일 S3 업로드
         String fileUrl = s3FileService.uploadFile("chatting/" + roomId + "/", chattingFileCreateRequest.getFile());
@@ -130,14 +148,22 @@ public class ChattingMessageService {
         // [7] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageCreateResponse
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_FILE_CREATE_SUCCESS, chattingMessageCreateResponse);
 
+        log.info("CHATTING-MESSAGE-SERVICE: [createChattingFile] END");
+        log.info("=======================");
+
         return resultResponse;
     }
 
     // 채팅 메시지 리스트 최신 100개
     @Transactional
     public ResultResponse getChattingMessageListByRoom(Long chattingRoomId, int page, int size, Integer totalRecord) {
+        log.info("=======================");
+        log.info("CHATTING-MESSAGE-SERVICE: [getChattingMessageListByRoom] START");
+
         // [1] 채팅방 유효성 검사
-        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow(
+                () -> new BusinessException(ErrorCode.CHATTING_ROOM_NOT_FOUND, CustomExceptionMessage.CHATTING_ROOM_NOT_FOUND.getMessage())
+        );
 
         // [2] ChattingMessage list 가져와서 정보 담기
         if (totalRecord == null) {
@@ -154,14 +180,22 @@ public class ChattingMessageService {
 
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_LIST_GET_SUCCESS, chattingMessageGetListPaginationRespnse);
 
+        log.info("CHATTING-MESSAGE-SERVICE: [getChattingMessageListByRoom] END");
+        log.info("=======================");
+
         return resultResponse;
     }
 
     // 채팅방 파일 리스트 최신 100개
     @Transactional
     public ResultResponse getChattingFileListByRoom(Long chattingRoomId, int page, int size, Integer totalRecord) {
+        log.info("=======================");
+        log.info("CHATTING-MESSAGE-SERVICE: [getChattingFileListByRoom] START");
+
         // [1] 채팅방 유효성 검사
-        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow(
+                () -> new BusinessException(ErrorCode.CHATTING_ROOM_NOT_FOUND, CustomExceptionMessage.CHATTING_ROOM_NOT_FOUND.getMessage())
+        );
 
         // [2] ChattingMessage list 가져와서 정보 담기
         if (totalRecord == null) {
@@ -178,21 +212,35 @@ public class ChattingMessageService {
 
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_FILE_LIST_GET_SUCCESS, chattingMessageGetListPaginationRespnse);
 
+        log.info("CHATTING-MESSAGE-SERVICE: [getChattingFileListByRoom] END");
+        log.info("=======================");
+
         return resultResponse;
     }
 
     @Transactional
     public ResultResponse updateChattingMessage(Long accountId, Long chattingRoomId, Long chattingMessageId, ChattingMessageContentCreateRequest chattingMessageContentCreateRequest) {
+        log.info("=======================");
+        log.info("CHATTING-MESSAGE-SERVICE: [updateChattingMessage] START");
+
         // [1] 채팅방 유효성 검사
-        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow(
+                () -> new BusinessException(ErrorCode.CHATTING_ROOM_NOT_FOUND, CustomExceptionMessage.CHATTING_ROOM_NOT_FOUND.getMessage())
+        );
 
         // [2] 채팅 sender 유효성 검사
-        Account account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId).orElseThrow();
-        chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow();
+        Account account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId).orElseThrow(
+                () -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, CustomExceptionMessage.ACCOUNT_NOT_FOUND.getMessage())
+        );
+        chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow(
+                () -> new BusinessException(ErrorCode.CHATTING_PARTICIPANT_NOT_FOUND, CustomExceptionMessage.CHATTING_PARTICIPANT_NOT_FOUND.getMessage())
+        );
 
         // [3] 채팅 message 유효성 검사
-        ChattingMessage chattingMessage = chattingMessageRepository.findByIdAndRoomIdAndAccountIdAndIsDeletedFalse(
-                foundChattingRoom.getChattingRoomId(), accountId, chattingMessageId).orElseThrow(); // 삭제한 메시지는 수정할 수 없도록 is_deleted == false인 메시지만 조회
+        ChattingMessage chattingMessage = chattingMessageRepository.findByIdAndRoomIdAndAccountIdAndIsDeletedFalse(foundChattingRoom.getChattingRoomId(), accountId, chattingMessageId)
+                .orElseThrow(
+                        () -> new BusinessException(ErrorCode.CHATTING_MESSAGE_NOT_FOUND, CustomExceptionMessage.CHATTING_MESSAGE_NOT_FOUND.getMessage())
+                ); // 삭제한 메시지는 수정할 수 없도록 is_deleted == false인 메시지만 조회
 
         // [4] 채팅 메시지 수정 및 정보 담기
         chattingMessage.setContent(chattingMessageContentCreateRequest.getContent());
@@ -203,21 +251,35 @@ public class ChattingMessageService {
         // [5] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageCreateResponse
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_UPDATE_SUCCESS, chattingMessageUpdateResponse);
 
+        log.info("CHATTING-MESSAGE-SERVICE: [updateChattingMessage] END");
+        log.info("=======================");
+
         return resultResponse;
     }
 
     @Transactional
     public ResultResponse deleteChattingMessage(Long accountId, Long chattingRoomId, Long chattingMessageId) {
+        log.info("=======================");
+        log.info("CHATTING-MESSAGE-SERVICE: [deleteChattingMessage] START");
+
         // [1] 채팅방 유효성 검사
-        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow(
+                () -> new BusinessException(ErrorCode.CHATTING_ROOM_NOT_FOUND, CustomExceptionMessage.CHATTING_ROOM_NOT_FOUND.getMessage())
+        );
 
         // [2] 채팅 sender 유효성 검사
-        Account account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId).orElseThrow();
-        chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow();
+        Account account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId).orElseThrow(
+                () -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, CustomExceptionMessage.ACCOUNT_NOT_FOUND.getMessage())
+        );
+        chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow(
+                () -> new BusinessException(ErrorCode.CHATTING_PARTICIPANT_NOT_FOUND, CustomExceptionMessage.CHATTING_PARTICIPANT_NOT_FOUND.getMessage())
+        );
 
         // [3] 채팅 message 유효성 검사
-        ChattingMessage chattingMessage = chattingMessageRepository.findByIdAndRoomIdAndAccountIdAndIsDeletedFalse(
-                foundChattingRoom.getChattingRoomId(), accountId, chattingMessageId).orElseThrow(); // 삭제한 메시지는 다시 삭제할 수 없도록 is_deleted == false인 메시지만 조회
+        chattingMessageRepository.findByIdAndRoomIdAndAccountIdAndIsDeletedFalse(foundChattingRoom.getChattingRoomId(), accountId, chattingMessageId)
+                .orElseThrow(
+                        () -> new BusinessException(ErrorCode.CHATTING_MESSAGE_NOT_FOUND, CustomExceptionMessage.CHATTING_MESSAGE_NOT_FOUND.getMessage())
+                ); // 삭제한 메시지는 다시 삭제할 수 없도록 is_deleted == false인 메시지만 조회
 
         // [4] 채팅 메시지 삭제
         chattingMessageRepository.deleteByIdAndRoomIdAndAccountIdAndIsDeletedFalse(foundChattingRoom.getChattingRoomId(), accountId, chattingMessageId);
@@ -225,27 +287,45 @@ public class ChattingMessageService {
         // [5] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageCreateResponse
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_DELETE_SUCCESS, "delete success");
 
+        log.info("CHATTING-MESSAGE-SERVICE: [deleteChattingMessage] END");
+        log.info("=======================");
+
         return resultResponse;
     }
 
     @Transactional
     public ResponseEntity<byte[]> downloadChattingFile(Long accountId, Long chattingRoomId, Long chattingMessageId) {
+        log.info("=======================");
+        log.info("CHATTING-MESSAGE-SERVICE: [downloadChattingFile] START");
+
         // [1] 채팅방 유효성 검사
-        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow(
+                () -> new BusinessException(ErrorCode.CHATTING_ROOM_NOT_FOUND, CustomExceptionMessage.CHATTING_ROOM_NOT_FOUND.getMessage())
+        );
 
         // [2] 채팅 sender 유효성 검사
-        Account account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId).orElseThrow();
-        chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow();
+        Account account = accountRepository.findByAccountIdAndIsDeletedFalse(accountId).orElseThrow(
+                () -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, CustomExceptionMessage.ACCOUNT_NOT_FOUND.getMessage())
+        );
+        chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow(
+                () -> new BusinessException(ErrorCode.CHATTING_PARTICIPANT_NOT_FOUND, CustomExceptionMessage.CHATTING_PARTICIPANT_NOT_FOUND.getMessage())
+        );
 
         // [3] 채팅 message 유효성 검사
-        ChattingMessage chattingMessage = chattingMessageRepository.findByIdAndRoomIdAndAccountIdAndIsDeletedFalse(
-                foundChattingRoom.getChattingRoomId(), accountId, chattingMessageId).orElseThrow(); // 삭제한 메시지는 다시 삭제할 수 없도록 is_deleted == false인 메시지만 조회
+        ChattingMessage chattingMessage = chattingMessageRepository.findByIdAndRoomIdAndAccountIdAndIsDeletedFalse(foundChattingRoom.getChattingRoomId(), accountId, chattingMessageId)
+                .orElseThrow(
+                        () -> new BusinessException(ErrorCode.CHATTING_MESSAGE_NOT_FOUND, CustomExceptionMessage.CHATTING_MESSAGE_NOT_FOUND.getMessage())
+                );
+
+        log.info("CHATTING-MESSAGE-SERVICE: [downloadChattingFile] END");
+        log.info("=======================");
 
         // [4] 채팅 파일 다운로드
         try {
             return s3FileService.downloadFile(chattingMessage.getFileUrl());
-        } catch (Exception e) {}
-        return null;
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.CHATTING_FILE_ERROR, CustomExceptionMessage.CHATTING_FILE_DOWNLOAD_FAILED.getMessage());
+        }
     }
 
 }
