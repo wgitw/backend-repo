@@ -246,4 +246,32 @@ public class ChattingRoomService {
 
         return resultResponse;
     }
+
+    // chattingRoom 삭제
+    @Transactional
+    public ResultResponse deleteChattingRoom(Account account, Long chattingRoomId) {
+        // [1] 채팅방 유효성 검사
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow();
+
+        // [2] account 유효성 검사
+        chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow();
+
+        // [3] 채팅방에 속한 참여자 리스트 가져와서 isDeleted를 true로 변경
+        // [3-1] 채팅방에 속한 참여자 리스트 가져오기
+        List<ChattingParticipant> chattingParticipantList = chattingParticipantRepository.findByChattingRoomAndIsDeletedFalse(foundChattingRoom);
+        // [3-2] 채팅방에 속한 참여자들의 isDeleted를 true로 변경
+        for(ChattingParticipant c : chattingParticipantList) {
+            c.setIsDeleted(true);
+            chattingParticipantRepository.save(c);
+        }
+
+        // [4] 채팅방 삭제
+        foundChattingRoom.setIsDeleted(true);
+        chattingRoomRepository.save(foundChattingRoom);
+
+        // [5] resultResponse 만들기
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_DELETE_SUCCESS, "채팅방 삭제 성공");
+
+        return resultResponse;
+    }
 }

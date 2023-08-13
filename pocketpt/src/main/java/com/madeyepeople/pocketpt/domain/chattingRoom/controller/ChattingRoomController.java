@@ -65,4 +65,12 @@ public class ChattingRoomController {
         template.convertAndSend("/sub/accounts/" + account.getAccountId(), resultResponse);
     }
 
+    // 채팅방 삭제
+    @DeleteMapping("/{chattingRoomId}")
+    public ResponseEntity<ResultResponse> deleteChattingRoom(@PathVariable Long chattingRoomId) {
+        Account account = securityUtil.getLoginAccountEntity();
+        ResultResponse resultResponse = chattingRoomService.deleteChattingRoom(account, chattingRoomId);
+        return ResponseEntity.ok(resultResponse);
+    }
+
 }
