@@ -34,14 +34,16 @@ public class ChattingMessageController {
     // 채팅방 메시지 보내기
     @MessageMapping("/chatting/rooms/{chattingRoomId}") // MessageMapping은 RequestMapping의 영향을 받지 않는 듯함
     public void sendChattingMessage(@DestinationVariable Long chattingRoomId, ChattingMessageContentCreateRequest chattingMessageContentCreateRequest, StompHeaderAccessor headerAccessor) {
-        log.info("pub Controller까지 왔다???\n");
-        log.info("chattingRoomId: " + chattingRoomId);
-        log.info("content: " + chattingMessageContentCreateRequest.getContent());
+        log.info("=======================");
+        log.info("CHATTING-MESSAGE-CONTROLLER: [sendChattingMessage] START");
+        log.info("CHATTING-MESSAGE-CONTROLLER: [sendChattingMessage] chattingRoomId>> " + chattingRoomId);
+        log.info("CHATTING-MESSAGE-CONTROLLER: [sendChattingMessage] content>> " + chattingMessageContentCreateRequest.getContent());
         String accountUsername = headerAccessor.getUser().getName();
         ResultResponse resultResponse = chattingMessageService.createChattingMessage(chattingMessageContentCreateRequest, chattingRoomId, accountUsername);
-        log.info("resultResponse: " + resultResponse);
+        log.info("CHATTING-MESSAGE-CONTROLLER: [sendChattingMessage] resultResponse>> " + resultResponse);
         template.convertAndSend("/sub/channel/" + chattingRoomId, resultResponse);
-        log.info("template 보냈다???");
+        log.info("CHATTING-MESSAGE-CONTROLLER: [sendChattingMessage] END");
+        log.info("=======================");
     }
 
     // 채팅방 파일 보내기
