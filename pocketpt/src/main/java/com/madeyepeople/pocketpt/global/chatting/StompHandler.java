@@ -4,6 +4,7 @@ import com.madeyepeople.pocketpt.domain.account.social.JwtUtil;
 import com.madeyepeople.pocketpt.domain.chattingRoom.service.ChattingRoomService;
 import com.madeyepeople.pocketpt.global.error.ErrorCode;
 import com.madeyepeople.pocketpt.global.error.ErrorResponse;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,8 +55,8 @@ public class StompHandler implements ChannelInterceptor {
 
                 try {
                     jwtUtil.validateToken(accessToken);
-                } catch (Exception e) {
-                    log.error("WS-STOMP: [CONNECT] json error");
+                } catch (JwtException e) {
+                    log.error("WS-STOMP: [CONNECT] JwtException>> {}", e.getMessage());
                     StompHeaderAccessor headerAccessor = StompHeaderAccessor.create(StompCommand.ERROR);
                     ErrorResponse errorResponse = ErrorResponse.of(ErrorCode.JWT_VALIDATION_ERROR);
                     String errorMessage;
@@ -67,6 +68,8 @@ public class StompHandler implements ChannelInterceptor {
                     }
                     headerAccessor.setMessage(errorMessage);
                     channel.send(MessageBuilder.createMessage(new byte[0], headerAccessor.getMessageHeaders()));
+                } catch (Exception e) {
+                    log.error("WS-STOMP: [CONNECT] Exception>> {}", e.getMessage());
                 }
 
                 Authentication authentication = jwtUtil.getAuthentication(accessToken);
