@@ -66,7 +66,6 @@ public class AccountService {
                         .collect(Collectors.toList())
         );
 
-
         // 트레이너일 경우, 월별 PT 단가가 필수로 입력되어야 함.
         if (account.getAccountRole() == Role.TRAINER) {
             if (commonRegistrationRequest.getMonthlyPtPriceList() == null) {
@@ -103,6 +102,7 @@ public class AccountService {
                 .build();
     }
 
+    @Transactional
     public MonthlyPtPriceGetResponse getPtPrice(String trainerCode) {
         Optional<Account> trainer = accountRepository.findByIdentificationCodeAndIsDeletedFalse(trainerCode);
 

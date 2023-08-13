@@ -16,6 +16,7 @@ public enum CustomExceptionMessage {
     ACCOUNT_ALREADY_REGISTERED("이미 회원가입된 사용자입니다."),
 
     // pt matching
+    TRAINER_ACCOUNT_ID_NOT_FOUND("해당 trainerAccountId를 가진 trainer는 없습니다."),
     TRAINER_IDENTIFICATION_CODE_NOT_FOUND("해당 code를 가진 trainer는 없습니다."),
     IDENTIFICATION_CODE_DUPLICATTED("매우 희박한 확률로 unique 해야할 identification code가 겹쳤습니다. 큰일입니다!!"),
     IDENTIFICATION_CODE_IS_NOT_TRAINER("해당 identification code를 가진 사용자는 trainer가 아닙니다."),

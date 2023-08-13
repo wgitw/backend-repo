@@ -8,6 +8,7 @@ import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.chattingRoom.service.ChattingRoomService;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.PtMatchingSummary;
+import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PaymentAmountGetRequest;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PtRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.response.PtRegistrationAcceptResponse;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.response.PtRegistrationResponse;
@@ -59,21 +60,14 @@ public class PtMatchingService {
 
     @Transactional
     public PtRegistrationResponse registerPt(PtRegistrationRequest ptRegistrationRequest) throws ConstraintViolationException, BusinessException {
-        // TODO:  중복 등록 불가하게 수정 (trainerId, traineeId, status = pending unique하게 변경)
-        Optional<Account> trainer = accountRepository.findByIdentificationCodeAndIsDeletedFalse(ptRegistrationRequest.getTrainerCode());
-
-        // 해당 Identification Code 가진 account가 있는지, 있다면 Role = trainer인지 확인
-        if (trainer.isEmpty()) {
-            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.TRAINER_IDENTIFICATION_CODE_NOT_FOUND.getMessage());
-        } else if (!trainer.get().getAccountRole().getValue().equals("trainer")) {
-            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.IDENTIFICATION_CODE_IS_NOT_TRAINER.getMessage());
-        }
+        Account trainer = accountRepository.findByAccountIdAndIsDeletedFalse(ptRegistrationRequest.getTrainerAccountId()).
+                orElseThrow(() -> new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.TRAINER_ACCOUNT_ID_NOT_FOUND.getMessage()));
 
         Account trainee = securityUtil.getLoginAccountEntity();
-        List<MonthlyPtPriceDto> monthlyPtPriceDtoList = toMonthlyPtPriceDtoList.of(trainer.get().getMonthlyPtPriceList());
-        Integer paymentAmount = paymentAmountCalculator.calculate(ptRegistrationRequest.getSubscriptionPeriod(), monthlyPtPriceDtoList);
 
-        PtMatching saved = ptMatchingRepository.save(toPtMatchingEntity.fromAccountEntities(trainer.get(), trainee, ptRegistrationRequest.getSubscriptionPeriod(), paymentAmount));
+        PtMatching saved = ptMatchingRepository.save(
+                toPtMatchingEntity.fromAccountEntities(trainer, trainee, ptRegistrationRequest.getSubscriptionPeriod(), ptRegistrationRequest.getPaymentAmount())
+        );
 
         // TODO: ResultResponse 사용하도록 변경, Account 로직들도 마찬가지
         return toPtRegistrationResponse.fromPtMatchingEntity(saved);
@@ -146,5 +140,9 @@ public class PtMatchingService {
                 .build();
 
         return ResultResponse.of(ResultCode.PT_MATCHING_ACCEPT_SUCCESS, ptRegistrationAcceptResponse);
+    }
+
+    public Integer getExpectedPaymentAmount(PaymentAmountGetRequest paymentAmountGetRequest) {
+        return paymentAmountCalculator.calculate(paymentAmountGetRequest.getSubscriptionPeriod(), paymentAmountGetRequest.getMonthlyPtPriceList());
     }
 }
