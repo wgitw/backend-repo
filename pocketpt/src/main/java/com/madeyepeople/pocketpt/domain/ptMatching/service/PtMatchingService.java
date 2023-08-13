@@ -10,6 +10,7 @@ import com.madeyepeople.pocketpt.domain.chattingRoom.service.ChattingRoomService
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.PtMatchingSummary;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PtRegistrationRequest;
+import com.madeyepeople.pocketpt.domain.ptMatching.dto.response.PtRegistrationAcceptResponse;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.response.PtRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
 import com.madeyepeople.pocketpt.domain.ptMatching.mapper.ToPtMatchingEntity;
@@ -106,8 +107,8 @@ public class PtMatchingService {
     @Transactional
     public ResultResponse acceptPtMatching(Long ptMatchingId) {
         // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
-        Account account = securityUtil.getLoginAccountEntity();
-        if (!account.getAccountRole().equals(Role.TRAINER)) {
+        Account trainer = securityUtil.getLoginAccountEntity();
+        if (!trainer.getAccountRole().equals(Role.TRAINER)) {
             throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.AUTHENTICATED_USER_IS_NOT_TRAINER.getMessage());
         }
 
@@ -116,7 +117,7 @@ public class PtMatchingService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_NOT_FOUND.getMessage()));
 
         // pt matching의 trainerId가 로그인한 계정의 accountId와 일치하는지 확인
-        if (!ptMatching.getTrainer().getAccountId().equals(account.getAccountId())) {
+        if (!ptMatching.getTrainer().getAccountId().equals(trainer.getAccountId())) {
             throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_TRAINER_ID_IS_NOT_MATCHED.getMessage());
         }
 
@@ -125,13 +126,20 @@ public class PtMatchingService {
             throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_STATUS_IS_NOT_PENDING.getMessage());
         }
 
-        PtMatching saved = ptMatchingRepository.save(ptMatching.updateStatus(PtStatus.ACTIVE));
+        PtMatching savedPtMatching = ptMatchingRepository.save(ptMatching.updateStatus(PtStatus.ACTIVE));
+        Account savedTrainer = accountRepository.save(trainer.updateTotalSales(trainer.getTotalSales() + savedPtMatching.getPaymentAmount()));
+        log.error(savedTrainer.toString());
 
         // 채팅방 생성 및 생성 응답 전송
         ResultResponse resultResponse = chattingRoomService.createChattingRoomFromPtMatching(ptMatching.getTrainer(), ptMatching.getTrainee());
         template.convertAndSend("/sub/accounts/" + ptMatching.getTrainer().getAccountId(), resultResponse);
         template.convertAndSend("/sub/accounts/" + ptMatching.getTrainee().getAccountId(), resultResponse);
 
-        return ResultResponse.of(ResultCode.PT_MATCHING_ACCEPT_SUCCESS, toPtMatchingSummary.fromPtMatchingEntity(saved, account.getAccountId()));
+        PtRegistrationAcceptResponse ptRegistrationAcceptResponse = PtRegistrationAcceptResponse.builder()
+                .ptMatchingSummary(toPtMatchingSummary.fromPtMatchingEntity(savedPtMatching, trainer.getAccountId()))
+                .totalSales(savedTrainer.getTotalSales())
+                .build();
+
+        return ResultResponse.of(ResultCode.PT_MATCHING_ACCEPT_SUCCESS, ptRegistrationAcceptResponse);
     }
 }

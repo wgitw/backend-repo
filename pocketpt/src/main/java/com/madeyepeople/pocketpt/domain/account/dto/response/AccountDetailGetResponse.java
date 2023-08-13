@@ -22,5 +22,7 @@ public class AccountDetailGetResponse {
     private String gender;
     private Date birthdate;
     private String introduce;
+    private String identificationCode;
+    private Integer totalSales;
     private List<MonthlyPtPriceDto> monthlyPtPriceList;
 }

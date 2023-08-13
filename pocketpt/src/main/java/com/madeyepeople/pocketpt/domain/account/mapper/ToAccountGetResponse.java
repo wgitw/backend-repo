@@ -23,6 +23,8 @@ public class ToAccountGetResponse {
                 .gender(account.getGender())
                 .birthdate(account.getBirthdate())
                 .introduce(account.getIntroduce())
+                .identificationCode(account.getIdentificationCode())
+                .totalSales(account.getTotalSales())
                 .monthlyPtPriceList(
                         account.getMonthlyPtPriceList().stream()
                                 .map(monthlyPtPrice -> MonthlyPtPriceDto.builder()

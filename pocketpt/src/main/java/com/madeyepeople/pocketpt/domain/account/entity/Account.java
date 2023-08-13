@@ -10,6 +10,8 @@ import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.List;
 import java.util.Date;
@@ -18,7 +20,7 @@ import java.util.Date;
 
 @Entity
 @Getter
-@ToString
+@ToString(exclude = {"chattingParticipantList", "chattingMessageBookmarkList", "ptMatchingListOfTrainer", "ptMatchingListOfTrainee", "monthlyPtPriceList"})
 @NoArgsConstructor
 @AllArgsConstructor
 // TODO: @SQLDelete 로 삭제시 is_deleted = true 로 변경되게 하기
@@ -81,6 +83,7 @@ public class Account extends BaseEntity {
     private String recommenderCode;
     private String careerCertificateUrl;
     private String introduce;
+    @ColumnDefault("0")
     private Integer totalSales;
     private Float serviceFeeRate;
     private Float discountRate;
@@ -128,6 +131,11 @@ public class Account extends BaseEntity {
         this.accountRole = accountRole;
         this.identificationCode = identificationCode;
 //        this.monthlyPtPriceList = monthlyPtPriceList;
+        return this;
+    }
+
+    public Account updateTotalSales(Integer totalSales) {
+        this.totalSales = totalSales;
         return this;
     }
 }
