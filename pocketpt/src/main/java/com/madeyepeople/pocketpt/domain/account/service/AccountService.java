@@ -6,9 +6,11 @@ import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRe
 import com.madeyepeople.pocketpt.domain.account.dto.response.AccountDetailGetResponse;
 import com.madeyepeople.pocketpt.domain.account.dto.response.AccountRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.account.dto.response.CheckAccountSignupResponse;
+import com.madeyepeople.pocketpt.domain.account.dto.response.MonthlyPtPriceGetResponse;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.entity.MonthlyPtPrice;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToAccountGetResponse;
+import com.madeyepeople.pocketpt.domain.account.mapper.ToMonthlyPtPriceDtoList;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.MonthlyPtPriceRepository;
@@ -23,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +38,7 @@ public class AccountService {
 
     private final ToRegistrationResponse toRegistrationResponse;
     private final ToAccountGetResponse toAccountGetResponse;
+    private final ToMonthlyPtPriceDtoList toMonthlyPtPriceDtoList;
 
     private final SecurityUtil securityUtil;
     private final UniqueCodeGenerator uniqueCodeGenerator;
@@ -96,6 +100,24 @@ public class AccountService {
         Account account = securityUtil.getLoginAccountEntity();
         return CheckAccountSignupResponse.builder()
                 .isAccountSignedUp(account.getAccountRole() != null)
+                .build();
+    }
+
+    public MonthlyPtPriceGetResponse getPtPrice(String trainerCode) {
+        Optional<Account> trainer = accountRepository.findByIdentificationCodeAndIsDeletedFalse(trainerCode);
+
+        // 해당 Identification Code 가진 account가 있는지, 있다면 Role = trainer인지 확인
+        if (trainer.isEmpty()) {
+            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.TRAINER_IDENTIFICATION_CODE_NOT_FOUND.getMessage());
+        } else if (!trainer.get().getAccountRole().getValue().equals("trainer")) {
+            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.IDENTIFICATION_CODE_IS_NOT_TRAINER.getMessage());
+        }
+
+        List<MonthlyPtPriceDto> monthlyPtPriceDtoList = toMonthlyPtPriceDtoList.of(trainer.get().getMonthlyPtPriceList());
+
+        return MonthlyPtPriceGetResponse.builder()
+                .trainerAccountId(trainer.get().getAccountId())
+                .monthlyPtPriceList(monthlyPtPriceDtoList)
                 .build();
     }
 }

@@ -106,7 +106,7 @@ public class PtMatchingService {
 
     @Transactional
     public ResultResponse acceptPtMatching(Long ptMatchingId) {
-        log.error("acceptPtMatching");
+
         // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
         Account trainer = securityUtil.getLoginAccountEntity();
         if (!trainer.getAccountRole().equals(Role.TRAINER)) {
@@ -135,8 +135,6 @@ public class PtMatchingService {
         PtMatching savedPtMatching = ptMatchingRepository.save(ptMatching.updateStatusAndExpiredDate(PtStatus.ACTIVE, updatedExpiredDate));
         Account savedTrainer = accountRepository.save(trainer.updateTotalSales(updatedTotalSales));
 
-        log.error(savedPtMatching.toString());
-        log.error(savedTrainer.toString());
         // 채팅방 생성 및 생성 응답 전송
         ResultResponse resultResponse = chattingRoomService.createChattingRoomFromPtMatching(ptMatching.getTrainer(), ptMatching.getTrainee());
         template.convertAndSend("/sub/accounts/" + ptMatching.getTrainer().getAccountId(), resultResponse);
