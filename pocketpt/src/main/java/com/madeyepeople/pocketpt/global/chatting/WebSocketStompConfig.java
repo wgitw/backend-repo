@@ -24,7 +24,7 @@ public class WebSocketStompConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // stomp 접속 주소 url => /ws-stomp
         registry
-//                .setErrorHandler(stompExceptionHandler)
+                .setErrorHandler(stompExceptionHandler)
                 .addEndpoint("/ws-stomp") // 연결될 엔드포인트
 //                .setAllowedOrigins("*")
                 .setAllowedOriginPatterns("*");
