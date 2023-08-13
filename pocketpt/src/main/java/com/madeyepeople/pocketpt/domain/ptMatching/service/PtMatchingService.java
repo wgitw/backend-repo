@@ -5,7 +5,6 @@ import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToMonthlyPtPriceDtoList;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
-import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
 import com.madeyepeople.pocketpt.domain.chattingRoom.service.ChattingRoomService;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.PtMatchingSummary;
@@ -32,6 +31,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,7 +73,6 @@ public class PtMatchingService {
         List<MonthlyPtPriceDto> monthlyPtPriceDtoList = toMonthlyPtPriceDtoList.of(trainer.get().getMonthlyPtPriceList());
         Integer paymentAmount = paymentAmountCalculator.calculate(ptRegistrationRequest.getSubscriptionPeriod(), monthlyPtPriceDtoList);
 
-        // TODO: subscriptionPeriod로 expiredDate도 계산해야 함
         PtMatching saved = ptMatchingRepository.save(toPtMatchingEntity.fromAccountEntities(trainer.get(), trainee, ptRegistrationRequest.getSubscriptionPeriod(), paymentAmount));
 
         // TODO: ResultResponse 사용하도록 변경, Account 로직들도 마찬가지
@@ -106,6 +106,7 @@ public class PtMatchingService {
 
     @Transactional
     public ResultResponse acceptPtMatching(Long ptMatchingId) {
+        log.error("acceptPtMatching");
         // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
         Account trainer = securityUtil.getLoginAccountEntity();
         if (!trainer.getAccountRole().equals(Role.TRAINER)) {
@@ -126,10 +127,16 @@ public class PtMatchingService {
             throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_STATUS_IS_NOT_PENDING.getMessage());
         }
 
-        PtMatching savedPtMatching = ptMatchingRepository.save(ptMatching.updateStatus(PtStatus.ACTIVE));
-        Account savedTrainer = accountRepository.save(trainer.updateTotalSales(trainer.getTotalSales() + savedPtMatching.getPaymentAmount()));
-        log.error(savedTrainer.toString());
+        Integer updatedTotalSales = trainer.getTotalSales() + ptMatching.getPaymentAmount();
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, ptMatching.getSubscriptionPeriod());
+        Date updatedExpiredDate = calendar.getTime();
 
+        PtMatching savedPtMatching = ptMatchingRepository.save(ptMatching.updateStatusAndExpiredDate(PtStatus.ACTIVE, updatedExpiredDate));
+        Account savedTrainer = accountRepository.save(trainer.updateTotalSales(updatedTotalSales));
+
+        log.error(savedPtMatching.toString());
+        log.error(savedTrainer.toString());
         // 채팅방 생성 및 생성 응답 전송
         ResultResponse resultResponse = chattingRoomService.createChattingRoomFromPtMatching(ptMatching.getTrainer(), ptMatching.getTrainee());
         template.convertAndSend("/sub/accounts/" + ptMatching.getTrainer().getAccountId(), resultResponse);

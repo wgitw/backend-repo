@@ -60,8 +60,9 @@ public class PtMatching extends BaseEntity {
         this.paymentAmount = paymentAmount;
     }
 
-    public PtMatching updateStatus(PtStatus status) {
+    public PtMatching updateStatusAndExpiredDate(PtStatus status, Date expiredDate) {
         this.status = status;
+        this.expiredDate = expiredDate;
         return this;
     }
 

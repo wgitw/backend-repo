@@ -30,22 +30,23 @@ INSERT INTO account (account_id, oauth2_id, provider, identification_code, email
 INSERT INTO account (account_id, oauth2_id, provider, identification_code, email, account_role, name, phone_number, nickname, profile_picture_url, introduce, is_deleted) VALUES (27, 1098765, 'kakao', 'Sfo67890', 'trainee13@example.com', 'trainee', '트레이니13', '01313131313', '트레이니13닉네임', 'https://pocket-pt.s3.ap-northeast-2.amazonaws.com/account/profile-picture/default_profile.jpg', '트레이니13 소개', false);
 
 -- PtMatching
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (1, 1, 13, 'pending', 6, now());
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (2, 1, 15, 'pending', 6, now());
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (3, 1, 14, 'active', 6, now());
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (4, 1, 18, 'pending', 13, now());
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (5, 1, 19, 'pending', 16, now());
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (6, 1, 20, 'active', 11, now());
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (7, 1, 21, 'active', 11, now());
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (8, 1, 22, 'active', 11, now());
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (9, 1, 23, 'active', 11, now());
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (10, 1, 24, 'active', 11, now());
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (11, 1, 25, 'active', 11, now());
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (12, 1, 16, 'active', 11, now());
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (13, 2, 16, 'pending', 11, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (1, 1, 13, 'pending', 6, date_add(now(), interval 6 month), 250000, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (2, 1, 15, 'pending', 4, date_add(now(), interval 4 month), 130000, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (3, 1, 14, 'active', 5, date_add(now(), interval 5 month), 210000, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (4, 1, 18, 'pending', 13, date_add(now(), interval 13 month), 480000, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (5, 1, 19, 'pending', 16, date_add(now(), interval 16 month), 570000, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (6, 1, 20, 'active', 1, date_add(now(), interval 1 month), 50000, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (7, 1, 21, 'active', 2, date_add(now(), interval 2 month), 90000, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (8, 1, 22, 'active', 5, date_add(now(), interval 5 month), 200000, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (9, 1, 23, 'active', 7, date_add(now(), interval 7 month), 270000, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (10, 1, 24, 'active', 12, date_add(now(), interval 12 month), 520000, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (11, 1, 25, 'active', 6, date_add(now(), interval 6 month), 250000, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (12, 1, 16, 'active', 7, date_add(now(), interval 7 month), 270000, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (13, 2, 16, 'pending', 8, date_add(now(), interval 8 month), 320000, now());
 
-INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, created_at) VALUES (14, 2, 14, 'active', 6, now());
+INSERT INTO pt_matching (pt_matching_id, trainer_account_id, trainee_account_id, status, subscription_period, expired_date, payment_amount, created_at) VALUES (14, 2, 14, 'active', 6, date_add(now(), interval 6 month), 480000, now());
 
+UPDATE account set total_sales = (select sum(payment_amount) from pt_matching where trainer_account_id = 1 and status = 'active') where account_id = 1;
 
 -- MonthlyPtPrice
 INSERT INTO monthly_pt_price (monthly_pt_price_id, account_id, period, price, created_at) VALUES (1, 1, 1, 30000, now());
