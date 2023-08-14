@@ -9,10 +9,7 @@ import com.madeyepeople.pocketpt.domain.account.dto.response.*;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.entity.Career;
 import com.madeyepeople.pocketpt.domain.account.entity.MonthlyPtPrice;
-import com.madeyepeople.pocketpt.domain.account.mapper.ToAccountGetResponse;
-import com.madeyepeople.pocketpt.domain.account.mapper.ToCareerEntity;
-import com.madeyepeople.pocketpt.domain.account.mapper.ToMonthlyPtPriceDtoList;
-import com.madeyepeople.pocketpt.domain.account.mapper.ToRegistrationResponse;
+import com.madeyepeople.pocketpt.domain.account.mapper.*;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.CareerRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.MonthlyPtPriceRepository;
@@ -49,6 +46,7 @@ public class AccountService {
     private final ToMonthlyPtPriceDtoList toMonthlyPtPriceDtoList;
     private final ToPtMatchingSummary toPtMatchingSummary;
     private final ToCareerEntity toCareerEntity;
+    private final ToTrainerCareerCreateAndGetResponse toTrainerCareerCreateAndGetResponse;
 
     private final SecurityUtil securityUtil;
     private final UniqueCodeGenerator uniqueCodeGenerator;
@@ -161,24 +159,21 @@ public class AccountService {
                 .build();
     }
 
-    public TrainerCareerCreateResponse createTrainerCareer(TrainerCareerCreateRequest trainerCareerCreateRequest) {
+    public TrainerCareerCreateAndGetResponse createTrainerCareer(TrainerCareerCreateRequest trainerCareerCreateRequest) {
         Account trainer = securityUtil.getLoginAccountEntity();
 
         List<Career> savedCareerList = trainerCareerCreateRequest.getCareerList().stream()
                 .map(career -> careerRepository.save(toCareerEntity.of(trainer, career)))
                 .toList();
 
-        return TrainerCareerCreateResponse.builder()
-                .trainerAccountId(savedCareerList.get(0).getTrainer().getAccountId())
-                .careerList(savedCareerList.stream()
-                        .map(career -> CareerDto.builder()
-                                .careerId(career.getCareerId())
-                                .type(career.getType().getValue())
-                                .title(career.getTitle())
-                                .date(career.getDate())
-                                .build())
-                        .toList()
-                )
-                .build();
+        return toTrainerCareerCreateAndGetResponse.of(savedCareerList);
+    }
+
+    public TrainerCareerCreateAndGetResponse getTrainerCareer() {
+        Account trainer = securityUtil.getLoginAccountEntity();
+
+        List<Career> careerList = careerRepository.findAllByTrainerAccountIdAndIsDeletedFalseOrderByType(trainer.getAccountId());
+
+        return toTrainerCareerCreateAndGetResponse.of(careerList);
     }
 }

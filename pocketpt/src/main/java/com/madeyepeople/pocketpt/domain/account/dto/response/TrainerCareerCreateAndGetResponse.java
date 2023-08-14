@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class TrainerCareerCreateResponse {
+public class TrainerCareerCreateAndGetResponse {
     private Long trainerAccountId;
     private List<CareerDto> careerList;
 }

@@ -17,6 +17,7 @@ public enum ResultCode {
     ACCOUNT_TOTAL_SALES_GET_SUCCESS("A005", "트레이너의 총 매출 조회 성공"),
     ACCOUNT_MONTHLY_SALES_GET_SUCCESS("A006", "트레이너의 월별 매출 조회 성공"),
     ACCOUNT_TRAINER_CAREER_CREATE_SUCCESS("A007", "트레이너의 이력 생성 성공"),
+    ACCOUNT_TRAINER_CAREER_GET_SUCCESS("A008", "트레이너의 이력 조회 성공"),
 
     // ptMatching
     PT_REGISTRATION_CREATE_SUCCESS("PM001", "PT 요청 성공"),

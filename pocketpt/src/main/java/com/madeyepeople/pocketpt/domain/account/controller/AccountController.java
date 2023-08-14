@@ -66,8 +66,14 @@ public class AccountController {
      */
     @PostMapping("/trainer/career")
     public ResponseEntity<ResultResponse> createTrainerCareer(@RequestBody TrainerCareerCreateRequest trainerCareerCreateRequest) {
-        TrainerCareerCreateResponse trainerCareerCreateResponse = accountService.createTrainerCareer(trainerCareerCreateRequest);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_CREATE_SUCCESS, trainerCareerCreateResponse));
+        TrainerCareerCreateAndGetResponse trainerCareerCreateAndGetResponse = accountService.createTrainerCareer(trainerCareerCreateRequest);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_CREATE_SUCCESS, trainerCareerCreateAndGetResponse));
+    }
+
+    @GetMapping("/trainer/career")
+    public ResponseEntity<ResultResponse> getTrainerCareer() {
+        TrainerCareerCreateAndGetResponse trainerCareerGetResponse = accountService.getTrainerCareer();
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_GET_SUCCESS, trainerCareerGetResponse));
     }
 
     @GetMapping("/trainer/sales/total")
