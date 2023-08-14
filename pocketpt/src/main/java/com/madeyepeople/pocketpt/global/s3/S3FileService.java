@@ -56,7 +56,7 @@ public class S3FileService {
                 amazonS3Client.putObject(request);
             } catch (IOException e) {
                 log.error("S3 BUCKET: [UPLOAD] IOException>> {}", e.getMessage());
-                throw new BusinessException(ErrorCode.CHATTING_FILE_ERROR, CustomExceptionMessage.CHATTING_FILE_UPLOAD_FAILED.getMessage());
+                throw new BusinessException(ErrorCode.CHATTING_FILE_ERROR, e.getMessage());
             }
 
             // [4] 업로드한 파일의 URL 반환
@@ -66,7 +66,7 @@ public class S3FileService {
 
         } catch (Exception e) {
             log.error("S3 BUCKET: [UPLOAD] Exception>> {}", e.getMessage());
-            throw new BusinessException(ErrorCode.CHATTING_FILE_ERROR, CustomExceptionMessage.CHATTING_FILE_UPLOAD_FAILED.getMessage());
+            throw new BusinessException(ErrorCode.CHATTING_FILE_ERROR, e.getMessage());
         }
     }
 
