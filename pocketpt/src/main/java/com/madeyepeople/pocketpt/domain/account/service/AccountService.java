@@ -1,15 +1,20 @@
 package com.madeyepeople.pocketpt.domain.account.service;
 
 import com.madeyepeople.pocketpt.domain.account.constant.Role;
+import com.madeyepeople.pocketpt.domain.account.dto.CareerDto;
 import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
+import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerCareerCreateRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.response.*;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
+import com.madeyepeople.pocketpt.domain.account.entity.Career;
 import com.madeyepeople.pocketpt.domain.account.entity.MonthlyPtPrice;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToAccountGetResponse;
+import com.madeyepeople.pocketpt.domain.account.mapper.ToCareerEntity;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToMonthlyPtPriceDtoList;
 import com.madeyepeople.pocketpt.domain.account.mapper.ToRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
+import com.madeyepeople.pocketpt.domain.account.repository.CareerRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.MonthlyPtPriceRepository;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
@@ -26,10 +31,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,11 +42,13 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final PtMatchingRepository ptMatchingRepository;
     private final MonthlyPtPriceRepository monthlyPtPriceRepository;
+    private final CareerRepository careerRepository;
 
     private final ToRegistrationResponse toRegistrationResponse;
     private final ToAccountGetResponse toAccountGetResponse;
     private final ToMonthlyPtPriceDtoList toMonthlyPtPriceDtoList;
     private final ToPtMatchingSummary toPtMatchingSummary;
+    private final ToCareerEntity toCareerEntity;
 
     private final SecurityUtil securityUtil;
     private final UniqueCodeGenerator uniqueCodeGenerator;
@@ -153,6 +158,27 @@ public class AccountService {
                 .ptMatchingSummaryList(ptMatchingList.stream()
                         .map(ptMatching -> toPtMatchingSummary.fromPtMatchingEntity(ptMatching, trainer.getAccountId()))
                         .toList())
+                .build();
+    }
+
+    public TrainerCareerCreateResponse createTrainerCareer(TrainerCareerCreateRequest trainerCareerCreateRequest) {
+        Account trainer = securityUtil.getLoginAccountEntity();
+
+        List<Career> savedCareerList = trainerCareerCreateRequest.getCareerList().stream()
+                .map(career -> careerRepository.save(toCareerEntity.of(trainer, career)))
+                .toList();
+
+        return TrainerCareerCreateResponse.builder()
+                .trainerAccountId(savedCareerList.get(0).getTrainer().getAccountId())
+                .careerList(savedCareerList.stream()
+                        .map(career -> CareerDto.builder()
+                                .careerId(career.getCareerId())
+                                .type(career.getType().getValue())
+                                .title(career.getTitle())
+                                .date(career.getDate())
+                                .build())
+                        .toList()
+                )
                 .build();
     }
 }
