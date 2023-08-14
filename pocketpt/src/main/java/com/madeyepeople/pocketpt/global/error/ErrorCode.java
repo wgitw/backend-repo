@@ -36,7 +36,7 @@ public enum ErrorCode {
     CHATTING_MESSAGE_BOOKMARK_NOT_FOUND(HttpStatus.NOT_FOUND, "E010", "존재하지 않는 채팅 메시지 북마크"),
 
     // File
-    CHATTING_FILE_ERROR(HttpStatus.NOT_FOUND, "E010", "파일 관련 오류"),
+    CHATTING_FILE_ERROR(HttpStatus.BAD_REQUEST, "E010", "파일 관련 오류"),
     ;
 
     private final HttpStatus status;
