@@ -60,13 +60,13 @@ public class AccountController {
     // TODO: 회원정보 간단 조회
 //    @GetMapping("/summary")
 
-    @GetMapping("/sales/total")
+    @GetMapping("/trainer/sales/total")
     public ResponseEntity<ResultResponse> getTrainerTotalSales() {
         TrainerTotalSalesGetResponse trainerTotalSalesGetResponse = accountService.getTrainerTotalSales();
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TOTAL_SALES_GET_SUCCESS, trainerTotalSalesGetResponse));
     }
 
-    @GetMapping("/sales/monthly")
+    @GetMapping("/trainer/sales/monthly")
     public ResponseEntity<ResultResponse> getTrainerMonthlySales(@RequestParam Integer year,
                                                                  @RequestParam Integer month) {
         TrainerTotalSalesGetResponse trainerMonthlySalesGetResponse = accountService.getTrainerMonthlySales(year, month);
