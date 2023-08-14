@@ -1,6 +1,7 @@
 package com.madeyepeople.pocketpt.domain.account.entity;
 
 import com.madeyepeople.pocketpt.domain.account.constant.CareerType;
+import com.madeyepeople.pocketpt.domain.account.dto.CareerUpdateDto;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,5 +35,15 @@ public class Career extends BaseEntity {
         this.type = type;
         this.title = title;
         this.date = date;
+    }
+
+    public Career updateByCareerUpdateDto(CareerUpdateDto careerUpdateDto) {
+        if (careerUpdateDto.getTitle() != null) {
+            this.title = careerUpdateDto.getTitle();
+        }
+        if (careerUpdateDto.getDate() != null) {
+            this.date = careerUpdateDto.getDate();
+        }
+        return this;
     }
 }

@@ -2,6 +2,7 @@ package com.madeyepeople.pocketpt.domain.account.service;
 
 import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.account.dto.CareerDto;
+import com.madeyepeople.pocketpt.domain.account.dto.CareerUpdateDto;
 import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerCareerCreateRequest;
@@ -175,5 +176,27 @@ public class AccountService {
         List<Career> careerList = careerRepository.findAllByTrainerAccountIdAndIsDeletedFalseOrderByType(trainer.getAccountId());
 
         return toTrainerCareerCreateAndGetResponse.of(careerList);
+    }
+
+    public CareerDto updateTrainerCareer(Long careerId, CareerUpdateDto careerUpdateDto) {
+        Account trainer = securityUtil.getLoginAccountEntity();
+
+        // 해당 careerId가 존재하지 않을 때
+        Career career = careerRepository.findByCareerIdAndIsDeletedFalse(careerId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.CAREER_NOT_FOUND.getMessage()));
+
+        // 해당 career의 trainerId와 로그인한 trainer의 id가 다를 때
+        if (!career.getTrainer().getAccountId().equals(trainer.getAccountId())) {
+            throw new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.CAREER_ACCOUNT_ID_IS_NOT_MATCHED.getMessage());
+        }
+
+        Career savedCareer = careerRepository.save(career.updateByCareerUpdateDto(careerUpdateDto));
+
+        return CareerDto.builder()
+                .careerId(savedCareer.getCareerId())
+                .title(savedCareer.getTitle())
+                .type(savedCareer.getType().getValue())
+                .date(savedCareer.getDate())
+                .build();
     }
 }

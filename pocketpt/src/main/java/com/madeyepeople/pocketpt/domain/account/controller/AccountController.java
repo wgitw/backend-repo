@@ -1,5 +1,7 @@
 package com.madeyepeople.pocketpt.domain.account.controller;
 
+import com.madeyepeople.pocketpt.domain.account.dto.CareerDto;
+import com.madeyepeople.pocketpt.domain.account.dto.CareerUpdateDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerCareerCreateRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.response.*;
@@ -74,6 +76,13 @@ public class AccountController {
     public ResponseEntity<ResultResponse> getTrainerCareer() {
         TrainerCareerCreateAndGetResponse trainerCareerGetResponse = accountService.getTrainerCareer();
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_GET_SUCCESS, trainerCareerGetResponse));
+    }
+
+    @PatchMapping("/trainer/career/{careerId}")
+    public ResponseEntity<ResultResponse> updateTrainerCareer(@RequestBody CareerUpdateDto careerUpdateDto,
+                                                              @PathVariable Long careerId) {
+        CareerDto careerDto = accountService.updateTrainerCareer(careerId, careerUpdateDto);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_UPDATE_SUCCESS, careerDto));
     }
 
     @GetMapping("/trainer/sales/total")

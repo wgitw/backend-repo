@@ -16,6 +16,10 @@ public enum CustomExceptionMessage {
     ACCOUNT_ALREADY_REGISTERED("이미 회원가입된 사용자입니다."),
     ACCOUNT_NOT_FOUND("존재하지 않는 사용자입니다."),
 
+    // account
+    CAREER_NOT_FOUND("해당 careerId를 가진 career는 없습니다."),
+    CAREER_ACCOUNT_ID_IS_NOT_MATCHED("해당 career의 accountId가 로그인된 사용자의 accountId와 일치하지 않습니다."),
+
     // pt matching
     TRAINER_ACCOUNT_ID_NOT_FOUND("해당 trainerAccountId를 가진 trainer는 없습니다."),
     TRAINER_IDENTIFICATION_CODE_NOT_FOUND("해당 code를 가진 trainer는 없습니다."),
