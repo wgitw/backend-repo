@@ -85,6 +85,12 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_UPDATE_SUCCESS, careerDto));
     }
 
+    @DeleteMapping("/trainer/career/{careerId}")
+    public ResponseEntity<ResultResponse> deleteTrainerCareer(@PathVariable Long careerId) {
+        accountService.deleteTrainerCareer(careerId);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_DELETE_SUCCESS, "deleted careerId = " + careerId));
+    }
+
     @GetMapping("/trainer/sales/total")
     public ResponseEntity<ResultResponse> getTrainerTotalSales() {
         TrainerTotalSalesGetResponse trainerTotalSalesGetResponse = accountService.getTrainerTotalSales();
