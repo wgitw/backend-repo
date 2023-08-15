@@ -1,7 +1,9 @@
 package com.madeyepeople.pocketpt.domain.account.controller;
 
-import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
+import com.madeyepeople.pocketpt.domain.account.dto.CareerDto;
+import com.madeyepeople.pocketpt.domain.account.dto.CareerUpdateDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
+import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerCareerCreateRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.response.*;
 import com.madeyepeople.pocketpt.domain.account.service.AccountService;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
@@ -15,8 +17,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-
 
 @Validated
 @RestController
@@ -28,6 +28,9 @@ public class AccountController {
     private final SecurityUtil securityUtil;
     private final AccountService accountService;
 
+    /**
+     * 공통 API
+     */
     @GetMapping("/check/signup")
     public ResponseEntity<ResultResponse> checkSignup() {
         CheckAccountSignupResponse checkAccountSignupResponse = accountService.checkSignup();
@@ -60,13 +63,41 @@ public class AccountController {
     // TODO: 회원정보 간단 조회
 //    @GetMapping("/summary")
 
-    @GetMapping("/sales/total")
+    /**
+     * 트레이너용 API
+     */
+    @PostMapping("/trainer/career")
+    public ResponseEntity<ResultResponse> createTrainerCareer(@RequestBody TrainerCareerCreateRequest trainerCareerCreateRequest) {
+        TrainerCareerCreateAndGetResponse trainerCareerCreateAndGetResponse = accountService.createTrainerCareer(trainerCareerCreateRequest);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_CREATE_SUCCESS, trainerCareerCreateAndGetResponse));
+    }
+
+    @GetMapping("/trainer/career")
+    public ResponseEntity<ResultResponse> getTrainerCareer() {
+        TrainerCareerCreateAndGetResponse trainerCareerGetResponse = accountService.getTrainerCareer();
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_GET_SUCCESS, trainerCareerGetResponse));
+    }
+
+    @PatchMapping("/trainer/career/{careerId}")
+    public ResponseEntity<ResultResponse> updateTrainerCareer(@RequestBody CareerUpdateDto careerUpdateDto,
+                                                              @PathVariable Long careerId) {
+        CareerDto careerDto = accountService.updateTrainerCareer(careerId, careerUpdateDto);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_UPDATE_SUCCESS, careerDto));
+    }
+
+    @DeleteMapping("/trainer/career/{careerId}")
+    public ResponseEntity<ResultResponse> deleteTrainerCareer(@PathVariable Long careerId) {
+        accountService.deleteTrainerCareer(careerId);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_DELETE_SUCCESS, "deleted careerId = " + careerId));
+    }
+
+    @GetMapping("/trainer/sales/total")
     public ResponseEntity<ResultResponse> getTrainerTotalSales() {
         TrainerTotalSalesGetResponse trainerTotalSalesGetResponse = accountService.getTrainerTotalSales();
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TOTAL_SALES_GET_SUCCESS, trainerTotalSalesGetResponse));
     }
 
-    @GetMapping("/sales/monthly")
+    @GetMapping("/trainer/sales/monthly")
     public ResponseEntity<ResultResponse> getTrainerMonthlySales(@RequestParam Integer year,
                                                                  @RequestParam Integer month) {
         TrainerTotalSalesGetResponse trainerMonthlySalesGetResponse = accountService.getTrainerMonthlySales(year, month);

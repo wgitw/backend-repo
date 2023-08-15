@@ -48,13 +48,13 @@ public class CustomAuthorizationFilter extends GenericFilterBean {
 
     // Request Header 에서 토큰 정보 추출
     private String resolveToken(HttpServletRequest request) {
-        Enumeration<String> headerNames = request.getHeaderNames();
-        log.info("Header List");
-        while (headerNames.hasMoreElements()) {
-            String headerName = headerNames.nextElement();
-            String headerValue = request.getHeader(headerName);
-            log.info(headerName + " : " + headerValue);
-        }
+//        Enumeration<String> headerNames = request.getHeaderNames();
+//        log.info("Header List");
+//        while (headerNames.hasMoreElements()) {
+//            String headerName = headerNames.nextElement();
+//            String headerValue = request.getHeader(headerName);
+//            log.info(headerName + " : " + headerValue);
+//        }
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
             try {

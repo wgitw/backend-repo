@@ -2,6 +2,11 @@ profiles:
   default: local
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
   datasource:
     #    include:
     #      #      - docker

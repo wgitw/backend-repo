@@ -3,6 +3,9 @@ package com.madeyepeople.pocketpt.global.s3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
+import com.madeyepeople.pocketpt.global.error.ErrorCode;
+import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
+import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +37,8 @@ public class S3FileService {
     }
 
     public String uploadFile(String classification, MultipartFile multipartFile) {
+        log.info("=======================");
+        log.info("S3 BUCKET: [UPLOAD] START");
         try {
             // [1] 파일의 사이즈를 알려줌
             ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -43,26 +48,31 @@ public class S3FileService {
             // [2] 버킷 이름과 파일 경로 지정
             String fileUUID = UUID.randomUUID().toString(); // 파일 이름 생성
             String filePath = classification + fileUUID + "/" + multipartFile.getOriginalFilename();
+            log.info("S3 BUCKET: [UPLOAD] filePath>> {}", filePath);
 
             // [3] S3에 파일 업로드
             try (InputStream inputStream = multipartFile.getInputStream()) {
                 PutObjectRequest request = new PutObjectRequest(bucketName, filePath, inputStream, objectMetadata).withCannedAcl(CannedAccessControlList.PublicRead);
                 amazonS3Client.putObject(request);
             } catch (IOException e) {
-                log.error("S3 파일 업로드에 실패했습니다. {}", e.getMessage());
-                throw new IllegalStateException("S3 파일 업로드에 실패했습니다.");
+                log.error("S3 BUCKET: [UPLOAD] IOException>> {}", e.getMessage());
+                throw new BusinessException(ErrorCode.CHATTING_FILE_ERROR, e.getMessage());
             }
 
             // [4] 업로드한 파일의 URL 반환
+            log.info("S3 BUCKET: [UPLOAD] END");
+            log.info("=======================\n\n");
             return amazonS3Client.getUrl(bucketName, filePath).toString();
 
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            log.error("S3 BUCKET: [UPLOAD] Exception>> {}", e.getMessage());
+            throw new BusinessException(ErrorCode.CHATTING_FILE_ERROR, e.getMessage());
         }
     }
 
     public ResponseEntity<byte[]> downloadFile(String fileUrl) throws IOException {
+        log.info("=======================");
+        log.info("S3 BUCKET: [DOWNLOAD] START");
         S3Object s3Object = amazonS3Client.getObject(new GetObjectRequest(bucketName, fileUrl));
         S3ObjectInputStream s3ObjectInputStream = s3Object.getObjectContent();
         byte[] bytes = IOUtils.toByteArray(s3ObjectInputStream);
@@ -73,8 +83,11 @@ public class S3FileService {
         String[] arr = fileUrl.split("/");
         String type = arr[arr.length - 1];
         String fileName = URLEncoder.encode(type, "UTF-8").replaceAll("\\+", "%20");
+        log.info("S3 BUCKET: [DOWNLOAD] fileName>> {}", fileName);
         httpHeaders.setContentDispositionFormData("attachment", fileName);
 
+        log.info("S3 BUCKET: [DOWNLOAD] END");
+        log.info("=======================\n\n");
         return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
     }
 

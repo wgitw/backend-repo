@@ -1,15 +1,18 @@
 package com.madeyepeople.pocketpt.domain.account.service;
 
 import com.madeyepeople.pocketpt.domain.account.constant.Role;
+import com.madeyepeople.pocketpt.domain.account.dto.CareerDto;
+import com.madeyepeople.pocketpt.domain.account.dto.CareerUpdateDto;
 import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
+import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerCareerCreateRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.response.*;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
+import com.madeyepeople.pocketpt.domain.account.entity.Career;
 import com.madeyepeople.pocketpt.domain.account.entity.MonthlyPtPrice;
-import com.madeyepeople.pocketpt.domain.account.mapper.ToAccountGetResponse;
-import com.madeyepeople.pocketpt.domain.account.mapper.ToMonthlyPtPriceDtoList;
-import com.madeyepeople.pocketpt.domain.account.mapper.ToRegistrationResponse;
+import com.madeyepeople.pocketpt.domain.account.mapper.*;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
+import com.madeyepeople.pocketpt.domain.account.repository.CareerRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.MonthlyPtPriceRepository;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
@@ -26,10 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,11 +40,14 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final PtMatchingRepository ptMatchingRepository;
     private final MonthlyPtPriceRepository monthlyPtPriceRepository;
+    private final CareerRepository careerRepository;
 
     private final ToRegistrationResponse toRegistrationResponse;
     private final ToAccountGetResponse toAccountGetResponse;
     private final ToMonthlyPtPriceDtoList toMonthlyPtPriceDtoList;
     private final ToPtMatchingSummary toPtMatchingSummary;
+    private final ToCareerEntity toCareerEntity;
+    private final ToTrainerCareerCreateAndGetResponse toTrainerCareerCreateAndGetResponse;
 
     private final SecurityUtil securityUtil;
     private final UniqueCodeGenerator uniqueCodeGenerator;
@@ -154,5 +158,60 @@ public class AccountService {
                         .map(ptMatching -> toPtMatchingSummary.fromPtMatchingEntity(ptMatching, trainer.getAccountId()))
                         .toList())
                 .build();
+    }
+
+    public TrainerCareerCreateAndGetResponse createTrainerCareer(TrainerCareerCreateRequest trainerCareerCreateRequest) {
+        Account trainer = securityUtil.getLoginAccountEntity();
+
+        List<Career> savedCareerList = trainerCareerCreateRequest.getCareerList().stream()
+                .map(career -> careerRepository.save(toCareerEntity.of(trainer, career)))
+                .toList();
+
+        return toTrainerCareerCreateAndGetResponse.of(savedCareerList);
+    }
+
+    public TrainerCareerCreateAndGetResponse getTrainerCareer() {
+        Account trainer = securityUtil.getLoginAccountEntity();
+
+        List<Career> careerList = careerRepository.findAllByTrainerAccountIdAndIsDeletedFalseOrderByType(trainer.getAccountId());
+
+        return toTrainerCareerCreateAndGetResponse.of(careerList);
+    }
+
+    public CareerDto updateTrainerCareer(Long careerId, CareerUpdateDto careerUpdateDto) {
+        Account trainer = securityUtil.getLoginAccountEntity();
+
+        // 해당 careerId가 존재하지 않을 때
+        Career career = careerRepository.findByCareerIdAndIsDeletedFalse(careerId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.CAREER_NOT_FOUND.getMessage()));
+
+        // 해당 career의 trainerId와 로그인한 trainer의 id가 다를 때
+        if (!career.getTrainer().getAccountId().equals(trainer.getAccountId())) {
+            throw new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.CAREER_ACCOUNT_ID_IS_NOT_MATCHED.getMessage());
+        }
+
+        Career savedCareer = careerRepository.save(career.updateByCareerUpdateDto(careerUpdateDto));
+
+        return CareerDto.builder()
+                .careerId(savedCareer.getCareerId())
+                .title(savedCareer.getTitle())
+                .type(savedCareer.getType().getValue())
+                .date(savedCareer.getDate())
+                .build();
+    }
+
+    public void deleteTrainerCareer(Long careerId) {
+        Account trainer = securityUtil.getLoginAccountEntity();
+
+        // 해당 careerId가 존재하지 않을 때
+        Career career = careerRepository.findByCareerIdAndIsDeletedFalse(careerId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.CAREER_NOT_FOUND.getMessage()));
+
+        // 해당 career의 trainerId와 로그인한 trainer의 id가 다를 때
+        if (!career.getTrainer().getAccountId().equals(trainer.getAccountId())) {
+            throw new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.CAREER_ACCOUNT_ID_IS_NOT_MATCHED.getMessage());
+        }
+
+        careerRepository.delete(career);
     }
 }

@@ -16,6 +16,10 @@ public enum ResultCode {
     ACCOUNT_PT_PRICE_GET_SUCCESS("A004", "트레이너의 월간 PT 가격 조회 성공"),
     ACCOUNT_TOTAL_SALES_GET_SUCCESS("A005", "트레이너의 총 매출 조회 성공"),
     ACCOUNT_MONTHLY_SALES_GET_SUCCESS("A006", "트레이너의 월별 매출 조회 성공"),
+    ACCOUNT_TRAINER_CAREER_CREATE_SUCCESS("A007", "트레이너의 이력 생성 성공"),
+    ACCOUNT_TRAINER_CAREER_GET_SUCCESS("A008", "트레이너의 이력 조회 성공"),
+    ACCOUNT_TRAINER_CAREER_UPDATE_SUCCESS("A009", "트레이너의 이력 수정 성공"),
+    ACCOUNT_TRAINER_CAREER_DELETE_SUCCESS("A010", "트레이너의 이력 삭제 성공"),
 
     // ptMatching
     PT_REGISTRATION_CREATE_SUCCESS("PM001", "PT 요청 성공"),
@@ -31,6 +35,9 @@ public enum ResultCode {
     CHATTING_ROOM_LIST_GET_SUCCESS("CR002", "채팅방 리스트 가져오기 성공"),
     CHATTING_ROOM_LIST_UPDATE_INFO_FOR_MESSAGE_GET_SUCCESS("CR003", "채팅방 리스트 -새로운 메시지- 변경사항 전송 성공"),
     CHATTING_ROOM_LIST_UPDATE_INFO_FOR_ROOM_GET_SUCCESS("CR004", "채팅방 리스트 -새로운 채팅방 생성- 변경사항 전송 성공"),
+    CHATTING_ROOM_ENTER_SUCCESS("CR005", "채팅방 입장 성공"),
+    CHATTING_ROOM_EXIT_SUCCESS("CR006", "채팅방 퇴장 성공"),
+    CHATTING_ROOM_DELETE_SUCCESS("CR007", "채팅방 삭제 성공"),
 
     // chatting message
     CHATTING_MESSAGE_CREATE_SUCCESS("CM001", "채팅 메시지 생성 성공"),

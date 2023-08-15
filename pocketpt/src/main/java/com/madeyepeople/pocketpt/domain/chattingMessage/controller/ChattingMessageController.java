@@ -3,6 +3,7 @@ package com.madeyepeople.pocketpt.domain.chattingMessage.controller;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingFileCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingMessageContentCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingMessage.service.ChattingMessageService;
+import com.madeyepeople.pocketpt.global.result.ResultCode;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
 import com.madeyepeople.pocketpt.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,8 @@ public class ChattingMessageController {
     @MessageMapping("/chatting/rooms/{chattingRoomId}/enter") // MessageMapping은 RequestMapping의 영향을 받지 않는 듯함
     public void sendChattingMessageEnter(@DestinationVariable Long chattingRoomId, StompHeaderAccessor headerAccessor) {
         String accountUsername = headerAccessor.getUser().getName();
-        template.convertAndSend("/sub/channel/" + chattingRoomId, accountUsername+ " enter");
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_ENTER_SUCCESS, accountUsername+ " enter");
+        template.convertAndSend("/sub/channel/" + chattingRoomId, resultResponse);
     }
 
     // 채팅방 메시지 보내기
