@@ -1,4 +1,4 @@
-name: hoho
+name: opensearchTest
 
 on: [workflow_dispatch]
 
