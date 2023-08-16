@@ -41,9 +41,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
                                 "/",
-                                "/api/v1/main",
-                                "/api/v1/test-logout",
-                                "/api/v1/cookie-test",
+                                "/api/v1/account/main",
+                                "/api/v1/account/test-logout",
+                                "/api/v1/account/cookie-test",
                                 "/ws-stomp"
                         ).permitAll()
                         .anyRequest().authenticated()
