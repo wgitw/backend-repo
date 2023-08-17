@@ -53,6 +53,7 @@ public class ChattingMessageController {
     public ResponseEntity<ResultResponse> createChattingFile(@PathVariable Long chattingRoomId, @ModelAttribute ChattingFileCreateRequest chattingRoomCreateRequest) {
         Long accountId = securityUtil.getLoginAccountId();
         ResultResponse resultResponse = chattingMessageService.createChattingFile(chattingRoomCreateRequest, chattingRoomId, accountId);
+        template.convertAndSend("/sub/channel/" + chattingRoomId, resultResponse);
         return ResponseEntity.ok(resultResponse);
     }
 
