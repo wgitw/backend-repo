@@ -36,7 +36,7 @@ public class ChattingMessage extends BaseEntity {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "file_url")
+    @Column(name = "file_url", columnDefinition = "TEXT")
     private String fileUrl;
 
     @Column(name = "is_edited", nullable = false)
