@@ -39,8 +39,9 @@ public class ChattingRoomController {
     }
 
     // 채팅방 리스트 가져오기 - 회원 ID 기준
-    @GetMapping("/accounts/{accountId}")
-    public ResponseEntity<ResultResponse> getChattingRoomListByUser(@PathVariable Long accountId) {
+    @GetMapping("/accounts")
+    public ResponseEntity<ResultResponse> getChattingRoomListByUser() {
+        Long accountId = securityUtil.getLoginAccountId();
         ResultResponse resultResponse = chattingRoomService.getChattingRoomListByUser(accountId);
         return ResponseEntity.ok(resultResponse);
     }
