@@ -65,11 +65,11 @@ INSERT INTO monthly_pt_price (monthly_pt_price_id, account_id, period, price, cr
 -- Chatting
 INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (1, 2, false, 0, 1, now());
 INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 1, true, false, 0, now());
-INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (14, 1, false, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (13, 1, false, false, 0, now());
 
 INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (2, 2, false, 0, 1, now());
 INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 2, true, false, 0, now());
-INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (13, 2, false, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (14, 2, false, false, 0, now());
 
 INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (3, 2, false, 0, 1, now());
 INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 3, true, false, 0, now());
