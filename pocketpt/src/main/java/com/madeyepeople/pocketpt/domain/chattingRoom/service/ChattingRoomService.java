@@ -43,7 +43,7 @@ public class ChattingRoomService {
     private final ChattingRoomRepository chattingRoomRepository;
     private final ChattingParticipantRepository chattingParticipantRepository;
     private final ChattingMessageRepository chattingMessageRepository;
-    private final ToChattingRoomEntity toChattingRoomMapper;
+    private final ToChattingRoomEntity toChattingRoomEntity;
     private final ToChattingRoomResponse toChattingRoomResponse;
     private final ToChattingParticipantEntity toChattingParticipantEntity;
     private final ToChattingParticipantResponse toChattingParticipantResponse;
@@ -58,7 +58,7 @@ public class ChattingRoomService {
         log.info("CHATTING-ROOM-SERVICE: [createChattingRoom] START");
 
         // [1] ChattingRoom 내용 저장 - 이미 hostParticipantId는 검증된 상태에서 오기 때문에 이 단계에서 검증은 불필요
-        ChattingRoom chattingRoom = toChattingRoomMapper.toChattingRoomCreateEntity(hostAccountId);
+        ChattingRoom chattingRoom = toChattingRoomEntity.toChattingRoomCreateEntity(hostAccountId);
         ChattingRoom savedChattingRoom = chattingRoomRepository.save(chattingRoom);
 
         // [2] ChattingParticipant List 저장 맟 정보 담기
@@ -107,7 +107,7 @@ public class ChattingRoomService {
         log.info("CHATTING-ROOM-SERVICE: [createChattingRoomFromPtMatching] START");
 
         // [1] ChattingRoom 내용 저장 - 이미 hostParticipantId는 검증된 상태에서 오기 때문에 이 단계에서 검증은 불필요
-        ChattingRoom chattingRoom = toChattingRoomMapper.toChattingRoomCreateEntity(traineeAccount.getAccountId());
+        ChattingRoom chattingRoom = toChattingRoomEntity.toChattingRoomCreateEntity(traineeAccount.getAccountId());
         ChattingRoom savedChattingRoom = chattingRoomRepository.save(chattingRoom);
 
         // [2] ChattingParticipant List 저장 맟 정보 담기
