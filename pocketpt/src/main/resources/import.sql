@@ -64,28 +64,82 @@ INSERT INTO monthly_pt_price (monthly_pt_price_id, account_id, period, price, cr
 
 -- Chatting
 INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (1, 2, false, 0, 1, now());
-
-INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 1, false, false, 0, now());
-INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (14, 1, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 1, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (14, 1, false, false, 0, now());
 
 INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (2, 2, false, 0, 1, now());
-
-INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 2, false, false, 0, now());
-INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (13, 2, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 2, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (13, 2, false, false, 0, now());
 
 INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (3, 2, false, 0, 1, now());
-
-INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 3, false, false, 0, now());
-INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (15, 3, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 3, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (15, 3, false, false, 0, now());
 
 INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (4, 2, false, 0, 1, now());
-
-INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 4, false, false, 0, now());
-INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (16, 4, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 4, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (16, 4, false, false, 0, now());
 
 INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (5, 2, false, 0, 1, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 5, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (17, 5, false, false, 0, now());
 
-INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 5, false, false, 0, now());
-INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (17, 5, true, false, 0, now());
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (6, 2, false, 0, 1, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 6, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (18, 6, false, false, 0, now());
 
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (7, 2, false, 0, 1, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 7, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (19, 7, false, false, 0, now());
+
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (8, 2, false, 0, 1, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 8, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (20, 8, false, false, 0, now());
+
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (9, 2, false, 0, 1, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 9, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (21, 9, false, false, 0, now());
+
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (10, 2, false, 0, 1, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 10, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (22, 10, false, false, 0, now());
+
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (11, 2, false, 0, 1, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 11, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (23, 11, false, false, 0, now());
+
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (12, 2, false, 0, 1, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 12, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (24, 12, false, false, 0, now());
+
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (13, 2, false, 0, 1, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 13, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (25, 13, false, false, 0, now());
+
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (14, 2, false, 0, 1, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 14, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (26, 14, false, false, 0, now());
+
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (15, 2, false, 0, 1, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 15, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (27, 15, false, false, 0, now());
+
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (16, 2, false, 0, 1, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 16, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (2, 16, false, false, 0, now());
+
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (17, 2, false, 0, 1, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 17, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (3, 17, false, false, 0, now());
+
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (18, 2, false, 0, 1, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 18, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (4, 18, false, false, 0, now());
+
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (19, 2, false, 0, 1, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 19, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (5, 19, false, false, 0, now());
+
+INSERT INTO chatting_room(chatting_room_id, number_of_participant, is_deleted, status, host_id, created_at) VALUES (20, 2, false, 0, 1, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (1, 20, true, false, 0, now());
+INSERT INTO chatting_participant (account_id, chatting_room_id, is_host, is_deleted, not_view_count, created_at) VALUES (6, 20, false, false, 0, now());
 
