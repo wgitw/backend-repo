@@ -4,6 +4,7 @@ import com.madeyepeople.pocketpt.domain.account.dto.CareerDto;
 import com.madeyepeople.pocketpt.domain.account.dto.CareerUpdateDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerCareerCreateRequest;
+import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerIncomeGetRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.response.*;
 import com.madeyepeople.pocketpt.domain.account.service.AccountService;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
@@ -39,11 +40,11 @@ public class AccountController {
 
     @PostMapping("/{role}")
     public ResponseEntity<ResultResponse> signup(@RequestBody @Valid CommonRegistrationRequest commonRegistrationRequest,
-                                                        @PathVariable
-                                                        @Pattern(
-                                                                regexp = "^(trainer|trainee)$",
-                                                                message = "role은 'trainer' 또는 'trainee'만 허용합니다.")
-                                                        String role) {
+                                                 @PathVariable
+                                                 @Pattern(
+                                                         regexp = "^(trainer|trainee)$",
+                                                         message = "role은 'trainer' 또는 'trainee'만 허용합니다.")
+                                                 String role) {
         AccountRegistrationResponse accountRegistrationResponse = accountService.registerAccount(commonRegistrationRequest, role);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_CREATE_SUCCESS, accountRegistrationResponse));
     }
@@ -104,10 +105,23 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_MONTHLY_SALES_GET_SUCCESS, trainerMonthlySalesGetResponse));
     }
 
+    //  서비스 수수료 2가지 정책(정액 정책, 매출비례정책)에 따라 트레이너의 순수익을 조회하는 API
+    @GetMapping("/trainer/income/{plan}")
+    public ResponseEntity<ResultResponse> getTrainerTotalIncome(@RequestBody TrainerIncomeGetRequest trainerIncomeGetRequest,
+                                                                @PathVariable @Pattern(regexp = "^(fixed|relative)$",
+                                                                        message = "plan은 'fixed' 또는 'relative'만 허용합니다.")
+                                                                        String plan) {
+        TrainerIncomeGetResponse trainerIncomeGetResponse = accountService.getTrainerIncome(trainerIncomeGetRequest.getSales(), plan);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_INCOME_GET_SUCCESS, trainerIncomeGetResponse));
+    }
+
+    // @GetMapping("/trainer/income/monthly")
+
     /**
      * 테스트용 api
      */
     @GetMapping("/main")
+
     public String mainTest() {
         return "메인 페이지 입니다!";
     }

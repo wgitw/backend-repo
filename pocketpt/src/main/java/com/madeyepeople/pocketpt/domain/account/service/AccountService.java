@@ -14,6 +14,9 @@ import com.madeyepeople.pocketpt.domain.account.mapper.*;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.CareerRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.MonthlyPtPriceRepository;
+import com.madeyepeople.pocketpt.domain.admin.service.FixedPlatformFeePolicy;
+import com.madeyepeople.pocketpt.domain.admin.service.PlatformFeePolicy;
+import com.madeyepeople.pocketpt.domain.admin.service.RelativePlatformFeePolicy;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
 import com.madeyepeople.pocketpt.domain.ptMatching.mapper.ToPtMatchingSummary;
@@ -36,6 +39,9 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 public class AccountService {
+
+    private final FixedPlatformFeePolicy fixedPlatformFeePolicy;
+    private final RelativePlatformFeePolicy relativePlatformFeePolicy;
 
     private final AccountRepository accountRepository;
     private final PtMatchingRepository ptMatchingRepository;
@@ -213,5 +219,19 @@ public class AccountService {
         }
 
         careerRepository.delete(career);
+    }
+
+    public TrainerIncomeGetResponse getTrainerIncome(Integer sales, String plan) {
+        Integer income;
+
+        if (plan.equals("fixed")) {
+            income = fixedPlatformFeePolicy.calculateIncome(sales);
+        } else {
+            income = relativePlatformFeePolicy.calculateIncome(sales);
+        }
+
+        return TrainerIncomeGetResponse.builder()
+                .income(income)
+                .build();
     }
 }
