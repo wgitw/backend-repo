@@ -1,7 +1,7 @@
 ---
 name: Custom issue template
 about: SWM 프로젝트 협업용 issue template
-title: ''
+title: '[SM-xxx] title'
 labels: enhancement
 assignees: ''
 
