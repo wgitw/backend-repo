@@ -43,15 +43,15 @@ public class PtMatchingController {
         return ResponseEntity.ok(resultResponse);
     }
 
-    // 요청된 PT 수락 (trainer only)
-    @GetMapping("/accept/{ptMatchingId}")
+    // 요청된 PT 수락
+    @GetMapping("/trainer/accept/{ptMatchingId}")
     public ResponseEntity<ResultResponse> acceptPtMatching(@PathVariable Long ptMatchingId) {
         ResultResponse resultResponse = ptMatchingService.acceptPtMatching(ptMatchingId);
         return ResponseEntity.ok(resultResponse);
     }
 
-    // TODO: 요청된 PT 거절 (trainer only)
-//    @DeleteMapping
+    // 요청된 PT 거절
+//    @PatchMapping("/")
 
     // TODO: 기존 PT 매칭 연장 (trainer only)
 //    @PatchMapping

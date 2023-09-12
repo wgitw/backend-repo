@@ -13,6 +13,7 @@ public class PtMatchingSummary {
     private String status;
     private Integer subscriptionPeriod;
     private Integer paymentAmount;
+    private String startDate;
     private String expiredDate;
 
     // account info

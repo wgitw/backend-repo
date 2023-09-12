@@ -31,6 +31,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -72,9 +74,21 @@ public class PtMatchingService {
             throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_REQUEST_ALREADY_EXIST.getMessage());
         }
 
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date startDate;
+        try {
+            startDate = formatter.parse(ptRegistrationRequest.getStartDate());
+        } catch (ParseException e) {
+            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.INVALID_DATE_FORMAT.getMessage());
+        }
+
 
         PtMatching saved = ptMatchingRepository.save(
-                toPtMatchingEntity.fromAccountEntities(trainer, trainee, ptRegistrationRequest.getSubscriptionPeriod(), ptRegistrationRequest.getPaymentAmount())
+                toPtMatchingEntity.fromAccountEntities(trainer,
+                        trainee,
+                        ptRegistrationRequest.getSubscriptionPeriod(),
+                        ptRegistrationRequest.getPaymentAmount(),
+                        startDate)
         );
 
         // TODO: ResultResponse 사용하도록 변경, Account 로직들도 마찬가지
@@ -133,8 +147,9 @@ public class PtMatchingService {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, ptMatching.getSubscriptionPeriod());
         Date updatedExpiredDate = calendar.getTime();
+        Date startDate = Calendar.getInstance().getTime();
 
-        PtMatching savedPtMatching = ptMatchingRepository.save(ptMatching.updateStatusAndExpiredDate(PtStatus.ACTIVE, updatedExpiredDate));
+        PtMatching savedPtMatching = ptMatchingRepository.save(ptMatching.updateStatusAndStartDateAndExpiredDate(PtStatus.ACTIVE, startDate, updatedExpiredDate));
         Account savedTrainer = accountRepository.save(trainer.updateTotalSales(updatedTotalSales));
 
         // 채팅방 생성 및 생성 응답 전송
