@@ -75,6 +75,12 @@ public class PtMatching extends BaseEntity {
         return this;
     }
 
+    public PtMatching updateIsRejectedAndRejectReason(String rejectReason) {
+        this.isRejected = true;
+        this.rejectReason = rejectReason;
+        return this;
+    }
+
 //    public PtMatching updateSales(Integer)
     public Account getOpponentAccountByMyAccountId(Long myAccountId) {
         if (this.trainer.getAccountId().equals(myAccountId)) {
