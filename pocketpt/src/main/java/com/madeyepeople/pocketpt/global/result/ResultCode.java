@@ -39,6 +39,9 @@ public enum ResultCode {
     CHATTING_ROOM_ENTER_SUCCESS("CR005", "채팅방 입장 성공"),
     CHATTING_ROOM_EXIT_SUCCESS("CR006", "채팅방 퇴장 성공"),
     CHATTING_ROOM_DELETE_SUCCESS("CR007", "채팅방 삭제 성공"),
+    TOP_CHATTING_ROOM_CREATE_SUCCESS("CR008", "채팅방 상단고정 성공"),
+    TOP_CHATTING_ROOM_DELETE_SUCCESS("CR009", "채팅방 상단고정 해제 성공"),
+    TOP_CHATTING_ROOM_LIST_GET_SUCCESS("CR010", "채팅방 상단고정 리스트 가져오기 성공"),
 
     // chatting message
     CHATTING_MESSAGE_CREATE_SUCCESS("CM001", "채팅 메시지 생성 성공"),

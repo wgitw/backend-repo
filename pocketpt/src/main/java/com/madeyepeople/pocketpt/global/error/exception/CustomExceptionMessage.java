@@ -34,6 +34,8 @@ public enum CustomExceptionMessage {
 
     // chatting room
     CHATTING_ROOM_NOT_FOUND("해당 채팅방이 존재하지 않습니다."),
+    TOP_CHATTING_ROOM_NOT_FOUND("해당 상단고정 채팅방이 존재하지 않습니다."),
+    TOP_CHATTING_ROOM_COUNT_EXCEEDED("상단고정 채팅방 개수를 초과했습니다."),
 
     // chatting participant
     CHATTING_PARTICIPANT_NOT_FOUND("해당 채팅 참여자가 존재하지 않습니다."),

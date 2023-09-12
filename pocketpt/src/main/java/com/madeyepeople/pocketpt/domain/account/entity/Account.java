@@ -5,6 +5,7 @@ import com.madeyepeople.pocketpt.domain.chattingMessageBookmark.entity.ChattingM
 import com.madeyepeople.pocketpt.domain.account.constant.RoleEnumConverter;
 import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
+import com.madeyepeople.pocketpt.domain.chattingRoom.entity.TopChattingRoom;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.annotation.Nonnull;
@@ -37,6 +38,9 @@ public class Account extends BaseEntity {
 
     @OneToMany(mappedBy = "account")
     private List<ChattingMessageBookmark> chattingMessageBookmarkList;
+
+    @OneToMany(mappedBy = "account")
+    private List<TopChattingRoom> topChattingRoomList;
 
     @OneToMany(mappedBy = "trainer")
     private List<PtMatching> ptMatchingListOfTrainer;

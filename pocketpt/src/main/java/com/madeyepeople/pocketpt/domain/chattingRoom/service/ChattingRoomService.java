@@ -16,10 +16,15 @@ import com.madeyepeople.pocketpt.domain.chattingRoom.comparator.ChattingRoomList
 import com.madeyepeople.pocketpt.domain.chattingRoom.dto.request.ChattingRoomCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingRoom.dto.response.ChattingRoomGetResponse;
 import com.madeyepeople.pocketpt.domain.chattingRoom.dto.response.ChattingRoomResponse;
+import com.madeyepeople.pocketpt.domain.chattingRoom.dto.response.TopChattingRoomCreateResponse;
 import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
+import com.madeyepeople.pocketpt.domain.chattingRoom.entity.TopChattingRoom;
 import com.madeyepeople.pocketpt.domain.chattingRoom.mapper.ToChattingRoomEntity;
 import com.madeyepeople.pocketpt.domain.chattingRoom.mapper.ToChattingRoomResponse;
+import com.madeyepeople.pocketpt.domain.chattingRoom.mapper.ToTopChattingRoomEntity;
+import com.madeyepeople.pocketpt.domain.chattingRoom.mapper.ToTopChattingRoomResponse;
 import com.madeyepeople.pocketpt.domain.chattingRoom.repository.ChattingRoomRepository;
+import com.madeyepeople.pocketpt.domain.chattingRoom.repository.TopChattingRoomRepository;
 import com.madeyepeople.pocketpt.global.error.ErrorCode;
 import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
@@ -43,12 +48,15 @@ public class ChattingRoomService {
     private final ChattingRoomRepository chattingRoomRepository;
     private final ChattingParticipantRepository chattingParticipantRepository;
     private final ChattingMessageRepository chattingMessageRepository;
+    private final TopChattingRoomRepository topChattingRoomRepository;
     private final ToChattingRoomEntity toChattingRoomEntity;
     private final ToChattingRoomResponse toChattingRoomResponse;
     private final ToChattingParticipantEntity toChattingParticipantEntity;
     private final ToChattingParticipantResponse toChattingParticipantResponse;
     private final ToChattingMessageResponse toChattingMessageResponse;
     private final AccountRepository accountRepository;
+    private final ToTopChattingRoomEntity toTopChattingRoomEntity;
+    private final ToTopChattingRoomResponse toTopChattingRoomResponse;
 
     // 채팅방 생성
     @Transactional
@@ -215,10 +223,19 @@ public class ChattingRoomService {
         List<ChattingRoomGetResponse> chattingRoomResponseList = new ArrayList<>();
         for(ChattingParticipant chattingParticipant:chattingParticipantList) {
             ChattingRoom chattingRoom = chattingParticipant.getChattingRoom();
+
+            // [3-1] 상단고정 채팅방인지 확인
+            Optional<TopChattingRoom> foundTopChattingRoom = topChattingRoomRepository.findByChattingRoomAndAccountAndIsDeletedFalse(chattingRoom, account);
+
+            // [3-2] 상단고정 채팅방이면 건너뛰기
+            if(foundTopChattingRoom.isPresent()) {
+                continue;
+            }
+
             String roomName = "";
             int notViewCount = 0;
 
-            // [3-1] room 정보에 포함되어 있는 participant list 정보 담기 - 본인 제외
+            // [3-3] room 정보에 포함되어 있는 participant list 정보 담기 - 본인 제외
             List<ChattingParticipantResponse> chattingParticipantResponseList = new ArrayList<>();
             for(ChattingParticipant c: chattingRoom.getChattingParticipantList()) {
                 if(accountId.equals(c.getAccount().getAccountId())) {
@@ -230,7 +247,7 @@ public class ChattingRoomService {
                 }
             }
 
-            // [3-2] 최신 메시지 정보 가져오기
+            // [3-4] 최신 메시지 정보 가져오기
             Optional<ChattingMessage> chattingMessage = chattingMessageRepository.findLatestChattingMessageByRoom(chattingRoom.getChattingRoomId());
             ChattingRoomGetResponse chattingRoomGetResponse;
             if(chattingMessage.isPresent()) { // 채팅 내용이 존재하는 경우
@@ -243,10 +260,10 @@ public class ChattingRoomService {
             chattingRoomResponseList.add(chattingRoomGetResponse);
         }
 
-        // [5] 최신 메시지 created_at desc로 정렬, 최신 메시지가 없다면 방이 만들어진 시간으로 대체
+        // [4] 최신 메시지 created_at desc로 정렬, 최신 메시지가 없다면 방이 만들어진 시간으로 대체
         Collections.sort(chattingRoomResponseList, new ChattingRoomListComparator().reversed());
 
-        // [6] resultResponse 만들기
+        // [5] resultResponse 만들기
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_LIST_GET_SUCCESS, chattingRoomResponseList);
 
         log.info("CHATTING-ROOM-SERVICE: [getChattingRoomListByUser] END");
@@ -355,4 +372,131 @@ public class ChattingRoomService {
 
         return resultResponse;
     }
+
+    // 채팅방 상단고정 생성
+    @Transactional
+    public ResultResponse createTopChattingRoom(Account account, Long chattingRoomId) {
+        log.info("=======================");
+        log.info("CHATTING-ROOM-SERVICE: [createTopChattingRoom] START");
+
+        // [1] 채팅방 유효성 검사
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow(
+                () -> new BusinessException(ErrorCode.CHATTING_ROOM_NOT_FOUND, CustomExceptionMessage.CHATTING_ROOM_NOT_FOUND.getMessage())
+        );
+
+        // [2] account 유효성 검사
+        chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow(
+                () -> new BusinessException(ErrorCode.CHATTING_PARTICIPANT_NOT_FOUND, CustomExceptionMessage.CHATTING_PARTICIPANT_NOT_FOUND.getMessage())
+        );
+
+        // [3] 상단고정 채팅방 개수 체크 - 5개 이상이면 에러
+        Long topChattingRoomCount = topChattingRoomRepository.countByAccountAndIsDeletedFalse(account);
+        if(topChattingRoomCount >= 5) {
+            throw new BusinessException(ErrorCode.TOP_CHATTING_ROOM_COUNT_EXCEEDED, CustomExceptionMessage.TOP_CHATTING_ROOM_COUNT_EXCEEDED.getMessage());
+        }
+
+        // [4] 채팅방 상단고정 생성
+        TopChattingRoom topChattingRoom = topChattingRoomRepository.save(toTopChattingRoomEntity.toTopChattingRoomCreateEntity(foundChattingRoom, account));
+
+        // [5] response 만들기
+        TopChattingRoomCreateResponse topChattingRoomCreateResponse = toTopChattingRoomResponse.toTopChattingRoomCreateResponse(topChattingRoom);
+
+        // [6] resultResponse 만들기
+        ResultResponse resultResponse = new ResultResponse(ResultCode.TOP_CHATTING_ROOM_CREATE_SUCCESS, topChattingRoomCreateResponse);
+
+        log.info("CHATTING-ROOM-SERVICE: [createTopChattingRoom] END");
+        log.info("=======================");
+
+        return resultResponse;
+    }
+
+    // 채팅방 상단고정 리스트 조회
+    @Transactional
+    public ResultResponse getTopChattingRoomList(Account account) {
+        log.info("=======================");
+        log.info("CHATTING-ROOM-SERVICE: [getTopChattingRoomList] START");
+
+        // [1] account 유효성 검사
+        Account foundAccount = accountRepository.findByAccountIdAndIsDeletedFalse(account.getAccountId()).orElseThrow(
+                () -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, CustomExceptionMessage.ACCOUNT_NOT_FOUND.getMessage())
+        );
+
+        // [2] 채팅방 상단고정 리스트 가져오기
+        List<TopChattingRoom> topChattingRoomList = topChattingRoomRepository.findByAccountAndIsDeletedFalseOrderByCreatedAtDesc(foundAccount);
+
+        // [3] response 만들기
+        List<ChattingRoomGetResponse> topChattingRoomResponseList = new ArrayList<>();
+        for(TopChattingRoom t : topChattingRoomList) {
+            ChattingRoom chattingRoom = t.getChattingRoom();
+            Long accountId = foundAccount.getAccountId();
+            String roomName = "";
+            int notViewCount = 0;
+
+            // [3-3] room 정보에 포함되어 있는 participant list 정보 담기 - 본인 제외
+            List<ChattingParticipantResponse> chattingParticipantResponseList = new ArrayList<>();
+            for(ChattingParticipant c: chattingRoom.getChattingParticipantList()) {
+                if(accountId.equals(c.getAccount().getAccountId())) {
+                    notViewCount = c.getNotViewCount();
+                } else {
+                    ChattingParticipantResponse chattingParticipantResponse = toChattingParticipantResponse.toChattingParticipantCreateResponse(c);
+                    roomName += c.getAccount().getNickname();
+                    chattingParticipantResponseList.add(chattingParticipantResponse);
+                }
+            }
+
+            // [3-4] 최신 메시지 정보 가져오기
+            Optional<ChattingMessage> chattingMessage = chattingMessageRepository.findLatestChattingMessageByRoom(chattingRoom.getChattingRoomId());
+            ChattingRoomGetResponse chattingRoomGetResponse;
+            if(chattingMessage.isPresent()) { // 채팅 내용이 존재하는 경우
+                chattingRoomGetResponse = toChattingRoomResponse.toChattingRoomListGetResponse(chattingRoom, roomName, notViewCount, chattingParticipantResponseList, chattingMessage.get());
+            }
+            else { // 채팅방이 새롭게 개설되어 채팅 내용이 존재하지 않는 경우
+                ChattingMessage defaultChattingMessage = new ChattingMessage();
+                chattingRoomGetResponse = toChattingRoomResponse.toChattingRoomListGetResponse(chattingRoom, roomName, notViewCount, chattingParticipantResponseList, defaultChattingMessage);
+            }
+            topChattingRoomResponseList.add(chattingRoomGetResponse);
+        }
+
+        // [4] resultResponse 만들기
+        ResultResponse resultResponse = new ResultResponse(ResultCode.TOP_CHATTING_ROOM_LIST_GET_SUCCESS, topChattingRoomResponseList);
+
+        log.info("CHATTING-ROOM-SERVICE: [getTopChattingRoomList] END");
+        log.info("=======================");
+
+        return resultResponse;
+    }
+
+    // 채팅방 상단고정 삭제
+    @Transactional
+    public ResultResponse deleteTopChattingRoom(Account account, Long chattingRoomId) {
+        log.info("=======================");
+        log.info("CHATTING-ROOM-SERVICE: [deleteTopChattingRoom] START");
+
+        // [1] 채팅방 유효성 검사
+        ChattingRoom foundChattingRoom = chattingRoomRepository.findByChattingRoomIdAndIsDeletedFalse(chattingRoomId).orElseThrow(
+                () -> new BusinessException(ErrorCode.CHATTING_ROOM_NOT_FOUND, CustomExceptionMessage.CHATTING_ROOM_NOT_FOUND.getMessage())
+        );
+
+        // [2] account 유효성 검사
+        chattingParticipantRepository.findByAccountAndChattingRoomAndIsDeletedFalse(account, foundChattingRoom).orElseThrow(
+                () -> new BusinessException(ErrorCode.CHATTING_PARTICIPANT_NOT_FOUND, CustomExceptionMessage.CHATTING_PARTICIPANT_NOT_FOUND.getMessage())
+        );
+
+        // [3] 채팅방 상단고정 유효성 검사
+        TopChattingRoom foundTopChattingRoom = topChattingRoomRepository.findByChattingRoomAndAccountAndIsDeletedFalse(foundChattingRoom, account).orElseThrow(
+                () -> new BusinessException(ErrorCode.TOP_CHATTING_ROOM_NOT_FOUND, CustomExceptionMessage.TOP_CHATTING_ROOM_NOT_FOUND.getMessage())
+        );
+
+        // [4] 채팅방 상단고정 삭제
+        topChattingRoomRepository.delete(foundTopChattingRoom);
+
+        // [4] resultResponse 만들기
+        ResultResponse resultResponse = new ResultResponse(ResultCode.TOP_CHATTING_ROOM_DELETE_SUCCESS, "채팅방 상단고정 삭제 성공");
+
+        log.info("CHATTING-ROOM-SERVICE: [deleteTopChattingRoom] END");
+        log.info("=======================");
+
+        return resultResponse;
+    }
+
 }

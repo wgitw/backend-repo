@@ -26,6 +26,8 @@ public enum ErrorCode {
 
     // Chatting Room
     CHATTING_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "E007", "존재하지 않는 채팅방"),
+    TOP_CHATTING_ROOM_NOT_FOUND(HttpStatus.NOT_FOUND, "E008", "존재하지 않는 상단고정 채팅방"),
+    TOP_CHATTING_ROOM_COUNT_EXCEEDED(HttpStatus.NOT_ACCEPTABLE, "E009", "상단고정 채팅방 개수 초과"),
 
     // Chatting Participant
     CHATTING_PARTICIPANT_NOT_FOUND(HttpStatus.NOT_FOUND, "E008", "존재하지 않는 채팅 참여자"),
