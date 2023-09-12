@@ -74,4 +74,28 @@ public class ChattingRoomController {
         return ResponseEntity.ok(resultResponse);
     }
 
+    // 채팅방 상단고정 생성
+    @PostMapping("/{chattingRoomId}/top")
+    public ResponseEntity<ResultResponse> createTopChattingRoom(@PathVariable Long chattingRoomId) {
+        Account account = securityUtil.getLoginAccountEntity();
+        ResultResponse resultResponse = chattingRoomService.createTopChattingRoom(account, chattingRoomId);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    // 채팅방 상단고정 리스트 조회
+    @GetMapping("/top")
+    public ResponseEntity<ResultResponse> getTopChattingRoomList() {
+        Account account = securityUtil.getLoginAccountEntity();
+        ResultResponse resultResponse = chattingRoomService.getTopChattingRoomList(account);
+        return ResponseEntity.ok(resultResponse);
+    }
+
+    // 채팅방 상단고정 삭제
+    @DeleteMapping("/{chattingRoomId}/top")
+    public ResponseEntity<ResultResponse> deleteTopChattingRoom(@PathVariable Long chattingRoomId) {
+        Account account = securityUtil.getLoginAccountEntity();
+        ResultResponse resultResponse = chattingRoomService.deleteTopChattingRoom(account, chattingRoomId);
+        return ResponseEntity.ok(resultResponse);
+    }
+
 }
