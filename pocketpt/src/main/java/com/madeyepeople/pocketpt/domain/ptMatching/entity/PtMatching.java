@@ -69,9 +69,8 @@ public class PtMatching extends BaseEntity {
         this.startDate = startDate;
     }
 
-    public PtMatching updateStatusAndStartDateAndExpiredDate(PtStatus status, Date startDate, Date expiredDate) {
+    public PtMatching updateStatusAndExpiredDate(PtStatus status, Date expiredDate) {
         this.status = status;
-        this.startDate = startDate;
         this.expiredDate = expiredDate;
         return this;
     }

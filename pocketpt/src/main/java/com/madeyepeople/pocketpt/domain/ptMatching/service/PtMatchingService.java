@@ -82,7 +82,6 @@ public class PtMatchingService {
             throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.INVALID_DATE_FORMAT.getMessage());
         }
 
-
         PtMatching saved = ptMatchingRepository.save(
                 toPtMatchingEntity.fromAccountEntities(trainer,
                         trainee,
@@ -144,12 +143,13 @@ public class PtMatchingService {
         }
 
         Integer updatedTotalSales = trainer.getTotalSales() + ptMatching.getPaymentAmount();
+
         Calendar calendar = Calendar.getInstance();
+        calendar.setTime(ptMatching.getStartDate());
         calendar.add(Calendar.MONTH, ptMatching.getSubscriptionPeriod());
         Date updatedExpiredDate = calendar.getTime();
-        Date startDate = Calendar.getInstance().getTime();
 
-        PtMatching savedPtMatching = ptMatchingRepository.save(ptMatching.updateStatusAndStartDateAndExpiredDate(PtStatus.ACTIVE, startDate, updatedExpiredDate));
+        PtMatching savedPtMatching = ptMatchingRepository.save(ptMatching.updateStatusAndExpiredDate(PtStatus.ACTIVE, updatedExpiredDate));
         Account savedTrainer = accountRepository.save(trainer.updateTotalSales(updatedTotalSales));
 
         // 채팅방 생성 및 생성 응답 전송

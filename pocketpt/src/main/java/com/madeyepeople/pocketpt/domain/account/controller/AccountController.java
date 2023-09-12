@@ -73,6 +73,7 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_CREATE_SUCCESS, trainerCareerCreateAndGetResponse));
     }
 
+    // TODO: 이력이 없을때, 없다 표시
     @GetMapping("/trainer/career")
     public ResponseEntity<ResultResponse> getTrainerCareer() {
         TrainerCareerCreateAndGetResponse trainerCareerGetResponse = accountService.getTrainerCareer();
