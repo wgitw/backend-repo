@@ -3,8 +3,6 @@ package com.madeyepeople.pocketpt.domain.ptMatching.dto;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.Date;
-
 @Getter
 @Builder
 public class PtMatchingSummary {
@@ -13,7 +11,9 @@ public class PtMatchingSummary {
     private String status;
     private Integer subscriptionPeriod;
     private Integer paymentAmount;
+    private String startDate;
     private String expiredDate;
+    private String rejectReason;
 
     // account info
     private Long accountId;

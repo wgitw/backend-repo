@@ -16,7 +16,8 @@ public class ToPtMatchingSummary {
     public PtMatchingSummary fromPtMatchingEntity(PtMatching ptMatching, Long MyAccountId) {
         Account opponent = ptMatching.getOpponentAccountByMyAccountId(MyAccountId);
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        String expiredDate;
+        String startDate, expiredDate;
+        startDate = dateFormat.format(ptMatching.getStartDate());
         if (ptMatching.getStatus() == PtStatus.PENDING) {
             expiredDate = null;
         } else {
@@ -28,7 +29,9 @@ public class ToPtMatchingSummary {
                 .status(ptMatching.getStatus().getValue())
                 .subscriptionPeriod(ptMatching.getSubscriptionPeriod())
                 .paymentAmount(ptMatching.getPaymentAmount())
+                .startDate(startDate)
                 .expiredDate(expiredDate)
+                .rejectReason(ptMatching.getRejectReason())
                 .accountId(opponent.getAccountId())
                 .name(opponent.getName())
                 .phoneNumber(opponent.getPhoneNumber())

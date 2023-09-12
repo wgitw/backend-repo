@@ -9,6 +9,5 @@ import java.util.List;
 @Getter
 @Builder
 public class TrainerCareerCreateAndGetResponse {
-    private Long trainerAccountId;
     private List<CareerDto> careerList;
 }

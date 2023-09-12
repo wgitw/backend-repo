@@ -9,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 public enum PtStatus {
     PENDING("pending"),
     ACTIVE("active"),
-    EXPIRED("expired");
+    EXPIRED("expired"),
+    REJECTED("rejected");
 
     private final String value;
 

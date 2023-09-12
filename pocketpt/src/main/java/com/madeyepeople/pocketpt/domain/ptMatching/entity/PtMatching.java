@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.Date;
 
@@ -41,28 +42,38 @@ public class PtMatching extends BaseEntity {
 
     private Integer subscriptionPeriod;
 
+    private Date startDate;
+
     private Date expiredDate;
 
     private Integer paymentAmount;
 
-    private Boolean IsNewSubscription;
+    private Boolean isNewSubscription;
 
-    private String ContactType;
+    private String contactType;
 
     private String precaution;
 
+    private String rejectReason;
+
     @Builder
-    public PtMatching(Account trainer, Account trainee, Integer subscriptionPeriod, PtStatus status, Integer paymentAmount) {
+    public PtMatching(Account trainer, Account trainee, Integer subscriptionPeriod, PtStatus status, Integer paymentAmount, Date startDate) {
         this.trainer = trainer;
         this.trainee = trainee;
         this.subscriptionPeriod = subscriptionPeriod;
         this.status = status;
         this.paymentAmount = paymentAmount;
+        this.startDate = startDate;
     }
 
     public PtMatching updateStatusAndExpiredDate(PtStatus status, Date expiredDate) {
         this.status = status;
         this.expiredDate = expiredDate;
+        return this;
+    }
+
+    public PtMatching updateRejectReason(String rejectReason) {
+        this.rejectReason = rejectReason;
         return this;
     }
 

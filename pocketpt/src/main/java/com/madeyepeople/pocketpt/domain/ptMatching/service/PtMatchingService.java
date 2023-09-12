@@ -9,6 +9,7 @@ import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.PtMatchingSummary;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PaymentAmountGetRequest;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PtRegistrationRequest;
+import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PtRejectionRequest;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.response.PtRegistrationAcceptResponse;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.response.PtRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
@@ -31,6 +32,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -50,7 +53,6 @@ public class PtMatchingService {
     private final ToPtRegistrationResponse toPtRegistrationResponse;
     private final ToPtMatchingListResponse toPtMatchingListResponse;
     private final ToPtMatchingSummary toPtMatchingSummary;
-    private final ToMonthlyPtPriceDtoList toMonthlyPtPriceDtoList;
 
     private final SecurityUtil securityUtil;
     private final PaymentAmountCalculator paymentAmountCalculator;
@@ -72,9 +74,21 @@ public class PtMatchingService {
             throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_REQUEST_ALREADY_EXIST.getMessage());
         }
 
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date startDate;
+
+        try {
+            startDate = formatter.parse(ptRegistrationRequest.getStartDate());
+        } catch (ParseException e) {
+            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.INVALID_DATE_FORMAT.getMessage());
+        }
 
         PtMatching saved = ptMatchingRepository.save(
-                toPtMatchingEntity.fromAccountEntities(trainer, trainee, ptRegistrationRequest.getSubscriptionPeriod(), ptRegistrationRequest.getPaymentAmount())
+                toPtMatchingEntity.fromAccountEntities(trainer,
+                        trainee,
+                        ptRegistrationRequest.getSubscriptionPeriod(),
+                        ptRegistrationRequest.getPaymentAmount(),
+                        startDate)
         );
 
         // TODO: ResultResponse 사용하도록 변경, Account 로직들도 마찬가지
@@ -130,7 +144,9 @@ public class PtMatchingService {
         }
 
         Integer updatedTotalSales = trainer.getTotalSales() + ptMatching.getPaymentAmount();
+
         Calendar calendar = Calendar.getInstance();
+        calendar.setTime(ptMatching.getStartDate());
         calendar.add(Calendar.MONTH, ptMatching.getSubscriptionPeriod());
         Date updatedExpiredDate = calendar.getTime();
 
@@ -152,5 +168,34 @@ public class PtMatchingService {
 
     public Integer getExpectedPaymentAmount(PaymentAmountGetRequest paymentAmountGetRequest) {
         return paymentAmountCalculator.calculate(paymentAmountGetRequest.getSubscriptionPeriod(), paymentAmountGetRequest.getMonthlyPtPriceList());
+    }
+
+    public ResultResponse rejectPtMatching(Long ptMatchingId, PtRejectionRequest ptRejectionRequest) {
+
+        // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
+        Account trainer = securityUtil.getLoginAccountEntity();
+        if (!trainer.getAccountRole().equals(Role.TRAINER)) {
+            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.AUTHENTICATED_USER_IS_NOT_TRAINER.getMessage());
+        }
+
+        // 해당 ptMatchingId가 존재하는지 확인
+        PtMatching ptMatching = ptMatchingRepository.findByPtMatchingIdAndIsDeletedFalse(ptMatchingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_NOT_FOUND.getMessage()));
+
+        // pt matching의 trainerId가 로그인한 계정의 accountId와 일치하는지 확인
+        if (!ptMatching.getTrainer().getAccountId().equals(trainer.getAccountId())) {
+            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_TRAINER_ID_IS_NOT_MATCHED.getMessage());
+        }
+
+        // pt matching status가 pending인지 확인
+        if (!ptMatching.getStatus().equals(PtStatus.PENDING)) {
+            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_STATUS_IS_NOT_PENDING.getMessage());
+        }
+
+        PtMatching updatedPtMatching = ptMatching.updateStatusAndExpiredDate(PtStatus.REJECTED, new Date());
+        updatedPtMatching = updatedPtMatching.updateRejectReason(ptRejectionRequest.getRejectReason());
+        PtMatching savedPtMatching = ptMatchingRepository.save(updatedPtMatching);
+
+        return ResultResponse.of(ResultCode.PT_MATCHING_REJECT_SUCCESS, toPtMatchingSummary.fromPtMatchingEntity(savedPtMatching, trainer.getAccountId()));
     }
 }

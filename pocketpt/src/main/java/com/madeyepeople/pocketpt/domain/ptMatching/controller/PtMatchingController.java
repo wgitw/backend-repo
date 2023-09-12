@@ -2,6 +2,7 @@ package com.madeyepeople.pocketpt.domain.ptMatching.controller;
 
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PaymentAmountGetRequest;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PtRegistrationRequest;
+import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PtRejectionRequest;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.response.PtRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.ptMatching.service.PtMatchingService;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/api/v1/matching")
@@ -43,15 +45,20 @@ public class PtMatchingController {
         return ResponseEntity.ok(resultResponse);
     }
 
-    // 요청된 PT 수락 (trainer only)
-    @GetMapping("/accept/{ptMatchingId}")
+    // 요청된 PT 수락
+    @GetMapping("/trainer/accept/{ptMatchingId}")
     public ResponseEntity<ResultResponse> acceptPtMatching(@PathVariable Long ptMatchingId) {
         ResultResponse resultResponse = ptMatchingService.acceptPtMatching(ptMatchingId);
         return ResponseEntity.ok(resultResponse);
     }
 
-    // TODO: 요청된 PT 거절 (trainer only)
-//    @DeleteMapping
+    // 요청된 PT 거절
+    @PatchMapping("/trainer/reject/{ptMatchingId}")
+    public ResponseEntity<ResultResponse> rejectPtMatching(@PathVariable Long ptMatchingId,
+                                                           @RequestBody PtRejectionRequest ptRejectionRequest) {
+        ResultResponse resultResponse = ptMatchingService.rejectPtMatching(ptMatchingId, ptRejectionRequest);
+        return ResponseEntity.ok(resultResponse);
+    }
 
     // TODO: 기존 PT 매칭 연장 (trainer only)
 //    @PatchMapping
