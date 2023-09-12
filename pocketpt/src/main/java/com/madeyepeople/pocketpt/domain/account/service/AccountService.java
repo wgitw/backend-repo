@@ -167,7 +167,12 @@ public class AccountService {
     }
 
     public TrainerCareerCreateAndGetResponse createTrainerCareer(TrainerCareerCreateRequest trainerCareerCreateRequest) {
+
+        // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
         Account trainer = securityUtil.getLoginAccountEntity();
+        if (!trainer.getAccountRole().equals(Role.TRAINER)) {
+            throw new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.AUTHENTICATED_USER_IS_NOT_TRAINER.getMessage());
+        }
 
         List<Career> savedCareerList = trainerCareerCreateRequest.getCareerList().stream()
                 .map(career -> careerRepository.save(toCareerEntity.of(trainer, career)))
@@ -177,7 +182,12 @@ public class AccountService {
     }
 
     public TrainerCareerCreateAndGetResponse getTrainerCareer() {
+
+        // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
         Account trainer = securityUtil.getLoginAccountEntity();
+        if (!trainer.getAccountRole().equals(Role.TRAINER)) {
+            throw new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.AUTHENTICATED_USER_IS_NOT_TRAINER.getMessage());
+        }
 
         List<Career> careerList = careerRepository.findAllByTrainerAccountIdAndIsDeletedFalseOrderByType(trainer.getAccountId());
 
@@ -185,8 +195,11 @@ public class AccountService {
     }
 
     public CareerDto updateTrainerCareer(Long careerId, CareerUpdateDto careerUpdateDto) {
+        // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
         Account trainer = securityUtil.getLoginAccountEntity();
-
+        if (!trainer.getAccountRole().equals(Role.TRAINER)) {
+            throw new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.AUTHENTICATED_USER_IS_NOT_TRAINER.getMessage());
+        }
         // 해당 careerId가 존재하지 않을 때
         Career career = careerRepository.findByCareerIdAndIsDeletedFalse(careerId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.CAREER_NOT_FOUND.getMessage()));
@@ -207,7 +220,12 @@ public class AccountService {
     }
 
     public void deleteTrainerCareer(Long careerId) {
+
+        // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
         Account trainer = securityUtil.getLoginAccountEntity();
+        if (!trainer.getAccountRole().equals(Role.TRAINER)) {
+            throw new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.AUTHENTICATED_USER_IS_NOT_TRAINER.getMessage());
+        }
 
         // 해당 careerId가 존재하지 않을 때
         Career career = careerRepository.findByCareerIdAndIsDeletedFalse(careerId)
