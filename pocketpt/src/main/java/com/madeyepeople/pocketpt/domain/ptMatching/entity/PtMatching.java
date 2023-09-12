@@ -45,11 +45,15 @@ public class PtMatching extends BaseEntity {
 
     private Integer paymentAmount;
 
-    private Boolean IsNewSubscription;
+    private Boolean isNewSubscription;
 
-    private String ContactType;
+    private String contactType;
 
     private String precaution;
+
+    private Boolean isRejected;
+
+    private String rejectReason;
 
     @Builder
     public PtMatching(Account trainer, Account trainee, Integer subscriptionPeriod, PtStatus status, Integer paymentAmount) {
