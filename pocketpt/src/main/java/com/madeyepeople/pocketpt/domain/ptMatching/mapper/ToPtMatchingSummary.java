@@ -17,11 +17,10 @@ public class ToPtMatchingSummary {
         Account opponent = ptMatching.getOpponentAccountByMyAccountId(MyAccountId);
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         String startDate, expiredDate;
+        startDate = dateFormat.format(ptMatching.getStartDate());
         if (ptMatching.getStatus() == PtStatus.PENDING) {
-            startDate = null;
             expiredDate = null;
         } else {
-            startDate = dateFormat.format(ptMatching.getStartDate());
             expiredDate = dateFormat.format(ptMatching.getExpiredDate());
         }
 

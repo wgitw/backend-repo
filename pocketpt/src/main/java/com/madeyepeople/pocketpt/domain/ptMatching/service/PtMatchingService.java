@@ -53,7 +53,6 @@ public class PtMatchingService {
     private final ToPtRegistrationResponse toPtRegistrationResponse;
     private final ToPtMatchingListResponse toPtMatchingListResponse;
     private final ToPtMatchingSummary toPtMatchingSummary;
-    private final ToMonthlyPtPriceDtoList toMonthlyPtPriceDtoList;
 
     private final SecurityUtil securityUtil;
     private final PaymentAmountCalculator paymentAmountCalculator;
