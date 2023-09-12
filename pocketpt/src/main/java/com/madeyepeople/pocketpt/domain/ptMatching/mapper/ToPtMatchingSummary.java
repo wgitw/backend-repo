@@ -32,6 +32,7 @@ public class ToPtMatchingSummary {
                 .paymentAmount(ptMatching.getPaymentAmount())
                 .startDate(startDate)
                 .expiredDate(expiredDate)
+                .rejectReason(ptMatching.getRejectReason())
                 .accountId(opponent.getAccountId())
                 .name(opponent.getName())
                 .phoneNumber(opponent.getPhoneNumber())

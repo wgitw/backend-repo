@@ -77,6 +77,7 @@ public class PtMatchingService {
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date startDate;
+
         try {
             startDate = formatter.parse(ptRegistrationRequest.getStartDate());
         } catch (ParseException e) {
@@ -193,8 +194,9 @@ public class PtMatchingService {
         }
 
         PtMatching updatedPtMatching = ptMatching.updateStatusAndExpiredDate(PtStatus.REJECTED, new Date());
-        updatedPtMatching = updatedPtMatching.updateIsRejectedAndRejectReason(ptRejectionRequest.getRejectReason());
+        updatedPtMatching = updatedPtMatching.updateRejectReason(ptRejectionRequest.getRejectReason());
         PtMatching savedPtMatching = ptMatchingRepository.save(updatedPtMatching);
+
         return ResultResponse.of(ResultCode.PT_MATCHING_REJECT_SUCCESS, toPtMatchingSummary.fromPtMatchingEntity(savedPtMatching, trainer.getAccountId()));
     }
 }

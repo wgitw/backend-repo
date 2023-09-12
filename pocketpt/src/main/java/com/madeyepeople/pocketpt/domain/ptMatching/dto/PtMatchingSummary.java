@@ -13,6 +13,7 @@ public class PtMatchingSummary {
     private Integer paymentAmount;
     private String startDate;
     private String expiredDate;
+    private String rejectReason;
 
     // account info
     private Long accountId;

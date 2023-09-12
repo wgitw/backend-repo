@@ -54,9 +54,6 @@ public class PtMatching extends BaseEntity {
 
     private String precaution;
 
-    @ColumnDefault("false")
-    private Boolean isRejected;
-
     private String rejectReason;
 
     @Builder
@@ -75,8 +72,7 @@ public class PtMatching extends BaseEntity {
         return this;
     }
 
-    public PtMatching updateIsRejectedAndRejectReason(String rejectReason) {
-        this.isRejected = true;
+    public PtMatching updateRejectReason(String rejectReason) {
         this.rejectReason = rejectReason;
         return this;
     }
