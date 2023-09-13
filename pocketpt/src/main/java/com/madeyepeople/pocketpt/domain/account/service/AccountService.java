@@ -128,7 +128,7 @@ public class AccountService {
     }
 
     @Transactional(readOnly = true)
-    public MonthlyPtPriceGetResponse getAllTrainerPtPrice(String trainerCode) {
+    public MonthlyPtPriceGetResponse getTrainerAllPtPrice(String trainerCode) {
         Optional<Account> trainer = accountRepository.findByIdentificationCodeAndIsDeletedFalse(trainerCode);
 
         // 해당 Identification Code 가진 account가 있는지, 있다면 Role = trainer인지 확인
@@ -166,7 +166,8 @@ public class AccountService {
 
     @Transactional(readOnly = true)
     public TrainerTotalSalesGetResponse getTrainerTotalSales() {
-        Account trainer = securityUtil.getLoginAccountEntity();
+        Account trainer = securityUtil.getLoginTrainerEntity();
+
         List<PtMatching> ptMatchingList = ptMatchingRepository.findAllByTrainerAccountIdAndIsDeletedFalseAndStatusInOrderByCreatedAtDesc(
                 trainer.getAccountId(), List.of(PtStatus.ACTIVE, PtStatus.EXPIRED)
         );
@@ -182,7 +183,8 @@ public class AccountService {
 
     @Transactional(readOnly = true)
     public TrainerTotalSalesGetResponse getTrainerMonthlySales(Integer year, Integer month) {
-        Account trainer = securityUtil.getLoginAccountEntity();
+        Account trainer = securityUtil.getLoginTrainerEntity();
+
         LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0);
         LocalDateTime endOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0).plusMonths(1).minusSeconds(1);
 
@@ -204,12 +206,7 @@ public class AccountService {
 
     @Transactional
     public TrainerCareerCreateAndGetResponse createTrainerCareer(TrainerCareerCreateRequest trainerCareerCreateRequest) {
-
-        // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
-        Account trainer = securityUtil.getLoginAccountEntity();
-        if (!trainer.getAccountRole().equals(Role.TRAINER)) {
-            throw new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.AUTHENTICATED_USER_IS_NOT_TRAINER.getMessage());
-        }
+        Account trainer = securityUtil.getLoginTrainerEntity();
 
         List<Career> savedCareerList = trainerCareerCreateRequest.getCareerList().stream()
                 .map(career -> careerRepository.save(toCareerEntity.of(trainer, career)))
@@ -221,11 +218,7 @@ public class AccountService {
     @Transactional(readOnly = true)
     public TrainerCareerCreateAndGetResponse getTrainerCareer() {
 
-        // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
-        Account trainer = securityUtil.getLoginAccountEntity();
-        if (!trainer.getAccountRole().equals(Role.TRAINER)) {
-            throw new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.AUTHENTICATED_USER_IS_NOT_TRAINER.getMessage());
-        }
+        Account trainer = securityUtil.getLoginTrainerEntity();
 
         List<Career> careerList = careerRepository.findAllByTrainerAccountIdAndIsDeletedFalseOrderByType(trainer.getAccountId());
 
@@ -234,11 +227,8 @@ public class AccountService {
 
     @Transactional
     public CareerDto updateTrainerCareer(Long careerId, CareerUpdateDto careerUpdateDto) {
-        // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
-        Account trainer = securityUtil.getLoginAccountEntity();
-        if (!trainer.getAccountRole().equals(Role.TRAINER)) {
-            throw new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.AUTHENTICATED_USER_IS_NOT_TRAINER.getMessage());
-        }
+        Account trainer = securityUtil.getLoginTrainerEntity();
+
         // 해당 careerId가 존재하지 않을 때
         Career career = careerRepository.findByCareerIdAndIsDeletedFalse(careerId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.CAREER_NOT_FOUND.getMessage()));
@@ -260,12 +250,7 @@ public class AccountService {
 
     @Transactional
     public void deleteTrainerCareer(Long careerId) {
-
-        // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
-        Account trainer = securityUtil.getLoginAccountEntity();
-        if (!trainer.getAccountRole().equals(Role.TRAINER)) {
-            throw new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.AUTHENTICATED_USER_IS_NOT_TRAINER.getMessage());
-        }
+        Account trainer = securityUtil.getLoginTrainerEntity();
 
         // 해당 careerId가 존재하지 않을 때
         Career career = careerRepository.findByCareerIdAndIsDeletedFalse(careerId)

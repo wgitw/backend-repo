@@ -122,11 +122,7 @@ public class PtMatchingService {
     @Transactional
     public ResultResponse acceptPtMatching(Long ptMatchingId) {
 
-        // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
-        Account trainer = securityUtil.getLoginAccountEntity();
-        if (!trainer.getAccountRole().equals(Role.TRAINER)) {
-            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.AUTHENTICATED_USER_IS_NOT_TRAINER.getMessage());
-        }
+        Account trainer = securityUtil.getLoginTrainerEntity();
 
         // 해당 ptMatchingId가 존재하는지 확인
         PtMatching ptMatching = ptMatchingRepository.findByPtMatchingIdAndIsDeletedFalse(ptMatchingId)
@@ -173,11 +169,7 @@ public class PtMatchingService {
     @Transactional
     public ResultResponse rejectPtMatching(Long ptMatchingId, PtRejectionRequest ptRejectionRequest) {
 
-        // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
-        Account trainer = securityUtil.getLoginAccountEntity();
-        if (!trainer.getAccountRole().equals(Role.TRAINER)) {
-            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.AUTHENTICATED_USER_IS_NOT_TRAINER.getMessage());
-        }
+        Account trainer = securityUtil.getLoginTrainerEntity();
 
         // 해당 ptMatchingId가 존재하는지 확인
         PtMatching ptMatching = ptMatchingRepository.findByPtMatchingIdAndIsDeletedFalse(ptMatchingId)

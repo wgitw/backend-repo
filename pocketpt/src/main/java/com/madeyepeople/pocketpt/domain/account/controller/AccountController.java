@@ -63,7 +63,7 @@ public class AccountController {
     // 트레이너의 월별 PT 단가 조회
     @GetMapping("/price")
     public ResponseEntity<ResultResponse> getTrainerPtPrice(@RequestParam String trainerCode) {
-        MonthlyPtPriceGetResponse monthlyPtPriceGetResponse = accountService.getAllTrainerPtPrice(trainerCode);
+        MonthlyPtPriceGetResponse monthlyPtPriceGetResponse = accountService.getTrainerAllPtPrice(trainerCode);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PT_PRICE_GET_SUCCESS, monthlyPtPriceGetResponse));
     }
 
