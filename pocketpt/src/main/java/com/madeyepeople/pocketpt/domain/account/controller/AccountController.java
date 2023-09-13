@@ -2,9 +2,11 @@ package com.madeyepeople.pocketpt.domain.account.controller;
 
 import com.madeyepeople.pocketpt.domain.account.dto.CareerDto;
 import com.madeyepeople.pocketpt.domain.account.dto.CareerUpdateDto;
+import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerCareerCreateRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerIncomeGetRequest;
+import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerMonthlyPtPriceCreateRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.response.*;
 import com.madeyepeople.pocketpt.domain.account.service.AccountService;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
@@ -61,7 +63,7 @@ public class AccountController {
     // 트레이너의 월별 PT 단가 조회
     @GetMapping("/price")
     public ResponseEntity<ResultResponse> getTrainerPtPrice(@RequestParam String trainerCode) {
-        MonthlyPtPriceGetResponse monthlyPtPriceGetResponse = accountService.getTrainerPtPrice(trainerCode);
+        MonthlyPtPriceGetResponse monthlyPtPriceGetResponse = accountService.getAllTrainerPtPrice(trainerCode);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PT_PRICE_GET_SUCCESS, monthlyPtPriceGetResponse));
     }
 
@@ -70,14 +72,25 @@ public class AccountController {
 
     /**
      * 트레이너용 API
+     * 1. 이력 CRUD
+     * 2. PT 단가 CUD
+     * 3. 총/월별 매출 조회
+     * 4. 순수익 조회
      */
+
+    // 트레이너
+    @PostMapping("/trainer/price")
+    public ResponseEntity<ResultResponse> createTrainerMonthlyPtPrice(@RequestBody TrainerMonthlyPtPriceCreateRequest trainerMonthlyPtPriceCreateRequest) {
+        MonthlyPtPriceDto monthlyPtPriceDto = accountService.createTrainerMonthlyPtPrice(trainerMonthlyPtPriceCreateRequest);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_MONTHLY_PT_PRICE_CREATE_SUCCESS, monthlyPtPriceDto));
+    }
+
     @PostMapping("/trainer/career")
     public ResponseEntity<ResultResponse> createTrainerCareer(@RequestBody TrainerCareerCreateRequest trainerCareerCreateRequest) {
         TrainerCareerCreateAndGetResponse trainerCareerCreateAndGetResponse = accountService.createTrainerCareer(trainerCareerCreateRequest);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_CREATE_SUCCESS, trainerCareerCreateAndGetResponse));
     }
 
-    // TODO: 이력이 없을때, 없다 표시
     @GetMapping("/trainer/career")
     public ResponseEntity<ResultResponse> getTrainerCareer() {
         TrainerCareerCreateAndGetResponse trainerCareerGetResponse = accountService.getTrainerCareer();

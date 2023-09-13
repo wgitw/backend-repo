@@ -1,7 +1,10 @@
 package com.madeyepeople.pocketpt.global.util;
 
+import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
+import com.madeyepeople.pocketpt.global.error.ErrorCode;
+import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +56,14 @@ public class SecurityUtil {
             throw new RuntimeException("User not authenticated");
         }
         return null;
+    }
+
+    public Account getLoginTrainerEntity() {
+        Account trainer = getLoginAccountEntity();
+        if (!trainer.getAccountRole().equals(Role.TRAINER)) {
+            throw new BusinessException(ErrorCode.TRAINER_CAREER_ERROR, CustomExceptionMessage.AUTHENTICATED_USER_IS_NOT_TRAINER.getMessage());
+        }
+        return trainer;
     }
 
     public Account getLoginAccountEntity(String username) {

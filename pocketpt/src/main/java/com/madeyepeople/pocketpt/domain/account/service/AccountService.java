@@ -6,6 +6,7 @@ import com.madeyepeople.pocketpt.domain.account.dto.CareerUpdateDto;
 import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerCareerCreateRequest;
+import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerMonthlyPtPriceCreateRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.response.*;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.entity.Career;
@@ -54,6 +55,8 @@ public class AccountService {
     private final ToPtMatchingSummary toPtMatchingSummary;
     private final ToCareerEntity toCareerEntity;
     private final ToTrainerCareerCreateAndGetResponse toTrainerCareerCreateAndGetResponse;
+    private final ToMonthlyPtPriceEntity toMonthlyPtPriceEntity;
+    private final ToMonthlyPtPriceDto toMonthlyPtPriceDto;
 
     private final SecurityUtil securityUtil;
     private final TrainerMonthlyPtPriceUtil trainerMonthlyPtPriceUtil;
@@ -90,7 +93,7 @@ public class AccountService {
             if (commonRegistrationRequest.getMonthlyPtPriceList().isEmpty()) {
                 throw new BusinessException(ErrorCode.TRAINER_MONTHLY_PT_PRICE_ERROR, CustomExceptionMessage.TRAINER_MUST_HAVE_MONTHLY_PT_PRICE.getMessage());
             // 중복되는 개월수가 없어야함.
-            } else if (trainerMonthlyPtPriceUtil.hasDuplicatePeriod(commonRegistrationRequest.getMonthlyPtPriceList())) {
+            } else if (trainerMonthlyPtPriceUtil.hasDuplicatePeriodByDto(commonRegistrationRequest.getMonthlyPtPriceList())) {
                 throw new BusinessException(ErrorCode.TRAINER_MONTHLY_PT_PRICE_ERROR, CustomExceptionMessage.MONTHLY_PT_PRICE_DUPLICATED_PERIOD.getMessage());
             } else {
                 List<MonthlyPtPriceDto> monthlyPtPriceDtoList = commonRegistrationRequest.getMonthlyPtPriceList();
@@ -125,7 +128,7 @@ public class AccountService {
     }
 
     @Transactional(readOnly = true)
-    public MonthlyPtPriceGetResponse getTrainerPtPrice(String trainerCode) {
+    public MonthlyPtPriceGetResponse getAllTrainerPtPrice(String trainerCode) {
         Optional<Account> trainer = accountRepository.findByIdentificationCodeAndIsDeletedFalse(trainerCode);
 
         // 해당 Identification Code 가진 account가 있는지, 있다면 Role = trainer인지 확인
@@ -142,6 +145,23 @@ public class AccountService {
                 .trainerAccountId(trainer.get().getAccountId())
                 .monthlyPtPriceList(monthlyPtPriceDtoList)
                 .build();
+    }
+
+    @Transactional
+    public MonthlyPtPriceDto createTrainerMonthlyPtPrice(TrainerMonthlyPtPriceCreateRequest trainerMonthlyPtPriceCreateRequest) {
+        Account trainer = securityUtil.getLoginTrainerEntity();
+
+        MonthlyPtPrice requestedMonthlyPtPrice = toMonthlyPtPriceEntity.of(trainer, trainerMonthlyPtPriceCreateRequest);
+        List<MonthlyPtPrice> monthlyPtPriceList = trainer.getMonthlyPtPriceList();
+        monthlyPtPriceList.add(requestedMonthlyPtPrice);
+
+        if (trainerMonthlyPtPriceUtil.hasDuplicatePeriodByEntity(monthlyPtPriceList)) {
+            throw new BusinessException(ErrorCode.TRAINER_MONTHLY_PT_PRICE_ERROR, CustomExceptionMessage.MONTHLY_PT_PRICE_DUPLICATED_PERIOD.getMessage());
+        }
+
+        MonthlyPtPrice monthlyPtPrice = monthlyPtPriceRepository.save(requestedMonthlyPtPrice);
+
+        return toMonthlyPtPriceDto.of(monthlyPtPrice);
     }
 
     @Transactional(readOnly = true)
@@ -274,6 +294,7 @@ public class AccountService {
                 .build();
     }
 
+    // 테스트용 api
     @Transactional
     public String removeRoleAndMonthlyPtPrice() {
         Account account = securityUtil.getLoginAccountEntity();

@@ -21,6 +21,9 @@ public enum ResultCode {
     ACCOUNT_TRAINER_CAREER_UPDATE_SUCCESS("A009", "트레이너의 이력 수정 성공"),
     ACCOUNT_TRAINER_CAREER_DELETE_SUCCESS("A010", "트레이너의 이력 삭제 성공"),
     ACCOUNT_INCOME_GET_SUCCESS("A011", "매출에 대한 순수익 조회 성공"),
+    ACCOUNT_TRAINER_MONTHLY_PT_PRICE_CREATE_SUCCESS("A012", "트레이너의 월별 단가 생성 성공"),
+    ACCOUNT_TRAINER_MONTHLY_PT_PRICE_UPDATE_SUCCESS("A013", "트레이너의 월별 단가 수정 성공"),
+    ACCOUNT_TRAINER_MONTHLY_PT_PRICE_DELETE_SUCCESS("A014", "트레이너의 월별 단가 삭제 성공"),
 
     // ptMatching
     PT_REGISTRATION_CREATE_SUCCESS("PM001", "PT 요청 성공"),
