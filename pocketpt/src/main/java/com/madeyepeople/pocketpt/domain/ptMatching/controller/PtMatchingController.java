@@ -22,6 +22,7 @@ public class PtMatchingController {
 
     private final PtMatchingService ptMatchingService;
 
+    // 결제 예상 금액 조회
     @PostMapping("/payment/amount")
     public ResponseEntity<ResultResponse> getExpectedPaymentAmount(@RequestBody PaymentAmountGetRequest paymentAmountGetRequest) {
         Integer expectedPaymentAmount = ptMatchingService.getExpectedPaymentAmount(paymentAmountGetRequest);
@@ -46,7 +47,7 @@ public class PtMatchingController {
     }
 
     // 요청된 PT 수락
-    @GetMapping("/trainer/accept/{ptMatchingId}")
+    @PatchMapping("/trainer/accept/{ptMatchingId}")
     public ResponseEntity<ResultResponse> acceptPtMatching(@PathVariable Long ptMatchingId) {
         ResultResponse resultResponse = ptMatchingService.acceptPtMatching(ptMatchingId);
         return ResponseEntity.ok(resultResponse);

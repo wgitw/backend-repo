@@ -2,7 +2,6 @@ package com.madeyepeople.pocketpt.domain.ptMatching.service;
 
 import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
-import com.madeyepeople.pocketpt.domain.account.mapper.ToMonthlyPtPriceDtoList;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.chattingRoom.service.ChattingRoomService;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
@@ -25,7 +24,7 @@ import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
 import com.madeyepeople.pocketpt.global.util.SecurityUtil;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -95,7 +94,7 @@ public class PtMatchingService {
         return toPtRegistrationResponse.fromPtMatchingEntity(saved);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResultResponse getPtMatchingList(String mode) {
         Account account = securityUtil.getLoginAccountEntity();
         List<PtMatching> ptMatchingList;
@@ -166,10 +165,12 @@ public class PtMatchingService {
         return ResultResponse.of(ResultCode.PT_MATCHING_ACCEPT_SUCCESS, ptRegistrationAcceptResponse);
     }
 
+    @Transactional(readOnly = true)
     public Integer getExpectedPaymentAmount(PaymentAmountGetRequest paymentAmountGetRequest) {
         return paymentAmountCalculator.calculate(paymentAmountGetRequest.getSubscriptionPeriod(), paymentAmountGetRequest.getMonthlyPtPriceList());
     }
 
+    @Transactional
     public ResultResponse rejectPtMatching(Long ptMatchingId, PtRejectionRequest ptRejectionRequest) {
 
         // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)

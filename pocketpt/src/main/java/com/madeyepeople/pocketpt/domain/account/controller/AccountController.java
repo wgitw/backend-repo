@@ -32,13 +32,15 @@ public class AccountController {
     /**
      * 공통 API
      */
+    // 2차 회원가입 여부 확인
     @GetMapping("/check/signup")
     public ResponseEntity<ResultResponse> checkSignup() {
         CheckAccountSignupResponse checkAccountSignupResponse = accountService.checkSignup();
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_CHECK_SIGNED_UP_SUCCESS, checkAccountSignupResponse));
     }
 
-    @PostMapping("/{role}")
+    // 2차 회원가입
+    @PatchMapping("/{role}")
     public ResponseEntity<ResultResponse> signup(@RequestBody @Valid CommonRegistrationRequest commonRegistrationRequest,
                                                  @PathVariable
                                                  @Pattern(
@@ -49,19 +51,21 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_CREATE_SUCCESS, accountRegistrationResponse));
     }
 
+    // 내 정보 상세 조회
     @GetMapping("/detail")
     public ResponseEntity<ResultResponse> getAccount() {
         AccountDetailGetResponse accountDetailGetResponse = accountService.getAccount();
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_GET_SUCCESS, accountDetailGetResponse));
     }
 
+    // 트레이너의 월별 PT 단가 조회
     @GetMapping("/price")
     public ResponseEntity<ResultResponse> getTrainerPtPrice(@RequestParam String trainerCode) {
         MonthlyPtPriceGetResponse monthlyPtPriceGetResponse = accountService.getTrainerPtPrice(trainerCode);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PT_PRICE_GET_SUCCESS, monthlyPtPriceGetResponse));
     }
 
-    // TODO: 회원정보 간단 조회
+    // TODO: 회원 프로필 조회
 //    @GetMapping("/summary")
 
     /**
@@ -136,5 +140,11 @@ public class AccountController {
     @GetMapping("/test-logout")
     public String logoutTest() {
         return "로그아웃 되었습니다.";
+    }
+
+    @GetMapping("rollback-signup")
+    public String removeRole() {
+
+        return accountService.removeRoleAndMonthlyPtPrice();
     }
 }

@@ -18,15 +18,15 @@ public class MonthlyPtPrice extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
-    private Account account;
+    private Account trainer;
 
     private Integer period;
 
     private Integer price;
 
     @Builder
-    public MonthlyPtPrice(Account account, Integer period, Integer price) {
-        this.account = account;
+    public MonthlyPtPrice(Account trainer, Integer period, Integer price) {
+        this.trainer = trainer;
         this.period = period;
         this.price = price;
     }

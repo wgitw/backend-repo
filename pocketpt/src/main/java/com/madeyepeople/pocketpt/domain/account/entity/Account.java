@@ -48,7 +48,7 @@ public class Account extends BaseEntity {
     @OneToMany(mappedBy = "trainee")
     private List<PtMatching> ptMatchingListOfTrainee;
 
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "trainer")
     private List<MonthlyPtPrice> monthlyPtPriceList;
   
     @Convert(converter = RoleEnumConverter.class)
@@ -138,6 +138,11 @@ public class Account extends BaseEntity {
 
     public Account updateTotalSales(Integer totalSales) {
         this.totalSales = totalSales;
+        return this;
+    }
+
+    public Account deleteAccountRole() {
+        this.accountRole = null;
         return this;
     }
 }

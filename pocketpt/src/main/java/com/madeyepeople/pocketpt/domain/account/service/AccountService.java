@@ -14,8 +14,8 @@ import com.madeyepeople.pocketpt.domain.account.mapper.*;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.CareerRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.MonthlyPtPriceRepository;
+import com.madeyepeople.pocketpt.domain.account.util.TrainerMonthlyPtPriceUtil;
 import com.madeyepeople.pocketpt.domain.admin.service.FixedPlatformFeePolicy;
-import com.madeyepeople.pocketpt.domain.admin.service.PlatformFeePolicy;
 import com.madeyepeople.pocketpt.domain.admin.service.RelativePlatformFeePolicy;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
@@ -26,10 +26,10 @@ import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
 import com.madeyepeople.pocketpt.global.util.SecurityUtil;
 import com.madeyepeople.pocketpt.global.util.UniqueCodeGenerator;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -56,6 +56,7 @@ public class AccountService {
     private final ToTrainerCareerCreateAndGetResponse toTrainerCareerCreateAndGetResponse;
 
     private final SecurityUtil securityUtil;
+    private final TrainerMonthlyPtPriceUtil trainerMonthlyPtPriceUtil;
     private final UniqueCodeGenerator uniqueCodeGenerator;
 
     @Transactional
@@ -75,15 +76,19 @@ public class AccountService {
                 uniqueCodeGenerator.getUniqueCode()
         );
 
-        // 트레이너일 경우, 월별 PT 단가가 필수로 입력되어야 함.
+        // 트레이너일 경우
         if (account.getAccountRole() == Role.TRAINER) {
+            // 월별 PT 단가가 필수로 입력되어야 함.
             if (commonRegistrationRequest.getMonthlyPtPriceList() == null) {
-                throw new BusinessException(CustomExceptionMessage.TRAINER_MUST_HAVE_MONTHLY_PT_PRICE.getMessage());
+                throw new BusinessException(ErrorCode.TRAINER_MONTHLY_PT_PRICE_ERROR, CustomExceptionMessage.TRAINER_MUST_HAVE_MONTHLY_PT_PRICE.getMessage());
+            // 중복되는 개월수가 없어야함.
+            } else if (trainerMonthlyPtPriceUtil.hasDuplicatePeriod(commonRegistrationRequest.getMonthlyPtPriceList())) {
+                throw new BusinessException(ErrorCode.TRAINER_MONTHLY_PT_PRICE_ERROR, CustomExceptionMessage.MONTHLY_PT_PRICE_DUPLICATED_PERIOD.getMessage());
             } else {
                 List<MonthlyPtPriceDto> monthlyPtPriceList = commonRegistrationRequest.getMonthlyPtPriceList();
                 for (MonthlyPtPriceDto monthlyPtPriceDto : monthlyPtPriceList) {
                     monthlyPtPriceRepository.save(MonthlyPtPrice.builder()
-                            .account(changed)
+                            .trainer(changed)
                             .period(monthlyPtPriceDto.getPeriod())
                             .price(monthlyPtPriceDto.getPrice())
                             .build());
@@ -97,13 +102,13 @@ public class AccountService {
         return toRegistrationResponse.fromAccountEntity(saved);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public AccountDetailGetResponse getAccount() {
         Account account = securityUtil.getLoginAccountEntity();
         return toAccountGetResponse.fromAccountEntity(account);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public CheckAccountSignupResponse checkSignup() {
         Account account = securityUtil.getLoginAccountEntity();
         return CheckAccountSignupResponse.builder()
@@ -111,7 +116,7 @@ public class AccountService {
                 .build();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public MonthlyPtPriceGetResponse getTrainerPtPrice(String trainerCode) {
         Optional<Account> trainer = accountRepository.findByIdentificationCodeAndIsDeletedFalse(trainerCode);
 
@@ -130,6 +135,7 @@ public class AccountService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public TrainerTotalSalesGetResponse getTrainerTotalSales() {
         Account trainer = securityUtil.getLoginAccountEntity();
         List<PtMatching> ptMatchingList = ptMatchingRepository.findAllByTrainerAccountIdAndIsDeletedFalseAndStatusInOrderByCreatedAtDesc(
@@ -145,6 +151,7 @@ public class AccountService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public TrainerTotalSalesGetResponse getTrainerMonthlySales(Integer year, Integer month) {
         Account trainer = securityUtil.getLoginAccountEntity();
         LocalDateTime startOfMonth = LocalDateTime.of(year, month, 1, 0, 0, 0);
@@ -166,6 +173,7 @@ public class AccountService {
                 .build();
     }
 
+    @Transactional
     public TrainerCareerCreateAndGetResponse createTrainerCareer(TrainerCareerCreateRequest trainerCareerCreateRequest) {
 
         // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
@@ -194,6 +202,7 @@ public class AccountService {
         return toTrainerCareerCreateAndGetResponse.of(careerList);
     }
 
+    @Transactional
     public CareerDto updateTrainerCareer(Long careerId, CareerUpdateDto careerUpdateDto) {
         // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
         Account trainer = securityUtil.getLoginAccountEntity();
@@ -219,6 +228,7 @@ public class AccountService {
                 .build();
     }
 
+    @Transactional
     public void deleteTrainerCareer(Long careerId) {
 
         // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)
@@ -239,6 +249,7 @@ public class AccountService {
         careerRepository.delete(career);
     }
 
+    @Transactional(readOnly = true)
     public TrainerIncomeGetResponse getTrainerIncome(Integer sales, String plan) {
         Integer income;
 
@@ -251,5 +262,13 @@ public class AccountService {
         return TrainerIncomeGetResponse.builder()
                 .income(income)
                 .build();
+    }
+
+    @Transactional
+    public String removeRoleAndMonthlyPtPrice() {
+        Account account = securityUtil.getLoginAccountEntity();
+        monthlyPtPriceRepository.deleteAllByTrainerAccountId(account.getAccountId());
+        Account saved = accountRepository.save(account.deleteAccountRole());
+        return saved.toString();
     }
 }
