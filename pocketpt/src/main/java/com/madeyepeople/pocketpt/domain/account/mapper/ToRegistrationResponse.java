@@ -31,6 +31,7 @@ public class ToRegistrationResponse {
         return AccountRegistrationResponse.builder()
                 .accountId(account.getAccountId())
                 .role(account.getAccountRole())
+                .identificationCode(account.getIdentificationCode())
                 .email(account.getEmail())
                 .name(account.getName())
                 .phoneNumber(account.getPhoneNumber())

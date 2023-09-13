@@ -12,6 +12,7 @@ import java.util.List;
 public class AccountRegistrationResponse {
     private Long accountId;
     private Role role;
+    private String identificationCode;
     private String email;
     private String name;
     private String phoneNumber;

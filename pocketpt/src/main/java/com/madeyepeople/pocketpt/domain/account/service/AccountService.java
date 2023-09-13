@@ -32,7 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,11 +68,20 @@ public class AccountService {
             throw new BusinessException(ErrorCode.ACCOUNT_ALREADY_REGISTERED, CustomExceptionMessage.ACCOUNT_ALREADY_REGISTERED.getMessage());
         }
 
+        String uniqueCode;
+
+        // [테스트] 김일곤의 경우, uniqueCode 고정
+        if (account.getEmail().equals("jesus0321@naver.com")) {
+            uniqueCode = "lhGbiEGe";
+        } else {
+            uniqueCode = uniqueCodeGenerator.getUniqueCode();
+        }
+
         Account changed = account.updateByRegistrationRequest(
                 commonRegistrationRequest.getName(),
                 commonRegistrationRequest.getPhoneNumber(),
                 Role.valueOf(role.toUpperCase()),
-                uniqueCodeGenerator.getUniqueCode()
+                uniqueCode
         );
 
         // 트레이너일 경우
@@ -96,7 +104,7 @@ public class AccountService {
             }
         }
 
-        // TODO: save 과정에서 identificationCode 중복이 발생할 수 있음.
+        // TODO: save 과정에서 identificationCode 중복이 발생할 수 있음. 랜덤 코드 생성 로직 상, 극악의 확률로 중복 가능
         //  Account entity에 unique constraint 적용해뒀으니 exception handling 필요. 다시 code 생성하던가.
         Account saved = accountRepository.save(changed);
         return toRegistrationResponse.fromAccountEntity(saved);
@@ -128,6 +136,7 @@ public class AccountService {
         }
 
         List<MonthlyPtPriceDto> monthlyPtPriceDtoList = toMonthlyPtPriceDtoList.of(trainer.get().getMonthlyPtPriceList());
+        trainerMonthlyPtPriceUtil.sortByPeriod(monthlyPtPriceDtoList);
 
         return MonthlyPtPriceGetResponse.builder()
                 .trainerAccountId(trainer.get().getAccountId())

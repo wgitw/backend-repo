@@ -5,6 +5,7 @@ import com.madeyepeople.pocketpt.domain.account.entity.MonthlyPtPrice;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class ToMonthlyPtPriceDtoList {
@@ -15,6 +16,6 @@ public class ToMonthlyPtPriceDtoList {
                         .period(monthlyPtPrice.getPeriod())
                         .price(monthlyPtPrice.getPrice())
                         .build())
-                .toList();
+                .collect(Collectors.toList());
     }
 }
