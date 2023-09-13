@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,7 +72,6 @@ public class AccountService {
         Account changed = account.updateByRegistrationRequest(
                 commonRegistrationRequest.getName(),
                 commonRegistrationRequest.getPhoneNumber(),
-                commonRegistrationRequest.getNickname(),
                 Role.valueOf(role.toUpperCase()),
                 uniqueCodeGenerator.getUniqueCode()
         );
@@ -79,14 +79,14 @@ public class AccountService {
         // 트레이너일 경우
         if (account.getAccountRole() == Role.TRAINER) {
             // 월별 PT 단가가 필수로 입력되어야 함.
-            if (commonRegistrationRequest.getMonthlyPtPriceList() == null) {
+            if (commonRegistrationRequest.getMonthlyPtPriceList().isEmpty()) {
                 throw new BusinessException(ErrorCode.TRAINER_MONTHLY_PT_PRICE_ERROR, CustomExceptionMessage.TRAINER_MUST_HAVE_MONTHLY_PT_PRICE.getMessage());
             // 중복되는 개월수가 없어야함.
             } else if (trainerMonthlyPtPriceUtil.hasDuplicatePeriod(commonRegistrationRequest.getMonthlyPtPriceList())) {
                 throw new BusinessException(ErrorCode.TRAINER_MONTHLY_PT_PRICE_ERROR, CustomExceptionMessage.MONTHLY_PT_PRICE_DUPLICATED_PERIOD.getMessage());
             } else {
-                List<MonthlyPtPriceDto> monthlyPtPriceList = commonRegistrationRequest.getMonthlyPtPriceList();
-                for (MonthlyPtPriceDto monthlyPtPriceDto : monthlyPtPriceList) {
+                List<MonthlyPtPriceDto> monthlyPtPriceDtoList = commonRegistrationRequest.getMonthlyPtPriceList();
+                for (MonthlyPtPriceDto monthlyPtPriceDto : monthlyPtPriceDtoList) {
                     monthlyPtPriceRepository.save(MonthlyPtPrice.builder()
                             .trainer(changed)
                             .period(monthlyPtPriceDto.getPeriod())
@@ -189,6 +189,7 @@ public class AccountService {
         return toTrainerCareerCreateAndGetResponse.of(savedCareerList);
     }
 
+    @Transactional(readOnly = true)
     public TrainerCareerCreateAndGetResponse getTrainerCareer() {
 
         // 로그인한 계정이 trainer인지 확인 (trainee는 PT를 수락할 권한 없음)

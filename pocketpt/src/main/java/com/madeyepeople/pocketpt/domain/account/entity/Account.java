@@ -126,10 +126,9 @@ public class Account extends BaseEntity {
         return this;
     }
 
-    public Account updateByRegistrationRequest(String name, String phoneNumber, String nickname, Role accountRole, String identificationCode) {
+    public Account updateByRegistrationRequest(String name, String phoneNumber, Role accountRole, String identificationCode) {
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.nickname = nickname;
         this.accountRole = accountRole;
         this.identificationCode = identificationCode;
 //        this.monthlyPtPriceList = monthlyPtPriceList;
