@@ -12,4 +12,5 @@ public class PurposeDto {
     private String title;
     private String content;
     private String targetDate;
+    private Integer dDay;
 }
