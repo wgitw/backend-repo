@@ -72,8 +72,8 @@ public class AccountController {
 
     /**
      * 트레이너용 API
-     * 1. 이력 CRUD
-     * 2. PT 단가 CUD
+     * 1. PT 단가 CUD
+     * 2. 이력 CRUD
      * 3. 총/월별 매출 조회
      * 4. 순수익 조회
      */
@@ -89,6 +89,12 @@ public class AccountController {
                                                                       @RequestBody TrainerMonthlyPtPriceCreateAndUpdateRequest trainerMonthlyPtPriceCreateAndUpdateRequest) {
         MonthlyPtPriceDto monthlyPtPriceDto = accountService.updateTrainerMonthlyPtPrice(ptPriceId, trainerMonthlyPtPriceCreateAndUpdateRequest);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_MONTHLY_PT_PRICE_UPDATE_SUCCESS, monthlyPtPriceDto));
+    }
+
+    @DeleteMapping("/trainer/price/{ptPriceId}")
+    public ResponseEntity<ResultResponse> deleteTrainerMonthlyPtPrice(@PathVariable Long ptPriceId) {
+        String deleteSuccessMessage = accountService.deleteTrainerMonthlyPtPrice(ptPriceId);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_MONTHLY_PT_PRICE_DELETE_SUCCESS, deleteSuccessMessage));
     }
 
     @PostMapping("/trainer/career")

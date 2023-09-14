@@ -320,4 +320,21 @@ public class AccountService {
 
         return toMonthlyPtPriceDto.of(savedMonthlyPtPrice);
     }
+
+    public String deleteTrainerMonthlyPtPrice(Long ptPriceId) {
+        Account trainer = securityUtil.getLoginTrainerEntity();
+
+        // 해당 ptPriceId가 존재하지 않을 때
+        MonthlyPtPrice monthlyPtPrice = monthlyPtPriceRepository.findById(ptPriceId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.TRAINER_MONTHLY_PT_PRICE_ERROR, CustomExceptionMessage.MONTHLY_PT_PRICE_NOT_FOUND.getMessage()));
+
+        // 요청된 ptPriceId가 로그인한 trainer의 ptPrice인지 확인
+        if (!monthlyPtPrice.getTrainer().equals(trainer)) {
+            throw new BusinessException(ErrorCode.TRAINER_MONTHLY_PT_PRICE_ERROR, CustomExceptionMessage.MONTHLY_PT_PRICE_ACCOUNT_ID_IS_NOT_MATCHED.getMessage());
+        }
+
+        monthlyPtPriceRepository.delete(monthlyPtPrice);
+
+        return "deleted ptPriceId = " + ptPriceId;
+    }
 }
