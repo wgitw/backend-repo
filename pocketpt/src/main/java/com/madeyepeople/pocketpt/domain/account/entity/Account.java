@@ -49,6 +49,9 @@ public class Account extends BaseEntity {
     private List<PtMatching> ptMatchingListOfTrainee;
 
     @OneToMany(mappedBy = "trainer")
+    private List<Career> careerList;
+
+    @OneToMany(mappedBy = "trainer")
     private List<MonthlyPtPrice> monthlyPtPriceList;
 
     @OneToMany(mappedBy = "account")
@@ -92,8 +95,6 @@ public class Account extends BaseEntity {
     private Integer totalSales;
     private Float serviceFeeRate;
     private Float discountRate;
-    // private List<Career> careerList;
-    // private List<purpose> purposeList;
 
     /**
      * 인증 관련 부가적인 정보
@@ -134,7 +135,6 @@ public class Account extends BaseEntity {
         this.phoneNumber = phoneNumber;
         this.accountRole = accountRole;
         this.identificationCode = identificationCode;
-//        this.monthlyPtPriceList = monthlyPtPriceList;
         return this;
     }
 

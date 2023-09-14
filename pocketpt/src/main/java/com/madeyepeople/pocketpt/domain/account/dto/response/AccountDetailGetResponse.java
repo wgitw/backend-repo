@@ -1,7 +1,9 @@
 package com.madeyepeople.pocketpt.domain.account.dto.response;
 
 import com.madeyepeople.pocketpt.domain.account.constant.Role;
+import com.madeyepeople.pocketpt.domain.account.dto.CareerDto;
 import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
+import com.madeyepeople.pocketpt.domain.account.dto.PurposeDto;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -24,5 +26,7 @@ public class AccountDetailGetResponse {
     private String introduce;
     private String identificationCode;
     private Integer totalSales;
+    private List<PurposeDto> purposeList;
+    private List<CareerDto> careerList;
     private List<MonthlyPtPriceDto> monthlyPtPriceList;
 }

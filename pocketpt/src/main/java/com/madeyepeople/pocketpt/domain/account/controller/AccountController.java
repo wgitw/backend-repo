@@ -18,6 +18,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 
 @Validated
 @RestController
@@ -110,8 +112,8 @@ public class AccountController {
 
     @GetMapping("/trainer/career")
     public ResponseEntity<ResultResponse> getTrainerCareer() {
-        TrainerCareerCreateAndGetResponse trainerCareerGetResponse = accountService.getTrainerCareer();
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_GET_SUCCESS, trainerCareerGetResponse));
+        TrainerCareerCreateAndGetResponse trainerCareerCreateAndGetResponse = accountService.getTrainerCareer();
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_GET_SUCCESS, trainerCareerCreateAndGetResponse));
     }
 
     @PatchMapping("/trainer/career/{careerId}")

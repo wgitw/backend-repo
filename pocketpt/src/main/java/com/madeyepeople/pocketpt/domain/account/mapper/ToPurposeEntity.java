@@ -12,7 +12,7 @@ public class ToPurposeEntity {
     public Purpose of(Account account, PurposeCreateRequest purposeCreateRequest) {
         LocalDate targetDate;
 
-        if (purposeCreateRequest.getTargetDate().isBlank()) {
+        if (purposeCreateRequest.getTargetDate() == null) {
             targetDate = null;
         } else {
             targetDate = LocalDate.parse(purposeCreateRequest.getTargetDate());
