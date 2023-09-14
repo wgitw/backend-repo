@@ -50,6 +50,9 @@ public class Account extends BaseEntity {
 
     @OneToMany(mappedBy = "trainer")
     private List<MonthlyPtPrice> monthlyPtPriceList;
+
+    @OneToMany(mappedBy = "account")
+    private List<Purpose> purposeList;
   
     @Convert(converter = RoleEnumConverter.class)
     @Column(name = "account_role")

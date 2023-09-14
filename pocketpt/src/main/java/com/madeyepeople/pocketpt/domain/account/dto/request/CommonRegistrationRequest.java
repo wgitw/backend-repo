@@ -19,7 +19,7 @@ public class CommonRegistrationRequest {
     @Size(max = 25, message = "이름은 25 character를 넘을 수 없습니다.")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "전화번호는 빈칸일 수 없습니다.")
     @Pattern(regexp = "^[0-9]{11}$", message = "전화번호는 11개의 숫자여야합니다.")
     private String phoneNumber;
 

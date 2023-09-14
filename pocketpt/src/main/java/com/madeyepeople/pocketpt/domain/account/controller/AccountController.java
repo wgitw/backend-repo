@@ -70,6 +70,13 @@ public class AccountController {
     // TODO: 회원 프로필 조회
 //    @GetMapping("/summary")
 
+//    @PostMapping("/purpose")
+//    public ResponseEntity<ResultResponse> createPurpose(@RequestBody @Valid PurposeSetRequest purposeSetRequest) {
+//        PurposeSetResponse purposeSetResponse = accountService.setPurpose(purposeSetRequest);
+//        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PURPOSE_SET_SUCCESS, purposeSetResponse));
+//    }
+
+
     /**
      * 트레이너용 API
      * 1. PT 단가 CUD
