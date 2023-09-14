@@ -3,10 +3,8 @@ package com.madeyepeople.pocketpt.domain.account.controller;
 import com.madeyepeople.pocketpt.domain.account.dto.CareerDto;
 import com.madeyepeople.pocketpt.domain.account.dto.CareerUpdateDto;
 import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
-import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
-import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerCareerCreateRequest;
-import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerIncomeGetRequest;
-import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerMonthlyPtPriceCreateAndUpdateRequest;
+import com.madeyepeople.pocketpt.domain.account.dto.PurposeDto;
+import com.madeyepeople.pocketpt.domain.account.dto.request.*;
 import com.madeyepeople.pocketpt.domain.account.dto.response.*;
 import com.madeyepeople.pocketpt.domain.account.service.AccountService;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
@@ -70,11 +68,11 @@ public class AccountController {
     // TODO: 회원 프로필 조회
 //    @GetMapping("/summary")
 
-//    @PostMapping("/purpose")
-//    public ResponseEntity<ResultResponse> createPurpose(@RequestBody @Valid PurposeSetRequest purposeSetRequest) {
-//        PurposeSetResponse purposeSetResponse = accountService.setPurpose(purposeSetRequest);
-//        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PURPOSE_SET_SUCCESS, purposeSetResponse));
-//    }
+    @PostMapping("/purpose")
+    public ResponseEntity<ResultResponse> createPurpose(@RequestBody @Valid PurposeCreateRequest purposeCreateRequest) {
+        PurposeDto purposeDto = accountService.createPurpose(purposeCreateRequest);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PURPOSE_CREATE_SUCCESS, purposeDto));
+    }
 
 
     /**

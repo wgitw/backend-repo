@@ -4,6 +4,7 @@ import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,4 +31,12 @@ public class Purpose extends BaseEntity {
     private String content;
 
     private LocalDate targetDate;
+
+    @Builder
+    public Purpose(Account account, @Nonnull String title, String content, LocalDate targetDate) {
+        this.account = account;
+        this.title = title;
+        this.content = content;
+        this.targetDate = targetDate;
+    }
 }

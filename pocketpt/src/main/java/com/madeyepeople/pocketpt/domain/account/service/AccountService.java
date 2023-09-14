@@ -4,18 +4,23 @@ import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.account.dto.CareerDto;
 import com.madeyepeople.pocketpt.domain.account.dto.CareerUpdateDto;
 import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
+import com.madeyepeople.pocketpt.domain.account.dto.PurposeDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
+import com.madeyepeople.pocketpt.domain.account.dto.request.PurposeCreateRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerCareerCreateRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerMonthlyPtPriceCreateAndUpdateRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.response.*;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.entity.Career;
 import com.madeyepeople.pocketpt.domain.account.entity.MonthlyPtPrice;
+import com.madeyepeople.pocketpt.domain.account.entity.Purpose;
 import com.madeyepeople.pocketpt.domain.account.mapper.*;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.CareerRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.MonthlyPtPriceRepository;
+import com.madeyepeople.pocketpt.domain.account.repository.PurposeRepository;
 import com.madeyepeople.pocketpt.domain.account.util.TrainerMonthlyPtPriceUtil;
+import com.madeyepeople.pocketpt.domain.admin.constant.ServiceLogicConstant;
 import com.madeyepeople.pocketpt.domain.admin.service.FixedPlatformFeePolicy;
 import com.madeyepeople.pocketpt.domain.admin.service.RelativePlatformFeePolicy;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
@@ -48,6 +53,7 @@ public class AccountService {
     private final PtMatchingRepository ptMatchingRepository;
     private final MonthlyPtPriceRepository monthlyPtPriceRepository;
     private final CareerRepository careerRepository;
+    private final PurposeRepository purposeRepository;
 
     private final ToRegistrationResponse toRegistrationResponse;
     private final ToAccountGetResponse toAccountGetResponse;
@@ -57,6 +63,8 @@ public class AccountService {
     private final ToTrainerCareerCreateAndGetResponse toTrainerCareerCreateAndGetResponse;
     private final ToMonthlyPtPriceEntity toMonthlyPtPriceEntity;
     private final ToMonthlyPtPriceDto toMonthlyPtPriceDto;
+    private final ToPurposeEntity toPurposeEntity;
+    private final ToPurposeDto toPurposeDto;
 
     private final SecurityUtil securityUtil;
     private final TrainerMonthlyPtPriceUtil trainerMonthlyPtPriceUtil;
@@ -336,5 +344,19 @@ public class AccountService {
         monthlyPtPriceRepository.delete(monthlyPtPrice);
 
         return "deleted ptPriceId = " + ptPriceId;
+    }
+
+    public PurposeDto createPurpose(PurposeCreateRequest purposeCreateRequest) {
+        Account account = securityUtil.getLoginAccountEntity();
+
+        // 회원의 purpose 개수가 최대치(3개)라면 생성 불가
+        List<Purpose> purposeList = account.getPurposeList();
+        if (purposeList.size() == ServiceLogicConstant.MAXIMUM_NUMBER_OF_PURPOSE) {
+            throw new BusinessException(ErrorCode.ACCOUNT_PURPOSE_ERROR, CustomExceptionMessage.ACCOUNT_PURPOSE_COUNT_IS_FULL.getMessage());
+        }
+
+        Purpose saved = purposeRepository.save(toPurposeEntity.of(account, purposeCreateRequest));
+
+        return toPurposeDto.of(saved);
     }
 }

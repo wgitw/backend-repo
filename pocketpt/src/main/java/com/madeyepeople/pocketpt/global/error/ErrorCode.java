@@ -21,6 +21,7 @@ public enum ErrorCode {
     ACCOUNT_NOT_FOUND(HttpStatus.NOT_FOUND, "E005", "존재하지 않는 사용자"),
     TRAINER_CAREER_ERROR(HttpStatus.NOT_ACCEPTABLE, "E006", "트레이너 이력 관련 오류"),
     TRAINER_MONTHLY_PT_PRICE_ERROR(HttpStatus.NOT_ACCEPTABLE, "E007", "트레이너 월별 단가 관련 오류"),
+    ACCOUNT_PURPOSE_ERROR(HttpStatus.NOT_ACCEPTABLE, "E008", "목표 관련 오류"),
 
     // PtMatching
     PT_MATCHING_ERROR(HttpStatus.NOT_ACCEPTABLE, "E006", "PT matching 관련 오류"),
