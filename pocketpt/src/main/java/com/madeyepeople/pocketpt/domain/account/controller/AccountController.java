@@ -60,6 +60,13 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_GET_SUCCESS, accountDetailGetResponse));
     }
 
+    // 상대방 프로필 정보 조회
+    @GetMapping("/profile/{accountId}")
+    public ResponseEntity<ResultResponse> getProfile(@PathVariable Long accountId) {
+        ProfileGetResponse profileGetResponse = accountService.getProfile(accountId);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PROFILE_GET_SUCCESS, profileGetResponse));
+    }
+
     // 트레이너의 월별 PT 단가 조회
     @GetMapping("/price")
     public ResponseEntity<ResultResponse> getTrainerPtPrice(@RequestParam String trainerCode) {

@@ -62,6 +62,7 @@ public class AccountService {
     private final ToMonthlyPtPriceDto toMonthlyPtPriceDto;
     private final ToPurposeEntity toPurposeEntity;
     private final ToPurposeDto toPurposeDto;
+    private final ToProfileGetResponse toProfileGetResponse;
 
     private final SecurityUtil securityUtil;
     private final TrainerMonthlyPtPriceUtil trainerMonthlyPtPriceUtil;
@@ -394,5 +395,12 @@ public class AccountService {
         purposeRepository.delete(purpose);
 
         return "deleted purposeId = " + purposeId;
+    }
+
+    public ProfileGetResponse getProfile(Long accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, CustomExceptionMessage.ACCOUNT_NOT_FOUND.getMessage()));
+
+        return toProfileGetResponse.of(account);
     }
 }
