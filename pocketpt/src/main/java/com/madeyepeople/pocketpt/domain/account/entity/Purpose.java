@@ -1,5 +1,6 @@
 package com.madeyepeople.pocketpt.domain.account.entity;
 
+import com.madeyepeople.pocketpt.domain.account.dto.request.PurposeUpdateRequest;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
@@ -38,5 +39,17 @@ public class Purpose extends BaseEntity {
         this.title = title;
         this.content = content;
         this.targetDate = targetDate;
+    }
+
+    public void updateByPurposeUpdateRequest(PurposeUpdateRequest purposeUpdateRequest) {
+        if (purposeUpdateRequest.getTitle() != null) {
+            this.title = purposeUpdateRequest.getTitle();
+        }
+        if (purposeUpdateRequest.getContent() != null) {
+            this.content = purposeUpdateRequest.getContent();
+        }
+        if (purposeUpdateRequest.getTargetDate() != null) {
+            this.targetDate = LocalDate.parse(purposeUpdateRequest.getTargetDate());
+        }
     }
 }

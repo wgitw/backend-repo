@@ -76,10 +76,17 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PURPOSE_CREATE_SUCCESS, purposeDto));
     }
 
-    @GetMapping("/purpose/")
+    @GetMapping("/purpose/{accountId}")
     public ResponseEntity<ResultResponse> getPurpose(@PathVariable Long accountId) {
         List<PurposeDto> purposeDtoList = accountService.getPurpose(accountId);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PURPOSE_GET_SUCCESS, purposeDtoList));
+    }
+
+    @PatchMapping("/purpose/{purposeId}")
+    public ResponseEntity<ResultResponse> updatePurpose(@PathVariable Long purposeId,
+                                                        @RequestBody PurposeUpdateRequest purposeUpdateRequest) {
+        PurposeDto purposeDto = accountService.updatePurpose(purposeId, purposeUpdateRequest);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PURPOSE_UPDATE_SUCCESS, purposeDto));
     }
 
 
