@@ -89,6 +89,12 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PURPOSE_UPDATE_SUCCESS, purposeDto));
     }
 
+    @DeleteMapping("/purpose/{purposeId}")
+    public ResponseEntity<ResultResponse> deletePurpose(@PathVariable Long purposeId) {
+        String deleteSuccessMessage = accountService.deletePurpose(purposeId);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PURPOSE_DELETE_SUCCESS, deleteSuccessMessage));
+    }
+
 
     /**
      * 트레이너용 API

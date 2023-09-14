@@ -378,4 +378,21 @@ public class AccountService {
 
         return toPurposeDto.of(saved);
     }
+
+    public String deletePurpose(Long purposeId) {
+        Account account = securityUtil.getLoginAccountEntity();
+
+        // 해당 purposeId가 존재하지 않을 때
+        Purpose purpose = purposeRepository.findByPurposeIdAndIsDeletedFalse(purposeId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_PURPOSE_ERROR, CustomExceptionMessage.PURPOSE_NOT_FOUND.getMessage()));
+
+        // 해당 purpose의 accountId와 로그인한 account의 id가 다를 때
+        if (!purpose.getAccount().getAccountId().equals(account.getAccountId())) {
+            throw new BusinessException(ErrorCode.ACCOUNT_PURPOSE_ERROR, CustomExceptionMessage.PURPOSE_ACCOUNT_ID_IS_NOT_MATCHED.getMessage());
+        }
+
+        purposeRepository.delete(purpose);
+
+        return "deleted purposeId = " + purposeId;
+    }
 }
