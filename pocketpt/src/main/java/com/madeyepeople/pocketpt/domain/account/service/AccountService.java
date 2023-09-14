@@ -356,4 +356,11 @@ public class AccountService {
 
         return toPurposeDto.of(saved);
     }
+
+    public List<PurposeDto> getPurpose(Long accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_PURPOSE_ERROR, CustomExceptionMessage.ACCOUNT_NOT_FOUND.getMessage()));
+
+        return toPurposeDto.of(account.getPurposeList());
+    }
 }

@@ -18,6 +18,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 
 @Validated
 @RestController
@@ -74,8 +76,11 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PURPOSE_CREATE_SUCCESS, purposeDto));
     }
 
-//    @GetMapping("/purpose/")
-//    public ResponseEntity<ResultResponse> getPurpose()
+    @GetMapping("/purpose/")
+    public ResponseEntity<ResultResponse> getPurpose(@PathVariable Long accountId) {
+        List<PurposeDto> purposeDtoList = accountService.getPurpose(accountId);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PURPOSE_GET_SUCCESS, purposeDtoList));
+    }
 
 
     /**
