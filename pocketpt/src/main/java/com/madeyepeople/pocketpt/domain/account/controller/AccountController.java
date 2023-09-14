@@ -18,8 +18,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-
 
 @Validated
 @RestController
@@ -76,6 +74,9 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PURPOSE_CREATE_SUCCESS, purposeDto));
     }
 
+//    @GetMapping("/purpose/")
+//    public ResponseEntity<ResultResponse> getPurpose()
+
 
     /**
      * 트레이너용 API
@@ -110,9 +111,9 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_CREATE_SUCCESS, trainerCareerCreateAndGetResponse));
     }
 
-    @GetMapping("/trainer/career")
-    public ResponseEntity<ResultResponse> getTrainerCareer() {
-        TrainerCareerCreateAndGetResponse trainerCareerCreateAndGetResponse = accountService.getTrainerCareer();
+    @GetMapping("/trainer/career/{accountId}")
+    public ResponseEntity<ResultResponse> getTrainerCareer(@PathVariable Long accountId) {
+        TrainerCareerCreateAndGetResponse trainerCareerCreateAndGetResponse = accountService.getTrainerCareer(accountId);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_CAREER_GET_SUCCESS, trainerCareerCreateAndGetResponse));
     }
 

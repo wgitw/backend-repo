@@ -224,11 +224,8 @@ public class AccountService {
     }
 
     @Transactional(readOnly = true)
-    public TrainerCareerCreateAndGetResponse getTrainerCareer() {
-
-        Account trainer = securityUtil.getLoginTrainerEntity();
-
-        List<Career> careerList = careerRepository.findAllByTrainerAccountIdAndIsDeletedFalseOrderByType(trainer.getAccountId());
+    public TrainerCareerCreateAndGetResponse getTrainerCareer(Long accountId) {
+        List<Career> careerList = careerRepository.findAllByTrainerAccountIdAndIsDeletedFalseOrderByType(accountId);
 
         return toTrainerCareerCreateAndGetResponse.of(careerList);
     }
