@@ -1,6 +1,7 @@
 package com.madeyepeople.pocketpt.domain.account.entity;
 
 
+import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerMonthlyPtPriceCreateAndUpdateRequest;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -29,5 +30,14 @@ public class MonthlyPtPrice extends BaseEntity {
         this.trainer = trainer;
         this.period = period;
         this.price = price;
+    }
+
+    public void updateByTrainerMonthlyPtPriceCreateAndUpdateRequest(TrainerMonthlyPtPriceCreateAndUpdateRequest trainerMonthlyPtPriceCreateAndUpdateRequest) {
+        if (trainerMonthlyPtPriceCreateAndUpdateRequest.getPeriod() != null) {
+            this.period = trainerMonthlyPtPriceCreateAndUpdateRequest.getPeriod();
+        }
+        if (trainerMonthlyPtPriceCreateAndUpdateRequest.getPrice() != null) {
+            this.price = trainerMonthlyPtPriceCreateAndUpdateRequest.getPrice();
+        }
     }
 }

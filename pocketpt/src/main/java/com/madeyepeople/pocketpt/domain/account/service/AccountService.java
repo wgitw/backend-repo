@@ -6,7 +6,7 @@ import com.madeyepeople.pocketpt.domain.account.dto.CareerUpdateDto;
 import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerCareerCreateRequest;
-import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerMonthlyPtPriceCreateRequest;
+import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerMonthlyPtPriceCreateAndUpdateRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.response.*;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.entity.Career;
@@ -148,10 +148,10 @@ public class AccountService {
     }
 
     @Transactional
-    public MonthlyPtPriceDto createTrainerMonthlyPtPrice(TrainerMonthlyPtPriceCreateRequest trainerMonthlyPtPriceCreateRequest) {
+    public MonthlyPtPriceDto createTrainerMonthlyPtPrice(TrainerMonthlyPtPriceCreateAndUpdateRequest trainerMonthlyPtPriceCreateAndUpdateRequest) {
         Account trainer = securityUtil.getLoginTrainerEntity();
 
-        MonthlyPtPrice requestedMonthlyPtPrice = toMonthlyPtPriceEntity.of(trainer, trainerMonthlyPtPriceCreateRequest);
+        MonthlyPtPrice requestedMonthlyPtPrice = toMonthlyPtPriceEntity.of(trainer, trainerMonthlyPtPriceCreateAndUpdateRequest);
         List<MonthlyPtPrice> monthlyPtPriceList = trainer.getMonthlyPtPriceList();
         monthlyPtPriceList.add(requestedMonthlyPtPrice);
 
@@ -286,5 +286,38 @@ public class AccountService {
         monthlyPtPriceRepository.deleteAllByTrainerAccountId(account.getAccountId());
         Account saved = accountRepository.save(account.deleteAccountRole());
         return saved.toString();
+    }
+
+    public MonthlyPtPriceDto updateTrainerMonthlyPtPrice(Long ptPriceId, TrainerMonthlyPtPriceCreateAndUpdateRequest trainerMonthlyPtPriceCreateAndUpdateRequest) {
+        Account trainer = securityUtil.getLoginTrainerEntity();
+
+        // 해당 ptPriceId가 존재하지 않을 때
+        MonthlyPtPrice monthlyPtPrice = monthlyPtPriceRepository.findById(ptPriceId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.TRAINER_MONTHLY_PT_PRICE_ERROR, CustomExceptionMessage.MONTHLY_PT_PRICE_NOT_FOUND.getMessage()));
+
+        // 요청된 ptPriceId가 로그인한 trainer의 ptPrice인지 확인
+        if (!monthlyPtPrice.getTrainer().equals(trainer)) {
+            throw new BusinessException(ErrorCode.TRAINER_MONTHLY_PT_PRICE_ERROR, CustomExceptionMessage.MONTHLY_PT_PRICE_ACCOUNT_ID_IS_NOT_MATCHED.getMessage());
+        }
+
+        List<MonthlyPtPrice> updatedMonthlyPtPriceList = trainer.getMonthlyPtPriceList();
+        for (MonthlyPtPrice nowMonthlyPtPrice : updatedMonthlyPtPriceList) {
+            if (nowMonthlyPtPrice.getMonthlyPtPriceId().equals(ptPriceId)) {
+                log.info(nowMonthlyPtPrice.toString());
+                nowMonthlyPtPrice.updateByTrainerMonthlyPtPriceCreateAndUpdateRequest(trainerMonthlyPtPriceCreateAndUpdateRequest);
+            }
+        }
+
+        log.info(updatedMonthlyPtPriceList.toString());
+
+        // 요청된 period가 이미 존재하는 period인지 확인
+        if (trainerMonthlyPtPriceUtil.hasDuplicatePeriodByEntity(updatedMonthlyPtPriceList)) {
+            throw new BusinessException(ErrorCode.TRAINER_MONTHLY_PT_PRICE_ERROR, CustomExceptionMessage.MONTHLY_PT_PRICE_DUPLICATED_PERIOD.getMessage());
+        }
+
+        monthlyPtPrice.updateByTrainerMonthlyPtPriceCreateAndUpdateRequest(trainerMonthlyPtPriceCreateAndUpdateRequest);
+        MonthlyPtPrice savedMonthlyPtPrice = monthlyPtPriceRepository.save(monthlyPtPrice);
+
+        return toMonthlyPtPriceDto.of(savedMonthlyPtPrice);
     }
 }

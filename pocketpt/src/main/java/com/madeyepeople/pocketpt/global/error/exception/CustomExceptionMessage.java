@@ -21,6 +21,8 @@ public enum CustomExceptionMessage {
     CAREER_NOT_FOUND("해당 careerId를 가진 career는 없습니다."),
     CAREER_ACCOUNT_ID_IS_NOT_MATCHED("해당 career의 accountId가 로그인된 사용자의 accountId와 일치하지 않습니다."),
     MONTHLY_PT_PRICE_DUPLICATED_PERIOD("중복되는 개월수(period)가 존재합니다."),
+    MONTHLY_PT_PRICE_NOT_FOUND("해당 monthlyPtPriceId를 가진 monthlyPtPrice는 없습니다."),
+    MONTHLY_PT_PRICE_ACCOUNT_ID_IS_NOT_MATCHED("해당 monthlyPtPrice의 accountId가 로그인된 사용자의 accountId와 일치하지 않습니다."),
 
     // pt matching
     TRAINER_ACCOUNT_ID_NOT_FOUND("해당 trainerAccountId를 가진 trainer는 없습니다."),

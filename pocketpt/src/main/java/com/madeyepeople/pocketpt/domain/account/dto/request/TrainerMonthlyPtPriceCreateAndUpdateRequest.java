@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class TrainerMonthlyPtPriceCreateRequest {
+public class TrainerMonthlyPtPriceCreateAndUpdateRequest {
     private Integer period;
     private Integer price;
 }

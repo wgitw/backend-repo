@@ -6,7 +6,7 @@ import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
 import com.madeyepeople.pocketpt.domain.account.dto.request.CommonRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerCareerCreateRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerIncomeGetRequest;
-import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerMonthlyPtPriceCreateRequest;
+import com.madeyepeople.pocketpt.domain.account.dto.request.TrainerMonthlyPtPriceCreateAndUpdateRequest;
 import com.madeyepeople.pocketpt.domain.account.dto.response.*;
 import com.madeyepeople.pocketpt.domain.account.service.AccountService;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
@@ -78,11 +78,17 @@ public class AccountController {
      * 4. 순수익 조회
      */
 
-    // 트레이너
     @PostMapping("/trainer/price")
-    public ResponseEntity<ResultResponse> createTrainerMonthlyPtPrice(@RequestBody TrainerMonthlyPtPriceCreateRequest trainerMonthlyPtPriceCreateRequest) {
-        MonthlyPtPriceDto monthlyPtPriceDto = accountService.createTrainerMonthlyPtPrice(trainerMonthlyPtPriceCreateRequest);
+    public ResponseEntity<ResultResponse> createTrainerMonthlyPtPrice(@RequestBody TrainerMonthlyPtPriceCreateAndUpdateRequest trainerMonthlyPtPriceCreateAndUpdateRequest) {
+        MonthlyPtPriceDto monthlyPtPriceDto = accountService.createTrainerMonthlyPtPrice(trainerMonthlyPtPriceCreateAndUpdateRequest);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_MONTHLY_PT_PRICE_CREATE_SUCCESS, monthlyPtPriceDto));
+    }
+
+    @PatchMapping("/trainer/price/{ptPriceId}")
+    public ResponseEntity<ResultResponse> updateTrainerMonthlyPtPrice(@PathVariable Long ptPriceId,
+                                                                      @RequestBody TrainerMonthlyPtPriceCreateAndUpdateRequest trainerMonthlyPtPriceCreateAndUpdateRequest) {
+        MonthlyPtPriceDto monthlyPtPriceDto = accountService.updateTrainerMonthlyPtPrice(ptPriceId, trainerMonthlyPtPriceCreateAndUpdateRequest);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_TRAINER_MONTHLY_PT_PRICE_UPDATE_SUCCESS, monthlyPtPriceDto));
     }
 
     @PostMapping("/trainer/career")
