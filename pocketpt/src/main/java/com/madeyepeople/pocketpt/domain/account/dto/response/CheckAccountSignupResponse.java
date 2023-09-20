@@ -7,4 +7,5 @@ import lombok.Getter;
 @Builder
 public class CheckAccountSignupResponse {
     private Boolean isAccountSignedUp;
+    private String defaultName;
 }

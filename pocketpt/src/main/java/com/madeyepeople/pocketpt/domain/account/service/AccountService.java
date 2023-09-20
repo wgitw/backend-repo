@@ -130,6 +130,7 @@ public class AccountService {
         Account account = securityUtil.getLoginAccountEntity();
         return CheckAccountSignupResponse.builder()
                 .isAccountSignedUp(account.getAccountRole() != null)
+                .defaultName(account.getName())
                 .build();
     }
 

@@ -11,7 +11,7 @@ public class ToAccountEntity {
                 .oauth2Id(oauth2ProviderInfo.getOauth2Id())
                 .provider(oauth2ProviderInfo.getProvider())
                 .email(oauth2ProviderInfo.getEmail())
-                .nickname(oauth2ProviderInfo.getNickname())
+                .name(oauth2ProviderInfo.getNickname())
                 .profilePictureUrl(oauth2ProviderInfo.getImageUrl())
                 .password(encodedPassword)
                 .oauthAccessToken(oauth2ProviderInfo.getOauth2ProviderAccessToken())

@@ -124,7 +124,7 @@ public class Account extends BaseEntity {
     }
 
     public Account updateByOAuthInfo(String nickname, String oauthAccessToken, String imageUrl) {
-        this.nickname = nickname;
+        this.name = nickname;
         this.oauthAccessToken = oauthAccessToken;
         this.profilePictureUrl = imageUrl;
         return this;
