@@ -51,11 +51,14 @@ public interface ChattingMessageRepository extends JpaRepository<ChattingMessage
     @Query(value =
             """
                 SELECT *
-                FROM chatting_message m
-                WHERE m.chatting_room = :chattingRoom
-                    AND :startNum >= m.chatting_message_id
-                    ORDER BY chatting_message_id DESC
-                    LIMIT :pageSize
+                FROM
+                    (
+                        SELECT *
+                        FROM chatting_message m
+                        WHERE m.chatting_room = :chattingRoom
+                    ) cm
+                ORDER BY cm.chatting_message_id DESC
+                LIMIT :startNum, :pageSize
             """, nativeQuery = true)
     List<ChattingMessage> findAllByChattingRoomOrderByChattingMessageIdDesc(Long chattingRoom, int startNum, int pageSize);
 

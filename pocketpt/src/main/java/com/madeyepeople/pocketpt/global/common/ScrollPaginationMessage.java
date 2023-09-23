@@ -7,6 +7,6 @@ public class ScrollPaginationMessage extends ScrollPagination {
 
     @Override
     void calculateStartNum() {
-        startNum = (int) (totalRecord - pageNum * pageSize);
+        startNum = (int) pageNum * pageSize;
     }
 }
