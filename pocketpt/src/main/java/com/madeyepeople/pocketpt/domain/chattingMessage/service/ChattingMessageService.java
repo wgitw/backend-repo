@@ -171,6 +171,9 @@ public class ChattingMessageService {
             totalRecord = chattingMessageRepository.findAllCountByChattingRoomOrderByChattingMessageId(foundChattingRoom.getChattingRoomId());
         }
         ScrollPagination scrollPagination = new ScrollPaginationMessage(size, page, totalRecord);
+
+        log.info("CHATTING-MESSAGE-SERVICE: [getChattingMessageListByRoom] scrollPagination.getStartNum()>> {}", scrollPagination.getStartNum());
+
         List<ChattingMessage> chattingMessageList = chattingMessageRepository
                 .findAllByChattingRoomOrderByChattingMessageIdDesc(foundChattingRoom.getChattingRoomId(), scrollPagination.getStartNum(), scrollPagination.getPageSize());
         List<ChattingMessageGetResponse> chattingMessageGetResponseList = new ArrayList<>();
