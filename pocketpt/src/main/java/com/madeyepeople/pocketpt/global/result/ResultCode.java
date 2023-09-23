@@ -61,7 +61,20 @@ public enum ResultCode {
     // chatting message bookmark
     CHATTING_MESSAGE_BOOKMARK_CREATE_SUCCESS("CB001", "채팅 북마크 성공"),
     CHATTING_MESSAGE_BOOKMARK_LIST_GET_SUCCESS("CB002", "채팅 북마크 리스트 가져오기 성공"),
-    CHATTING_MESSAGE_BOOKMARK_DELETE_SUCCESS("CB003", "채팅 북마크 삭제 성공");
+    CHATTING_MESSAGE_BOOKMARK_DELETE_SUCCESS("CB003", "채팅 북마크 삭제 성공"),
+
+    // historical data
+    HISTORICAL_DATA_CREATE_SUCCESS("HD001", "historical data 생성 성공"),
+    HISTORICAL_DATA_GET_SUCCESS("HD002", "historical data 조회 성공"),
+    HISTORICAL_DATA_UPDATE_SUCCESS("HD003", "historical data 수정 성공"),
+    HISTORICAL_DATA_DELETE_SUCCESS("HD004", "historical data 삭제 성공"),
+
+    // historical data file
+    HISTORICAL_DATA_FILE_CREATE_SUCCESS("HDF001", "historical data file 생성 성공"),
+    HISTORICAL_DATA_FILE_GET_SUCCESS("HDF002", "historical data file 조회 성공"),
+    HISTORICAL_DATA_FILE_UPDATE_SUCCESS("HDF003", "historical data file 수정 성공"),
+    HISTORICAL_DATA_FILE_DELETE_SUCCESS("HDF004", "historical data file 삭제 성공"),
+    ;
 
     private final String code;
     private final String message;

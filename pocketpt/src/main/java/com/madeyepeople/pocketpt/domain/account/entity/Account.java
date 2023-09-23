@@ -1,6 +1,7 @@
 package com.madeyepeople.pocketpt.domain.account.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.madeyepeople.pocketpt.domain.historicalData.entity.HistoricalData;
 import com.madeyepeople.pocketpt.domain.chattingMessageBookmark.entity.ChattingMessageBookmark;
 import com.madeyepeople.pocketpt.domain.account.constant.RoleEnumConverter;
 import com.madeyepeople.pocketpt.domain.account.constant.Role;
@@ -41,6 +42,9 @@ public class Account extends BaseEntity {
 
     @OneToMany(mappedBy = "account")
     private List<TopChattingRoom> topChattingRoomList;
+
+    @OneToMany(mappedBy = "account")
+    private List<HistoricalData> historicalDataList;
 
     @OneToMany(mappedBy = "trainer")
     private List<PtMatching> ptMatchingListOfTrainer;

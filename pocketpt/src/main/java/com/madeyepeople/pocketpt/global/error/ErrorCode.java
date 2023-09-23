@@ -41,6 +41,13 @@ public enum ErrorCode {
 
     // File
     CHATTING_FILE_ERROR(HttpStatus.BAD_REQUEST, "E010", "파일 관련 오류"),
+
+    // historicalData
+    HISTORICAL_DATA_NOT_FOUND(HttpStatus.NOT_FOUND, "E011", "존재하지 않는 HistoricalData"),
+    HISTORICAL_DATA_ERROR(HttpStatus.BAD_REQUEST, "E011", "HistoricalData 관련 오류"),
+
+    // historicalDataFile
+    HISTORY_DATA_FILE_NOT_FOUND(HttpStatus.NOT_FOUND, "E012", "존재하지 않는 HistoricalDataFile"),
     ;
 
     private final HttpStatus status;
