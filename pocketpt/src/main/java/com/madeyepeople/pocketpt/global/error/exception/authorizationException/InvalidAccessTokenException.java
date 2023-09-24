@@ -6,11 +6,6 @@ import lombok.Getter;
 
 @Getter
 public class InvalidAccessTokenException extends BusinessException {
-
-    public InvalidAccessTokenException() {
-        super(ErrorCode.INVALID_TOKEN);
-    }
-
     public InvalidAccessTokenException(String message) {
         super(ErrorCode.INVALID_TOKEN, message);
     }

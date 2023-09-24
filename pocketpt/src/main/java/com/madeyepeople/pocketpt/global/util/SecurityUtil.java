@@ -7,7 +7,6 @@ import com.madeyepeople.pocketpt.global.error.ErrorCode;
 import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
 import com.madeyepeople.pocketpt.global.error.exception.authorizationException.AccountNotExistException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -15,7 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.security.Principal;
 import java.util.Optional;
 
 @Component
@@ -79,7 +77,7 @@ public class SecurityUtil {
         }
     }
 
-    public Account isAccountExist(String email) throws Exception {
+    public Account isAccountExist(String email) {
         Optional<Account> account = accountRepository.findByEmailAndIsDeletedFalse(email);
         if (account.isPresent()) {
             return account.get();

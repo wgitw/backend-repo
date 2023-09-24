@@ -6,10 +6,6 @@ import lombok.Getter;
 
 @Getter
 public class AccountNotExistException extends BusinessException {
-    public AccountNotExistException() {
-        super(ErrorCode.ACCOUNT_NOT_FOUND);
-    }
-
     public AccountNotExistException(String message) {
         super(ErrorCode.ACCOUNT_NOT_FOUND, message);
     }
