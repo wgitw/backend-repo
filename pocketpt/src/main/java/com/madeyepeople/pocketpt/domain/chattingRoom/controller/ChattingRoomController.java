@@ -47,13 +47,13 @@ public class ChattingRoomController {
     }
 
     // 채팅방 리스트 변경사항 전송 - 새로운 메시지
-    @MessageMapping("/chatting/rooms/{chattingRoomId}/messages/{latestChattingMessageId}")
+    @MessageMapping("/chatting/rooms/{chattingRoomId}/accounts/{hostAccountId}/messages/{latestChattingMessageId}")
     @Transactional
-    public void updateChattingRoomInfoForNewMessage(@DestinationVariable Long chattingRoomId, @DestinationVariable Long latestChattingMessageId, StompHeaderAccessor headerAccessor) {
+    public void updateChattingRoomInfoForNewMessage(@DestinationVariable Long chattingRoomId, @DestinationVariable Long hostAccountId, @DestinationVariable Long latestChattingMessageId, StompHeaderAccessor headerAccessor) {
         String accountUsername = headerAccessor.getUser().getName();
         Account account = securityUtil.getLoginAccountEntity(accountUsername);
         ResultResponse resultResponse = chattingRoomService.updateChattingRoomInfoForNewMessage(account, chattingRoomId, latestChattingMessageId);
-        template.convertAndSend("/sub/accounts/" + account.getAccountId(), resultResponse);
+        template.convertAndSend("/sub/accounts/" + hostAccountId, resultResponse);
     }
 
     // 채팅방 리스트 변경사항 전송 - 새로운 방 생성
