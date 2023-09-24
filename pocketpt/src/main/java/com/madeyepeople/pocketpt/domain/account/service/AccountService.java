@@ -438,4 +438,9 @@ public class AccountService {
 
         return toProfileGetResponse.of(account);
     }
+
+    public String flushRedis() {
+        redisUtil.flushAll();
+        return "flushed";
+    }
 }

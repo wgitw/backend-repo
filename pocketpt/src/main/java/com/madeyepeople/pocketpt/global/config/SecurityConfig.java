@@ -44,6 +44,7 @@ public class SecurityConfig {
                                 "/api/v1/account/main",
                                 "/api/v1/account/test-logout",
                                 "/api/v1/account/cookie-test",
+                                "/api/v1/account/flush-redis",
                                 "/ws-stomp"
                         ).permitAll()
                         .anyRequest().authenticated()

@@ -29,4 +29,8 @@ public class RedisUtil {
     public boolean hasKey(String key) {
         return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
+
+    public void flushAll() {
+        redisTemplate.getConnectionFactory().getConnection().flushAll();
+    }
 }

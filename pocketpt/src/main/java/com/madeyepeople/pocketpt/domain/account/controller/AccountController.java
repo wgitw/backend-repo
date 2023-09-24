@@ -220,4 +220,9 @@ public class AccountController {
 
         return accountService.removeRoleAndMonthlyPtPrice();
     }
+
+    @GetMapping("/flush-redis")
+    public String flushRedis() {
+        return accountService.flushRedis();
+    }
 }
