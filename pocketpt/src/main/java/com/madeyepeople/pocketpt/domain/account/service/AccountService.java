@@ -16,6 +16,7 @@ import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.CareerRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.MonthlyPtPriceRepository;
 import com.madeyepeople.pocketpt.domain.account.repository.PurposeRepository;
+import com.madeyepeople.pocketpt.domain.account.social.JwtUtil;
 import com.madeyepeople.pocketpt.domain.account.util.TrainerMonthlyPtPriceUtil;
 import com.madeyepeople.pocketpt.domain.admin.constant.ServiceLogicConstant;
 import com.madeyepeople.pocketpt.domain.admin.service.FixedPlatformFeePolicy;
@@ -27,8 +28,11 @@ import com.madeyepeople.pocketpt.domain.ptMatching.repository.PtMatchingReposito
 import com.madeyepeople.pocketpt.global.error.ErrorCode;
 import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
+import com.madeyepeople.pocketpt.global.error.exception.authorizationException.InvalidAccessTokenException;
+import com.madeyepeople.pocketpt.global.util.RedisUtil;
 import com.madeyepeople.pocketpt.global.util.SecurityUtil;
 import com.madeyepeople.pocketpt.global.util.UniqueCodeGenerator;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,6 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -64,9 +69,12 @@ public class AccountService {
     private final ToPurposeDto toPurposeDto;
     private final ToProfileGetResponse toProfileGetResponse;
 
+    private final JwtUtil jwtUtil;
+    private final RedisUtil redisUtil;
     private final SecurityUtil securityUtil;
     private final TrainerMonthlyPtPriceUtil trainerMonthlyPtPriceUtil;
     private final UniqueCodeGenerator uniqueCodeGenerator;
+
 
     @Transactional
     public AccountRegistrationResponse registerAccount(CommonRegistrationRequest commonRegistrationRequest, String role) {
@@ -117,6 +125,27 @@ public class AccountService {
         //  Account entity에 unique constraint 적용해뒀으니 exception handling 필요. 다시 code 생성하던가.
         Account saved = accountRepository.save(changed);
         return toRegistrationResponse.fromAccountEntity(saved);
+    }
+
+    @Transactional
+    public void logout(HttpServletRequest httpServletRequest) {
+        String accessToken = httpServletRequest.getHeader("Authorization").substring(7);
+
+        redisUtil.set(accessToken, "logout", jwtUtil.getExpiration(accessToken) + 1000);
+    }
+
+    @Transactional
+    public WithdrawalResponse withdrawal(HttpServletRequest httpServletRequest) {
+        Account account = securityUtil.getLoginAccountEntity();
+        String accessToken = httpServletRequest.getHeader("Authorization").substring(7);
+
+        redisUtil.set(accessToken, "withdrawal", jwtUtil.getExpiration(accessToken) + 1000);
+        accountRepository.delete(account);
+
+        return WithdrawalResponse.builder()
+                .accountId(account.getAccountId())
+                .name(account.getName())
+                .build();
     }
 
     @Transactional(readOnly = true)
@@ -292,6 +321,7 @@ public class AccountService {
         return saved.toString();
     }
 
+    @Transactional
     public MonthlyPtPriceDto updateTrainerMonthlyPtPrice(Long ptPriceId, TrainerMonthlyPtPriceCreateAndUpdateRequest trainerMonthlyPtPriceCreateAndUpdateRequest) {
         Account trainer = securityUtil.getLoginTrainerEntity();
 
@@ -325,6 +355,7 @@ public class AccountService {
         return toMonthlyPtPriceDto.of(savedMonthlyPtPrice);
     }
 
+    @Transactional
     public String deleteTrainerMonthlyPtPrice(Long ptPriceId) {
         Account trainer = securityUtil.getLoginTrainerEntity();
 
@@ -342,6 +373,7 @@ public class AccountService {
         return "deleted ptPriceId = " + ptPriceId;
     }
 
+    @Transactional
     public PurposeDto createPurpose(PurposeCreateRequest purposeCreateRequest) {
         Account account = securityUtil.getLoginAccountEntity();
 
@@ -356,6 +388,7 @@ public class AccountService {
         return toPurposeDto.of(saved);
     }
 
+    @Transactional(readOnly = true)
     public List<PurposeDto> getPurpose(Long accountId) {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_PURPOSE_ERROR, CustomExceptionMessage.ACCOUNT_NOT_FOUND.getMessage()));
@@ -363,6 +396,7 @@ public class AccountService {
         return toPurposeDto.of(account.getPurposeList());
     }
 
+    @Transactional
     public PurposeDto updatePurpose(Long purposeId, PurposeUpdateRequest purposeUpdateRequest) {
         Account account = securityUtil.getLoginAccountEntity();
 
@@ -381,6 +415,7 @@ public class AccountService {
         return toPurposeDto.of(saved);
     }
 
+    @Transactional
     public String deletePurpose(Long purposeId) {
         Account account = securityUtil.getLoginAccountEntity();
 
@@ -398,10 +433,16 @@ public class AccountService {
         return "deleted purposeId = " + purposeId;
     }
 
+    @Transactional(readOnly = true)
     public ProfileGetResponse getProfile(Long accountId) {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, CustomExceptionMessage.ACCOUNT_NOT_FOUND.getMessage()));
 
         return toProfileGetResponse.of(account);
+    }
+
+    public String flushRedis() {
+        redisUtil.flushAll();
+        return "flushed";
     }
 }

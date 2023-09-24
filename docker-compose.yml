@@ -4,6 +4,12 @@ services:
   #    database_volumes:
   #      external: true
   #      name: [ volume-name ]
+  redis:
+      container_name: redis
+      image: redis
+      ports:
+        - "6379:6379"
+      restart: always
 
   mysql-db:
     container_name: mysql-db
@@ -38,6 +44,7 @@ services:
     build: ./pocketpt
     depends_on:
       - mysql-db
+      - redis
     expose:
       - "8080"
     ports:
