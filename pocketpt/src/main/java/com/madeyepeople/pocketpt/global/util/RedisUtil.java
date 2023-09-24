@@ -13,9 +13,9 @@ public class RedisUtil {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void set(String key, Object value, int minutes) {
+    public void set(String key, Object value, long milliseconds) {
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(value.getClass()));
-        redisTemplate.opsForValue().set(key, value, minutes, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(key, value, milliseconds, TimeUnit.MILLISECONDS);
     }
 
     public Object get(String key) {

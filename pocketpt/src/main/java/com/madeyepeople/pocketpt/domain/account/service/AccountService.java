@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -74,6 +75,7 @@ public class AccountService {
 
     @Transactional
     public void logout(LogoutRequest logoutRequest) {
+        redisUtil.set(logoutRequest.getAccessToken(), "logout", jwtUtil.getExpiration(logoutRequest.getAccessToken()) + 1000);
     }
 
     @Transactional
