@@ -28,12 +28,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountController {
 
-    private final SecurityUtil securityUtil;
     private final AccountService accountService;
+
+    private final SecurityUtil securityUtil;
+
 
     /**
      * 공통 API
      */
+    @DeleteMapping("/logout")
+    public ResponseEntity<ResultResponse> logout(@RequestBody LogoutRequest logoutRequest) {
+        accountService.logout(logoutRequest);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_LOGOUT_SUCCESS));
+    }
+
     // 2차 회원가입 여부 확인
     @GetMapping("/check/signup")
     public ResponseEntity<ResultResponse> checkSignup() {

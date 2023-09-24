@@ -1,9 +1,13 @@
 package com.madeyepeople.pocketpt.domain.account.social;
 
+import com.madeyepeople.pocketpt.global.error.exception.authorizationException.DiscardedTokenException;
+import com.madeyepeople.pocketpt.global.util.RedisUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,6 +26,9 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class JwtUtil {
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     public final String COOKIE_KEY_ACCESS_TOKEN = "access_token";
     public final String COOKIE_KEY_REFRESH_TOKEN = "refresh_token";
@@ -108,19 +115,20 @@ public class JwtUtil {
                     "eyJhbGciOiJIUzUxMiJ9.eyJhdXRob3JpdGllcyI6WyJtZW1iZXIiXSwic3ViIjoia2ltdGtzNDU2QG5hdmVyLmNvbSIsImlhdCI6MTY5MTEzMzg2MSwiZXhwIjoxNzAxNTAxODYxfQ.ZNHYOzUN5QSjNE_S_6kuPIkUQl_2-TGlopu9mFcvS3gS1j0zwY1rr4WncL0m-C5f16NDfmGmFiObSfUTTkeBLQ",
                     "eyJhbGciOiJIUzUxMiJ9.eyJhdXRob3JpdGllcyI6WyJtZW1iZXIiXSwic3ViIjoiamVzdXMwMzIxQG5hdmVyLmNvbSIsImlhdCI6MTY5MTA0MzQ3NiwiZXhwIjoxNjk4ODE5NDc2fQ.zuCQiD8DXsW8qjQrMbHd4M0X4eSKbX_iGFR-oMMujVv4pCrnkagQrhbNxAsmup2Cw6L-5jW7UlQA8wSKxtAN9w"};
 
-            for (String discaredToken : discardedTokens) {
-                if (discaredToken.equals(token)) {
-                    throw new JwtException("폐기된 token");
+            for (String discardedToken : discardedTokens) {
+                if (discardedToken.equals(token)) {
+                    throw new DiscardedTokenException();
                 }
             }
-        } catch (JwtException e) {
-            throw new JwtException("폐기된 token", e);
-        }
 
-        try {
+            // 로그아웃된 토큰인지 확인
+            if (redisUtil.hasKey(token)) {
+                throw new DiscardedTokenException();
+            }
+
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        // TODO: 각 경우에 따라 다른 exception 처리 필요. 일단 login으로 redirect
+            // TODO: 각 경우에 따라 다른 exception 처리 필요. 일단 login으로 redirect
         } catch (SignatureException e) {
             throw new JwtException("사용자 인증 실패", e);
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
@@ -131,6 +139,8 @@ public class JwtUtil {
             throw new JwtException("지원하지 않는 JWT token", e);
         } catch (IllegalArgumentException e) {
             throw new JwtException("지원하지 않는 JWT token", e);
+        } catch (DiscardedTokenException e) {
+            throw new JwtException(e.getMessage());
         } catch (Exception e) {
             throw new JwtException("알 수 없는 JWT token error", e);
         }
@@ -144,5 +154,10 @@ public class JwtUtil {
         } catch (StringIndexOutOfBoundsException e) {
             throw new JwtException("Bearer prefix 이후에 토큰이 존재하지 않습니다.", e);
         }
+    }
+
+    public Long getExpiration(String accessToken) {
+        long now = new Date().getTime();
+        return parseClaims(accessToken).getExpiration().getTime() - now;
     }
 }
