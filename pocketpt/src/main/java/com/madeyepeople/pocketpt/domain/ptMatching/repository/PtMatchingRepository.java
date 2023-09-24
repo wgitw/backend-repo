@@ -26,4 +26,7 @@ public interface PtMatchingRepository extends JpaRepository<PtMatching, Long> {
     // 매출 조회
     List<PtMatching> findAllByTrainerAccountIdAndIsDeletedFalseAndStatusInOrderByCreatedAtDesc(Long trainerAccountId, List<PtStatus> ptStatusList);
     List<PtMatching> findAllByTrainerAccountIdAndIsDeletedFalseAndCreatedAtBetweenAndStatusInOrderByCreatedAtDesc(Long trainerAccountId, LocalDateTime startDate, LocalDateTime endDate, List<PtStatus> ptStatusList);
+
+    // 계정 삭제시 해당 계정의 매칭 삭제
+
 }

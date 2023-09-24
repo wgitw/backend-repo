@@ -31,6 +31,7 @@ import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
 import com.madeyepeople.pocketpt.global.util.RedisUtil;
 import com.madeyepeople.pocketpt.global.util.SecurityUtil;
 import com.madeyepeople.pocketpt.global.util.UniqueCodeGenerator;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -73,10 +74,6 @@ public class AccountService {
     private final TrainerMonthlyPtPriceUtil trainerMonthlyPtPriceUtil;
     private final UniqueCodeGenerator uniqueCodeGenerator;
 
-    @Transactional
-    public void logout(LogoutRequest logoutRequest) {
-        redisUtil.set(logoutRequest.getAccessToken(), "logout", jwtUtil.getExpiration(logoutRequest.getAccessToken()) + 1000);
-    }
 
     @Transactional
     public AccountRegistrationResponse registerAccount(CommonRegistrationRequest commonRegistrationRequest, String role) {
@@ -127,6 +124,26 @@ public class AccountService {
         //  Account entity에 unique constraint 적용해뒀으니 exception handling 필요. 다시 code 생성하던가.
         Account saved = accountRepository.save(changed);
         return toRegistrationResponse.fromAccountEntity(saved);
+    }
+
+    @Transactional
+    public void logout(LogoutRequest logoutRequest) {
+        // TODO: 중복 로그아웃인지 확인하는 로직 추가
+        redisUtil.set(logoutRequest.getAccessToken(), "logout", jwtUtil.getExpiration(logoutRequest.getAccessToken()) + 1000);
+    }
+
+    @Transactional
+    public WithdrawalResponse withdrawal(HttpServletRequest httpServletRequest) {
+        Account account = securityUtil.getLoginAccountEntity();
+        String accessToken = httpServletRequest.getHeader("Authorization").substring(7);
+
+        redisUtil.set(accessToken, "withdrawal", jwtUtil.getExpiration(accessToken) + 1000);
+        accountRepository.delete(account);
+
+        return WithdrawalResponse.builder()
+                .accountId(account.getAccountId())
+                .name(account.getName())
+                .build();
     }
 
     @Transactional(readOnly = true)

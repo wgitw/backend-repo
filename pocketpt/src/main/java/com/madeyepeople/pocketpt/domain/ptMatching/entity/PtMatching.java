@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
 
 import java.util.Date;
 
@@ -20,6 +21,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @Entity(name = "pt_matching")
+@SQLDelete(sql = "UPDATE pt_matching SET is_deleted = true WHERE pt_matching_id = ?")
 public class PtMatching extends BaseEntity {
 
     @Id

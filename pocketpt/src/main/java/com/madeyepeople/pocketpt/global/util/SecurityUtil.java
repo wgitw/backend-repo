@@ -6,6 +6,7 @@ import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.global.error.ErrorCode;
 import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
+import com.madeyepeople.pocketpt.global.error.exception.authorizationException.AccountNotExistException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,8 +52,9 @@ public class SecurityUtil {
                 Account account = isAccountExist(username);
                 return account;
             }
+        } catch (AccountNotExistException e) {
+            throw e;
         } catch (Exception e) {
-            // TODO: exception handling
             throw new RuntimeException("User not authenticated");
         }
         return null;
@@ -81,7 +83,8 @@ public class SecurityUtil {
         Optional<Account> account = accountRepository.findByEmailAndIsDeletedFalse(email);
         if (account.isPresent()) {
             return account.get();
+        } else {
+            throw new AccountNotExistException();
         }
-        throw new Exception(CustomExceptionMessage.AUTHENTICATED_USER_NOT_FOUND.getMessage());
     }
 }

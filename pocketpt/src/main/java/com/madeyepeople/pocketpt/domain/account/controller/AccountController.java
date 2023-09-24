@@ -10,6 +10,7 @@ import com.madeyepeople.pocketpt.domain.account.service.AccountService;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
 import com.madeyepeople.pocketpt.global.result.ResultResponse;
 import com.madeyepeople.pocketpt.global.util.SecurityUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
@@ -36,12 +37,6 @@ public class AccountController {
     /**
      * 공통 API
      */
-    @DeleteMapping("/logout")
-    public ResponseEntity<ResultResponse> logout(@RequestBody LogoutRequest logoutRequest) {
-        accountService.logout(logoutRequest);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_LOGOUT_SUCCESS));
-    }
-
     // 2차 회원가입 여부 확인
     @GetMapping("/check/signup")
     public ResponseEntity<ResultResponse> checkSignup() {
@@ -59,6 +54,18 @@ public class AccountController {
                                                  String role) {
         AccountRegistrationResponse accountRegistrationResponse = accountService.registerAccount(commonRegistrationRequest, role);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_CREATE_SUCCESS, accountRegistrationResponse));
+    }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<ResultResponse> logout(@RequestBody LogoutRequest logoutRequest) {
+        accountService.logout(logoutRequest);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_LOGOUT_SUCCESS));
+    }
+
+    @DeleteMapping("/withdrawal")
+    public ResponseEntity<ResultResponse> withdrawal(HttpServletRequest httpServletRequest) {
+        WithdrawalResponse withdrawalResponse = accountService.withdrawal(httpServletRequest);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_WITHDRAWAL_SUCCESS, withdrawalResponse));
     }
 
     // 내 정보 상세 조회

@@ -12,6 +12,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,9 +21,10 @@ import java.util.List;
 
 @Entity
 @Getter
-@ToString(exclude = {"chattingParticipantList", "chattingMessageBookmarkList", "ptMatchingListOfTrainer", "ptMatchingListOfTrainee", "monthlyPtPriceList"})
+@ToString(exclude = {"chattingParticipantList", "chattingMessageBookmarkList", "ptMatchingListOfTrainer", "ptMatchingListOfTrainee", "monthlyPtPriceList", "careerList", "purposeList"})
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLDelete(sql = "UPDATE account SET email = '', name = '탈퇴한 회원', phone_number = '', profile_picture_url = '', is_deleted = true WHERE account_id = ?")
 // TODO: @SQLDelete 로 삭제시 is_deleted = true 로 변경되게 하기
 public class Account extends BaseEntity {
 
@@ -65,7 +67,6 @@ public class Account extends BaseEntity {
     private String provider;
 
     @Nonnull
-    @Column(unique = true)
     private String email;
 
     private String name;
