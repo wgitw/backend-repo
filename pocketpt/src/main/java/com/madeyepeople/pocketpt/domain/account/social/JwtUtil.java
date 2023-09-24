@@ -1,11 +1,11 @@
 package com.madeyepeople.pocketpt.domain.account.social;
 
-import com.madeyepeople.pocketpt.global.error.exception.authorizationException.DiscardedTokenException;
+import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
+import com.madeyepeople.pocketpt.global.error.exception.authorizationException.InvalidAccessTokenException;
 import com.madeyepeople.pocketpt.global.util.RedisUtil;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -117,13 +117,13 @@ public class JwtUtil {
 
             for (String discardedToken : discardedTokens) {
                 if (discardedToken.equals(token)) {
-                    throw new DiscardedTokenException();
+                    throw new InvalidAccessTokenException(CustomExceptionMessage.DISCARDED_TOKEN.getMessage());
                 }
             }
 
             // 로그아웃된 토큰인지 확인
             if (redisUtil.hasKey(token)) {
-                throw new DiscardedTokenException();
+                throw new InvalidAccessTokenException(CustomExceptionMessage.DISCARDED_TOKEN.getMessage());
             }
 
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -139,8 +139,8 @@ public class JwtUtil {
             throw new JwtException("지원하지 않는 JWT token", e);
         } catch (IllegalArgumentException e) {
             throw new JwtException("지원하지 않는 JWT token", e);
-        } catch (DiscardedTokenException e) {
-            throw new JwtException(e.getMessage());
+        } catch (InvalidAccessTokenException e) {
+            throw new JwtException(e.getMessage(), e);
         } catch (Exception e) {
             throw new JwtException("알 수 없는 JWT token error", e);
         }

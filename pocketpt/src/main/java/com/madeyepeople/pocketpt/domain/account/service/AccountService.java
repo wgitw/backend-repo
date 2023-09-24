@@ -28,6 +28,7 @@ import com.madeyepeople.pocketpt.domain.ptMatching.repository.PtMatchingReposito
 import com.madeyepeople.pocketpt.global.error.ErrorCode;
 import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
+import com.madeyepeople.pocketpt.global.error.exception.authorizationException.InvalidAccessTokenException;
 import com.madeyepeople.pocketpt.global.util.RedisUtil;
 import com.madeyepeople.pocketpt.global.util.SecurityUtil;
 import com.madeyepeople.pocketpt.global.util.UniqueCodeGenerator;
@@ -127,9 +128,10 @@ public class AccountService {
     }
 
     @Transactional
-    public void logout(LogoutRequest logoutRequest) {
-        // TODO: 중복 로그아웃인지 확인하는 로직 추가
-        redisUtil.set(logoutRequest.getAccessToken(), "logout", jwtUtil.getExpiration(logoutRequest.getAccessToken()) + 1000);
+    public void logout(HttpServletRequest httpServletRequest) {
+        String accessToken = httpServletRequest.getHeader("Authorization").substring(7);
+
+        redisUtil.set(accessToken, "logout", jwtUtil.getExpiration(accessToken) + 1000);
     }
 
     @Transactional

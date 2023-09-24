@@ -5,12 +5,13 @@ import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
 import lombok.Getter;
 
 @Getter
-public class AccountNotExistException extends BusinessException {
-    public AccountNotExistException() {
-        super(ErrorCode.ACCOUNT_NOT_FOUND);
+public class InvalidAccessTokenException extends BusinessException {
+
+    public InvalidAccessTokenException() {
+        super(ErrorCode.INVALID_TOKEN);
     }
 
-    public AccountNotExistException(String message) {
-        super(ErrorCode.ACCOUNT_NOT_FOUND, message);
+    public InvalidAccessTokenException(String message) {
+        super(ErrorCode.INVALID_TOKEN, message);
     }
 }

@@ -84,7 +84,7 @@ public class SecurityUtil {
         if (account.isPresent()) {
             return account.get();
         } else {
-            throw new AccountNotExistException();
+            throw new AccountNotExistException(CustomExceptionMessage.VALID_TOKEN_EMAIL_NOT_FOUND.getMessage());
         }
     }
 }

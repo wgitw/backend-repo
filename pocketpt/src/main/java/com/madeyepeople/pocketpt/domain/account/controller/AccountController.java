@@ -57,8 +57,8 @@ public class AccountController {
     }
 
     @DeleteMapping("/logout")
-    public ResponseEntity<ResultResponse> logout(@RequestBody LogoutRequest logoutRequest) {
-        accountService.logout(logoutRequest);
+    public ResponseEntity<ResultResponse> logout(HttpServletRequest httpServletRequest) {
+        accountService.logout(httpServletRequest);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_LOGOUT_SUCCESS));
     }
 

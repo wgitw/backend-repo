@@ -10,6 +10,8 @@ public enum CustomExceptionMessage {
     // global
     AUTHENTICATED_USER_NOT_FOUND("로그인된 사용자가 DB에 존재하지 않습니다"),
     INVALID_DATE_FORMAT("date string 형식이 yyyy-MM-dd가 아닙니다."),
+    DISCARDED_TOKEN("이미 폐기된 토큰입니다."),
+    VALID_TOKEN_EMAIL_NOT_FOUND("해당 토큰의 이메일을 가진 사용자가 존재하지 않습니다."),
 
     // sign up
     OAUTH2_NECESSARY_INFO_NOT_FOUND("Provider로부터 필수 제공 정보를 받아오지 못했습니다."),
