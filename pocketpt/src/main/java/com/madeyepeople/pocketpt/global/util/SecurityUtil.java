@@ -6,7 +6,7 @@ import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.global.error.ErrorCode;
 import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
-import jakarta.transaction.Transactional;
+import com.madeyepeople.pocketpt.global.error.exception.authorizationException.AccountNotExistException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
@@ -14,7 +14,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.security.Principal;
 import java.util.Optional;
 
 @Component
@@ -51,8 +50,9 @@ public class SecurityUtil {
                 Account account = isAccountExist(username);
                 return account;
             }
+        } catch (AccountNotExistException e) {
+            throw e;
         } catch (Exception e) {
-            // TODO: exception handling
             throw new RuntimeException("User not authenticated");
         }
         return null;
@@ -77,11 +77,12 @@ public class SecurityUtil {
         }
     }
 
-    public Account isAccountExist(String email) throws Exception {
+    public Account isAccountExist(String email) {
         Optional<Account> account = accountRepository.findByEmailAndIsDeletedFalse(email);
         if (account.isPresent()) {
             return account.get();
+        } else {
+            throw new AccountNotExistException(CustomExceptionMessage.VALID_TOKEN_EMAIL_NOT_FOUND.getMessage());
         }
-        throw new Exception(CustomExceptionMessage.AUTHENTICATED_USER_NOT_FOUND.getMessage());
     }
 }

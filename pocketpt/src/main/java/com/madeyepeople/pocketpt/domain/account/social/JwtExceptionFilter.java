@@ -28,7 +28,7 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
         response.setStatus(status.value());
         response.setContentType("application/json; charset=UTF-8");
 
-        ErrorResponse jwtExceptionResponse = ErrorResponse.of(ErrorCode.JWT_VALIDATION_ERROR);
+        ErrorResponse jwtExceptionResponse = ErrorResponse.of(ErrorCode.JWT_VALIDATION_ERROR, (Exception) e);
         response.getWriter().write(jwtExceptionResponse.toJSonString());
     }
 }

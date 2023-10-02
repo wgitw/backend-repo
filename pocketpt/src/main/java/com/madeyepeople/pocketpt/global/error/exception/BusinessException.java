@@ -2,7 +2,6 @@ package com.madeyepeople.pocketpt.global.error.exception;
 
 import com.madeyepeople.pocketpt.global.error.ErrorCode;
 import lombok.Getter;
-import org.springframework.validation.BindingResult;
 
 @Getter
 public class BusinessException extends RuntimeException {

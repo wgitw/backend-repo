@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutFilter;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -44,6 +43,7 @@ public class SecurityConfig {
                                 "/api/v1/account/main",
                                 "/api/v1/account/test-logout",
                                 "/api/v1/account/cookie-test",
+                                "/api/v1/account/flush-redis",
                                 "/ws-stomp"
                         ).permitAll()
                         .anyRequest().authenticated()
