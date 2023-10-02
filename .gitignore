@@ -39,12 +39,23 @@ out/
 .idea
 
 ### environment variables ###
-.env
+.env.docker
 .env.swp
+.env.prod
+
+### Gradle environment variables ###
+pocketpt/local.properties
 
 ### DB volumes ###
 db
 
 ### Mac ###
 .DS_Store
-=======
+
+### FCM test ###
+pocketpt/src/main/java/com/madeyepeople/pocketpt/domain/fcm
+pocketpt/src/main/java/com/madeyepeople/pocketpt/global/config/FirebaseConfig.java
+
+### elk test ###
+docker-elk/
+logstash-config/

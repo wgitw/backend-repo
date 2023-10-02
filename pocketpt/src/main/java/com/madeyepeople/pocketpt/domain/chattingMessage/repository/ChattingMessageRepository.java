@@ -1,6 +1,7 @@
 package com.madeyepeople.pocketpt.domain.chattingMessage.repository;
 
 import com.madeyepeople.pocketpt.domain.chattingMessage.entity.ChattingMessage;
+import com.madeyepeople.pocketpt.domain.chattingMessage.repositoryInterface.ChattingMessageWithBookmarkInterface;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -60,7 +61,79 @@ public interface ChattingMessageRepository extends JpaRepository<ChattingMessage
                 ORDER BY cm.chatting_message_id DESC
                 LIMIT :startNum, :pageSize
             """, nativeQuery = true)
-    List<ChattingMessage> findAllByChattingRoomOrderByChattingMessageIdDesc(Long chattingRoom, int startNum, int pageSize);
+    List<ChattingMessage> findAllByChattingRoomOrderByChattingMessageIdDescWithoutBookmark(Long chattingRoom, int startNum, int pageSize);
+
+    @Query(value =
+            """
+                SELECT
+                    cm.chatting_room AS chattingRoomId,
+                    cm.account_id AS accountId,
+                    cm.nickname AS nickname,
+                    cm.profile_picture_url AS profilePictureUrl,
+                    cm.chatting_message_id AS chattingMessageId,
+                    cm.content AS content,
+                    cm.file_url AS fileUrl,
+                    (CASE
+                        WHEN cmb.chatting_message_id = cm.chatting_message_id THEN true
+                        ELSE false
+                    END) AS isBookmarked,
+                    cm.is_edited AS isEdited,
+                    cm.not_view_count AS notViewCount,
+                    cm.is_deleted AS isDeleted,
+                    cm.created_at AS createdAt,
+                    cm.updated_at AS updatedAt
+                FROM
+                    (
+                        SELECT
+                            m.*,
+                            a.account_id,
+                            a.nickname,
+                            a.profile_picture_url
+                        FROM chatting_message m
+                        LEFT JOIN account a
+                        ON a.account_id = m.account
+                        WHERE m.chatting_room = :chattingRoom
+                    ) cm
+                LEFT JOIN chatting_message_bookmark cmb
+                ON cmb.chatting_message_id = cm.chatting_message_id
+                AND cmb.account_id = :accountId
+                ORDER BY cm.chatting_message_id DESC
+                LIMIT :startNum, :pageSize
+            """, nativeQuery = true)
+    List<ChattingMessageWithBookmarkInterface> findAllByChattingRoomOrderByChattingMessageIdDescWithBookmark(Long chattingRoom, int startNum, int pageSize, Long accountId);
+
+//    @Query(value =
+//            """
+//                SELECT
+//                    NEW com.madeyepeople.pocketpt.domain.chattingMessage.entity.ChattingMessageWithBookmark(
+//                        cm.chattingMessageId,
+//                        cm.chattingParticipant,
+//                        cm.chattingMessageBookmarkList,
+//                        cm.content,
+//                        cm.fileUrl,
+//                        (CASE
+//                            WHEN cmb.chatting_message_id = cm.chatting_message_id THEN true
+//                            ELSE false
+//                        END) AS is_bookmarked,
+//                        cm.isEdited,
+//                        cm.notViewCount,
+//                        cm.isDeleted,
+//                        cm.createdAt,
+//                        cm.updatedAt
+//                    )
+//                FROM
+//                    (
+//                        SELECT *
+//                        FROM chatting_message m
+//                        WHERE m.chatting_room = :chattingRoom
+//                    ) cm
+//                LEFT JOIN chatting_message_bookmark cmb
+//                ON cmb.chatting_message_id = cm.chatting_message_id
+//                AND cmb.account_id = :accountId
+//                ORDER BY cm.chatting_message_id DESC
+//                LIMIT :startNum, :pageSize
+//            """, nativeQuery = true)
+//    List<ChattingMessageWithBookmark> findAllByChattingRoomOrderByChattingMessageIdDescWithBookmark(Long chattingRoom, int startNum, int pageSize, Long accountId);
 
     // 채팅방의 파일 총개수 - is_deleted == True여도 삭제된 파일입니다로 보여주는 것을 의도하여 내보냄
     @Query(value =

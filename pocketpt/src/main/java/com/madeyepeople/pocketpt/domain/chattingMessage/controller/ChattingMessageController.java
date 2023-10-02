@@ -63,7 +63,8 @@ public class ChattingMessageController {
                                                                         @RequestParam(name = "page", defaultValue = "0") int page,
                                                                         @RequestParam(name = "size", defaultValue = "10") int size,
                                                                         @RequestParam(name = "totalRecord", defaultValue = "") Integer totalRecord) {
-        ResultResponse resultResponse = chattingMessageService.getChattingMessageListByRoom(chattingRoomId, page, size, totalRecord);
+        Long accountId = securityUtil.getLoginAccountId();
+        ResultResponse resultResponse = chattingMessageService.getChattingMessageListByRoom(chattingRoomId, page, size, totalRecord, accountId);
         return ResponseEntity.ok(resultResponse);
     }
 

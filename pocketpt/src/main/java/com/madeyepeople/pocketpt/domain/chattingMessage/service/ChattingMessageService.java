@@ -4,13 +4,12 @@ import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingFileCreateRequest;
 import com.madeyepeople.pocketpt.domain.chattingMessage.dto.request.ChattingMessageContentCreateRequest;
-import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageCreateResponse;
-import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageGetListPaginationRespnse;
-import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.ChattingMessageGetResponse;
+import com.madeyepeople.pocketpt.domain.chattingMessage.dto.response.*;
 import com.madeyepeople.pocketpt.domain.chattingMessage.entity.ChattingMessage;
 import com.madeyepeople.pocketpt.domain.chattingMessage.mapper.ToChattingMessageEntity;
 import com.madeyepeople.pocketpt.domain.chattingMessage.mapper.ToChattingMessageResponse;
 import com.madeyepeople.pocketpt.domain.chattingMessage.repository.ChattingMessageRepository;
+import com.madeyepeople.pocketpt.domain.chattingMessage.repositoryInterface.ChattingMessageWithBookmarkInterface;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.repository.ChattingParticipantRepository;
 import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
@@ -29,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.*;
 
@@ -156,7 +154,7 @@ public class ChattingMessageService {
 
     // 채팅 메시지 리스트 최신 100개
     @Transactional
-    public ResultResponse getChattingMessageListByRoom(Long chattingRoomId, int page, int size, Integer totalRecord) {
+    public ResultResponse getChattingMessageListByRoom(Long chattingRoomId, int page, int size, Integer totalRecord, Long accountId) {
         log.info("=======================");
         log.info("CHATTING-MESSAGE-SERVICE: [getChattingMessageListByRoom] START");
 
@@ -174,12 +172,13 @@ public class ChattingMessageService {
 
         log.info("CHATTING-MESSAGE-SERVICE: [getChattingMessageListByRoom] scrollPagination.getStartNum()>> {}", scrollPagination.getStartNum());
 
-        List<ChattingMessage> chattingMessageList = chattingMessageRepository
-                .findAllByChattingRoomOrderByChattingMessageIdDesc(foundChattingRoom.getChattingRoomId(), scrollPagination.getStartNum(), scrollPagination.getPageSize());
-        List<ChattingMessageGetResponse> chattingMessageGetResponseList = new ArrayList<>();
-        chattingMessageList.forEach(c -> chattingMessageGetResponseList.add(toChattingMessageResponse.toChattingMessageGetResponse(c)));
+        List<ChattingMessageWithBookmarkInterface> chattingMessageList = chattingMessageRepository
+                .findAllByChattingRoomOrderByChattingMessageIdDescWithBookmark(foundChattingRoom.getChattingRoomId(), scrollPagination.getStartNum(), scrollPagination.getPageSize(), accountId);
+        List<ChattingMessageWithBookmarkGetResponse> chattingMessageGetResponseList = new ArrayList<>();
+        chattingMessageList.forEach(c -> chattingMessageGetResponseList.add(toChattingMessageResponse.toChattingMessageWithBookmarkGetResponse(c)));
 
-        ChattingMessageGetListPaginationRespnse chattingMessageGetListPaginationRespnse = toChattingMessageResponse.toChattingMessageGetListPaginationResponse(chattingMessageGetResponseList, scrollPagination);
+        ChattingMessageWithBookmarkGetListPaginationRespnse chattingMessageGetListPaginationRespnse =
+                toChattingMessageResponse.toChattingMessageWithBookmarkGetListPaginationResponse(chattingMessageGetResponseList, scrollPagination);
 
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_LIST_GET_SUCCESS, chattingMessageGetListPaginationRespnse);
 

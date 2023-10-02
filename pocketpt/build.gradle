@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.1.2-SNAPSHOT'
 	id 'io.spring.dependency-management' version '1.1.0'
+	id 'com.google.cloud.tools.jib' version '3.3.2'
 }
 
 group = 'com.madeyepeople'
@@ -57,3 +58,36 @@ dependencies {
 //tasks.named('test') {
 //	useJUnitPlatform()
 //}
+
+/* AWS ECR */
+/*
+Properties properties = new Properties()
+def propertiesFile = project.rootProject.file('local.properties')
+if (propertiesFile.exists()) {
+	properties.load(propertiesFile.newDataInputStream())
+}
+
+ext {
+	aws_account_id = properties.getProperty('aws_account_id')
+	aws_region = properties.getProperty('aws_region')
+	aws_repository_name = properties.getProperty('aws_repository_name')
+	image_url="${aws_account_id}"+'.dkr.ecr.'+"${aws_region}"+'.amazonaws.com/'+"${aws_repository_name}"
+}
+
+jib {
+	from {
+		image = 'eclipse-temurin:17-jdk-alpine'
+	}
+	to {
+		image = "${image_url}"
+		tags = ['latest', "${project.version}".toString()]
+		credHelper = 'ecr-login'
+	}
+	container {
+		creationTime = 'USE_CURRENT_TIMESTAMP'
+		jvmFlags = ['-Dspring.profiles.active=prod', '-XX:+UseContainerSupport', '-Dserver.port=8080', '-Dfile.encoding=UTF-8']
+		ports = ['8080']
+		user = 'nobody:nogroup'
+	}
+}
+*/

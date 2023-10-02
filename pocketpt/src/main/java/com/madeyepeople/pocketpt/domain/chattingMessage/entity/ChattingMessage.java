@@ -5,7 +5,7 @@ import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParti
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Formula;
 
 import java.util.List;
 

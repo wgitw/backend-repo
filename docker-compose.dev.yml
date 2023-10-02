@@ -34,7 +34,7 @@ services:
   application:
     container_name: application
     env_file:
-      .env
+      .env.docker
     build: ./pocketpt
     depends_on:
       - mysql-db
