@@ -42,6 +42,7 @@ out/
 .env.docker
 .env.swp
 .env.prod
+.env
 
 ### Gradle environment variables ###
 pocketpt/local.properties

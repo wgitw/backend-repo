@@ -25,7 +25,7 @@ import java.util.List;
 @ToString(exclude = {"chattingParticipantList", "chattingMessageBookmarkList", "ptMatchingListOfTrainer", "ptMatchingListOfTrainee", "monthlyPtPriceList", "careerList", "purposeList"})
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "UPDATE account SET email = '', name = '탈퇴한 회원', phone_number = '', profile_picture_url = '', is_deleted = true WHERE account_id = ?")
+@SQLDelete(sql = "UPDATE account SET email = '', name = '탈퇴한 회원', phone_number = '', profile_picture_url = '', identification_code = null, is_deleted = true WHERE account_id = ?")
 // TODO: @SQLDelete 로 삭제시 is_deleted = true 로 변경되게 하기
 public class Account extends BaseEntity {
 
