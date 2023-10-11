@@ -73,7 +73,7 @@ jobs:
             EOF
             echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > private_key.pem
             chmod 600 private_key.pem
-            ssh -i private_key.pem ubuntu@10.0.220.221 <<EOF
+            ssh -i private_key.pem ubuntu@10.0.220.234 <<EOF
               echo "Connected to private EC2 instance"
               docker login -u "${{ secrets.PROD_DOCKERHUB_USERNAME }}" -p "${{ secrets.PROD_DOCKERHUB_TOKEN }}"
               docker pull ${{ secrets.PROD_DOCKERHUB_USERNAME }}/prod-pocket-pt:latest
