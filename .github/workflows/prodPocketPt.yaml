@@ -66,18 +66,18 @@ jobs:
           script: |
             echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > private_key.pem
             chmod 600 private_key.pem
-            ssh -i private_key.pem ubuntu@10.0.120.24 <<EOF
+            ssh -i private_key.pem ubuntu@10.0.120.24 <<EOF1
               echo "Connected to private EC2 instance"
               docker login -u "${{ secrets.PROD_DOCKERHUB_USERNAME }}" -p "${{ secrets.PROD_DOCKERHUB_TOKEN }}"
               docker pull ${{ secrets.PROD_DOCKERHUB_USERNAME }}/prod-pocket-pt:latest
-            EOF
+            EOF1
             echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > private_key.pem
             chmod 600 private_key.pem
-            ssh -i private_key.pem ubuntu@10.0.220.234 <<EOF
+            ssh -i private_key.pem ubuntu@10.0.220.234 <<EOF2
               echo "Connected to private EC2 instance"
               docker login -u "${{ secrets.PROD_DOCKERHUB_USERNAME }}" -p "${{ secrets.PROD_DOCKERHUB_TOKEN }}"
               docker pull ${{ secrets.PROD_DOCKERHUB_USERNAME }}/prod-pocket-pt:latest
-            EOF
+            EOF2
 
             
       # ECR 관련 코드 주석 처리
