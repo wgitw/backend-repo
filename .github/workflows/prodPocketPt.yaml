@@ -48,10 +48,11 @@ jobs:
       - name: Connect to EC2
         uses: appleboy/ssh-action@master
         with:
-          host: 3.38.250.97
+          host: 43.201.94.99
           username: ubuntu
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
+            ssh ubuntu@10.0.120.24
             docker login -u "${{ secrets.PROD_DOCKERHUB_USERNAME }}" -p "${{ secrets.PROD_DOCKERHUB_TOKEN }}"
             docker pull vivian0304/prod-pocket-pt:latest
             
