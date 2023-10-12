@@ -69,8 +69,11 @@ jobs:
             ssh -tt -i private_key.pem ubuntu@10.0.120.24 <<EOF
               echo "Connected to private EC2 instance"
               sudo docker login -u "${{ secrets.PROD_DOCKERHUB_USERNAME }}" -p "${{ secrets.PROD_DOCKERHUB_TOKEN }}"
+              echo "Success Docket Login"
               sudo docker pull ${{ secrets.PROD_DOCKERHUB_USERNAME }}/prod-pocket-pt:latest
+              echo "Success Docket Image Pull"
             EOF
+            rm -f private_key.pem
             
       - name: Connect to EC2 using SSH Key for Private2
         uses: appleboy/ssh-action@master
@@ -84,8 +87,11 @@ jobs:
             ssh -tt -i private_key.pem ubuntu@10.0.220.234 <<EOF
               echo "Connected to private EC2 instance"
               sudo docker login -u "${{ secrets.PROD_DOCKERHUB_USERNAME }}" -p "${{ secrets.PROD_DOCKERHUB_TOKEN }}"
+              echo "Success Docket Login"
               sudo docker pull ${{ secrets.PROD_DOCKERHUB_USERNAME }}/prod-pocket-pt:latest
+              echo "Success Docket Image Pull"
             EOF
+            rm -f private_key.pem
 
             
       # ECR 관련 코드 주석 처리
