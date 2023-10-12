@@ -57,7 +57,7 @@ jobs:
       #       docker login -u "${{ secrets.PROD_DOCKERHUB_USERNAME }}" -p "${{ secrets.PROD_DOCKERHUB_TOKEN }}"
       #       docker pull ${{ secrets.PROD_DOCKERHUB_USERNAME }}/prod-pocket-pt:latest
       
-      - name: Connect to EC2 using SSH Key for Private1
+      - name: Connect to EC2 using SSH Key
         uses: appleboy/ssh-action@master
         with:
           host: 43.201.94.99
@@ -66,34 +66,42 @@ jobs:
           script: |
             echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > private_key.pem
             chmod 600 private_key.pem
-            ssh -i private_key.pem ubuntu@10.0.120.24 <<EOF
-              echo "Connected to private EC2 instance"
+            ssh -i private_key.pem ubuntu@10.0.120.24 <<EOF1
+              echo "Connected to private1 EC2 instance"
               sudo docker login -u "${{ secrets.PROD_DOCKERHUB_USERNAME }}" -p "${{ secrets.PROD_DOCKERHUB_TOKEN }}"
               echo "Success Docket Login"
               sudo docker pull ${{ secrets.PROD_DOCKERHUB_USERNAME }}/prod-pocket-pt:latest
               echo "Success Docket Image Pull"
               exit
-            EOF
+            EOF1
+            ssh -i private_key.pem ubuntu@10.0.220.234 <<EOF2
+              echo "Connected to private2 EC2 instance"
+              sudo docker login -u "${{ secrets.PROD_DOCKERHUB_USERNAME }}" -p "${{ secrets.PROD_DOCKERHUB_TOKEN }}"
+              echo "Success Docket Login"
+              sudo docker pull ${{ secrets.PROD_DOCKERHUB_USERNAME }}/prod-pocket-pt:latest
+              echo "Success Docket Image Pull"
+              exit
+            EOF2
             rm -f private_key.pem
             
-      - name: Connect to EC2 using SSH Key for Private2
-        uses: appleboy/ssh-action@master
-        with:
-          host: 43.201.94.99
-          username: ubuntu
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          script: |
-            echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > private_key.pem
-            chmod 600 private_key.pem
-            ssh -i private_key.pem ubuntu@10.0.220.234 <<EOF
-              echo "Connected to private EC2 instance"
-              sudo docker login -u "${{ secrets.PROD_DOCKERHUB_USERNAME }}" -p "${{ secrets.PROD_DOCKERHUB_TOKEN }}"
-              echo "Success Docket Login"
-              sudo docker pull ${{ secrets.PROD_DOCKERHUB_USERNAME }}/prod-pocket-pt:latest
-              echo "Success Docket Image Pull"
-              exit
-            EOF
-            rm -f private_key.pem
+      # - name: Connect to EC2 using SSH Key for Private2
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     host: 43.201.94.99
+      #     username: ubuntu
+      #     key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+      #     script: |
+      #       echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > private_key.pem
+      #       chmod 600 private_key.pem
+      #       ssh -i private_key.pem ubuntu@10.0.220.234 <<EOF
+      #         echo "Connected to private EC2 instance"
+      #         sudo docker login -u "${{ secrets.PROD_DOCKERHUB_USERNAME }}" -p "${{ secrets.PROD_DOCKERHUB_TOKEN }}"
+      #         echo "Success Docket Login"
+      #         sudo docker pull ${{ secrets.PROD_DOCKERHUB_USERNAME }}/prod-pocket-pt:latest
+      #         echo "Success Docket Image Pull"
+      #         exit
+      #       EOF
+      #       rm -f private_key.pem
 
             
       # ECR 관련 코드 주석 처리
