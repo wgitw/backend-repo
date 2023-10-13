@@ -64,7 +64,7 @@ public class ChattingMessageBookmarkService {
         );
 
         // [3] 메시지 유효성 검사
-        ChattingMessage chattingMessage = chattingMessageRepository.findById(chattingMessageId).orElseThrow(
+        ChattingMessage chattingMessage = chattingMessageRepository.findByIdAndRoomIdAndAccountIdAndIsDeletedFalse(roomId, accountId, chattingMessageId).orElseThrow(
                 () -> new BusinessException(ErrorCode.CHATTING_MESSAGE_NOT_FOUND, CustomExceptionMessage.CHATTING_MESSAGE_NOT_FOUND.getMessage())
         );
 
@@ -101,10 +101,10 @@ public class ChattingMessageBookmarkService {
 
         // [3] 북마크 리스트 가져오기
         Slice<ChattingMessageBookmark> chattingMessageBookmarkList = chattingMessageBookmarkRepository.findAllByAccountAndChattingRoom(account, foundChattingRoom, pageable);
-        List<ChattingMessageGetResponse> chattingMessageBookmarkCreateResponseList = new ArrayList<>();
-        chattingMessageBookmarkList.forEach(c -> chattingMessageBookmarkCreateResponseList.add(toChattingMessageResponse.toChattingMessageGetResponse(c.getChattingMessage())));
+        List<ChattingMessageGetResponse> chattingMessageWithBookmarkGetResponses = new ArrayList<>();
+        chattingMessageBookmarkList.forEach(c -> chattingMessageWithBookmarkGetResponses.add(toChattingMessageResponse.toChattingMessageGetResponse(c.getChattingMessage())));
 
-        ChattingMessageBookmarkGetListPaginationResponse chattingMessageBookmarkGetListPaginationResponse = toChattingMessageBookmarkResponse.toChattingMessageBookmarkGetListPaginationResponse(chattingMessageBookmarkCreateResponseList, chattingMessageBookmarkList);
+        ChattingMessageBookmarkGetListPaginationResponse chattingMessageBookmarkGetListPaginationResponse = toChattingMessageBookmarkResponse.toChattingMessageBookmarkGetListPaginationResponse(chattingMessageWithBookmarkGetResponses, chattingMessageBookmarkList);
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_BOOKMARK_LIST_GET_SUCCESS, chattingMessageBookmarkGetListPaginationResponse);
 
         log.info("CHATTING-MESSAGE-BOOKMARK-SERVICE: [getChattingMessageBookmarkListByRoomAndAccount] END");

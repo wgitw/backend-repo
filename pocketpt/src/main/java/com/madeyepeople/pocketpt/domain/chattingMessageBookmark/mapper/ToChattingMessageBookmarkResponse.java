@@ -32,7 +32,7 @@ public class ToChattingMessageBookmarkResponse {
                                         List<ChattingMessageGetResponse> chattingMessageBookmarkCreateResponseList,
                                         Slice<ChattingMessageBookmark> chattingMessageBookmarkList) {
         return ChattingMessageBookmarkGetListPaginationResponse.builder()
-                .chattingMessageBookmarkCreateResponseList(chattingMessageBookmarkCreateResponseList)
+                .chattingMessageWithBookmarkGetResponses(chattingMessageBookmarkCreateResponseList)
                 .pageSize(chattingMessageBookmarkList.getSize())
                 .pageNum(chattingMessageBookmarkList.getNumber())
                 .hasPreviousPage(chattingMessageBookmarkList.hasPrevious())

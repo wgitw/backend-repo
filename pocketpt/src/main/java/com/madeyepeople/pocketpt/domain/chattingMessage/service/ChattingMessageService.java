@@ -10,6 +10,8 @@ import com.madeyepeople.pocketpt.domain.chattingMessage.mapper.ToChattingMessage
 import com.madeyepeople.pocketpt.domain.chattingMessage.mapper.ToChattingMessageResponse;
 import com.madeyepeople.pocketpt.domain.chattingMessage.repository.ChattingMessageRepository;
 import com.madeyepeople.pocketpt.domain.chattingMessage.repositoryInterface.ChattingMessageWithBookmarkInterface;
+import com.madeyepeople.pocketpt.domain.chattingMessageBookmark.entity.ChattingMessageBookmark;
+import com.madeyepeople.pocketpt.domain.chattingMessageBookmark.repository.ChattingMessageBookmarkRepository;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
 import com.madeyepeople.pocketpt.domain.chattingParticipant.repository.ChattingParticipantRepository;
 import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
@@ -39,6 +41,7 @@ public class ChattingMessageService {
     private final ChattingMessageRepository chattingMessageRepository;
     private final ChattingRoomRepository chattingRoomRepository;
     private final ChattingParticipantRepository chattingParticipantRepository;
+    private final ChattingMessageBookmarkRepository chattingMessageBookmarkRepository;
     private final ToChattingMessageEntity toChattingMessageEntity;
     private final ToChattingMessageResponse toChattingMessageResponse;
     private final S3FileService s3FileService;
@@ -278,16 +281,24 @@ public class ChattingMessageService {
         );
 
         // [3] 채팅 message 유효성 검사
-        chattingMessageRepository.findByIdAndRoomIdAndAccountIdAndIsDeletedFalse(foundChattingRoom.getChattingRoomId(), accountId, chattingMessageId)
+        ChattingMessage chattingMessage = chattingMessageRepository.findByIdAndRoomIdAndAccountIdAndIsDeletedFalse(foundChattingRoom.getChattingRoomId(), accountId, chattingMessageId)
                 .orElseThrow(
                         () -> new BusinessException(ErrorCode.CHATTING_MESSAGE_NOT_FOUND, CustomExceptionMessage.CHATTING_MESSAGE_NOT_FOUND.getMessage())
                 ); // 삭제한 메시지는 다시 삭제할 수 없도록 is_deleted == false인 메시지만 조회
 
-        // [4] 채팅 메시지 삭제
+        // [4] 채팅 메시지 북마크 유효성 검사
+        List<ChattingMessageBookmark> chattingMessageBookmark = chattingMessageBookmarkRepository.findAllByChattingMessageAndChattingRoom(chattingMessage, foundChattingRoom);
+
+        // [5] 채팅 메시지 id와 채팅 메시지 room id로 채팅 메시지 북마크 삭제
+        if (chattingMessageBookmark.size() > 0) {
+            chattingMessageBookmarkRepository.deleteByChattingMessageAndChattingRoom(chattingMessage, foundChattingRoom);
+        }
+
+        // [6] 채팅 메시지 삭제
         chattingMessageRepository.deleteByIdAndRoomIdAndAccountIdAndIsDeletedFalse(foundChattingRoom.getChattingRoomId(), accountId, chattingMessageId);
 
-        // [5] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageCreateResponse
-        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_DELETE_SUCCESS, "delete success");
+        // [7] 채팅방 id, 채팅 sender id, 채팅 메시지 정보가 담긴 chattingMessageCreateResponse
+        ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_MESSAGE_DELETE_SUCCESS, "chatting message and chatting message bookmark delete success");
 
         log.info("CHATTING-MESSAGE-SERVICE: [deleteChattingMessage] END");
         log.info("=======================");
