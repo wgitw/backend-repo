@@ -12,7 +12,7 @@ public enum ResultCode {
     // account
     ACCOUNT_CREATE_SUCCESS("A001", "회원 가입 성공"),
     ACCOUNT_GET_SUCCESS("A002", "특정 회원 상세 조회 성공"),
-    ACCOUNT_CHECK_SIGNED_UP_SUCCESS("A003", "1차 회원 가입 여부 조회 성공"),
+    ACCOUNT_CHECK_SIGNED_UP_SUCCESS("A003", "2차 회원 가입 여부 조회 성공"),
     ACCOUNT_PT_PRICE_GET_SUCCESS("A004", "트레이너의 월간 PT 가격 조회 성공"),
     ACCOUNT_TOTAL_SALES_GET_SUCCESS("A005", "트레이너의 총 매출 조회 성공"),
     ACCOUNT_MONTHLY_SALES_GET_SUCCESS("A006", "트레이너의 월별 매출 조회 성공"),
@@ -31,6 +31,7 @@ public enum ResultCode {
     ACCOUNT_PROFILE_GET_SUCCESS("A019", "프로필 조회 성공"),
     ACCOUNT_LOGOUT_SUCCESS("A020", "로그아웃 성공"),
     ACCOUNT_WITHDRAWAL_SUCCESS("A021", "회원 탈퇴 성공"),
+    ACCOUNT_INTRODUCE_UPDATE_SUCCESS("A022", "한줄 소개 수정 성공"),
 
     // ptMatching
     PT_REGISTRATION_CREATE_SUCCESS("PM001", "PT 요청 성공"),

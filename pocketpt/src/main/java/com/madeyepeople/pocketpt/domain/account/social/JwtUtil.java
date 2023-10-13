@@ -110,25 +110,13 @@ public class JwtUtil {
     // 토큰 정보를 검증하는 메서드
     public boolean validateToken(String token) {
         try {
-            // token이 저장된 string들과 일치한다면 거부
-            String[] discardedTokens = {"eyJhbGciOiJIUzUxMiJ9.eyJhdXRob3JpdGllcyI6WyJtZW1iZXIiXSwic3ViIjoidml2aWFuMDMwNEBuYXZlci5jb20iLCJpYXQiOjE2OTExMzM4MTksImV4cCI6MTcwMTUwMTgxOX0.HbjBJdJLqz58PE4qHHPcjL3T_PKG_rC05k-5nCBzWBWeNGnzTB8fUeOtjpR4LFjgnpuU2M5Uxy28wPwlRmGsuQ",
-                    "eyJhbGciOiJIUzUxMiJ9.eyJhdXRob3JpdGllcyI6WyJtZW1iZXIiXSwic3ViIjoia2ltdGtzNDU2QG5hdmVyLmNvbSIsImlhdCI6MTY5MTEzMzg2MSwiZXhwIjoxNzAxNTAxODYxfQ.ZNHYOzUN5QSjNE_S_6kuPIkUQl_2-TGlopu9mFcvS3gS1j0zwY1rr4WncL0m-C5f16NDfmGmFiObSfUTTkeBLQ",
-                    "eyJhbGciOiJIUzUxMiJ9.eyJhdXRob3JpdGllcyI6WyJtZW1iZXIiXSwic3ViIjoiamVzdXMwMzIxQG5hdmVyLmNvbSIsImlhdCI6MTY5MTA0MzQ3NiwiZXhwIjoxNjk4ODE5NDc2fQ.zuCQiD8DXsW8qjQrMbHd4M0X4eSKbX_iGFR-oMMujVv4pCrnkagQrhbNxAsmup2Cw6L-5jW7UlQA8wSKxtAN9w"};
-
-            for (String discardedToken : discardedTokens) {
-                if (discardedToken.equals(token)) {
-                    throw new InvalidAccessTokenException(CustomExceptionMessage.DISCARDED_TOKEN.getMessage());
-                }
-            }
-
             // 로그아웃된 토큰인지 확인
             if (redisUtil.hasKey(token)) {
                 throw new InvalidAccessTokenException(CustomExceptionMessage.DISCARDED_TOKEN.getMessage());
             }
-
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-            // TODO: 각 경우에 따라 다른 exception 처리 필요. 일단 login으로 redirect
+
         } catch (SignatureException e) {
             throw new JwtException("사용자 인증 실패", e);
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {

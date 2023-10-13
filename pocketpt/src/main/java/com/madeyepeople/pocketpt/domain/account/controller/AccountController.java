@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 
-@Validated
+@Validated // path variable에 정규식을 사용하기 위해 추가
 @RestController
 @RequestMapping("/api/v1/account")
 @Slf4j
@@ -45,7 +45,7 @@ public class AccountController {
     }
 
     // 2차 회원가입
-    @PatchMapping("/{role}")
+    @PatchMapping("/signup/{role}")
     public ResponseEntity<ResultResponse> signup(@RequestBody @Valid CommonRegistrationRequest commonRegistrationRequest,
                                                  @PathVariable
                                                  @Pattern(
@@ -75,6 +75,12 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_GET_SUCCESS, accountDetailGetResponse));
     }
 
+    @PatchMapping("/detail")
+    public ResponseEntity<ResultResponse> updateAccount(@RequestBody @Valid AccountUpdateRequest accountUpdateRequest) {
+        AccountUpdateResponse accountUpdateResponse = accountService.updateIntroduce(accountUpdateRequest);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_INTRODUCE_UPDATE_SUCCESS, accountUpdateResponse));
+    }
+
     // 상대방 프로필 정보 조회
     @GetMapping("/profile/{accountId}")
     public ResponseEntity<ResultResponse> getProfile(@PathVariable Long accountId) {
@@ -88,9 +94,6 @@ public class AccountController {
         MonthlyPtPriceGetResponse monthlyPtPriceGetResponse = accountService.getTrainerAllPtPrice(trainerCode);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PT_PRICE_GET_SUCCESS, monthlyPtPriceGetResponse));
     }
-
-    // TODO: 회원 프로필 조회
-//    @GetMapping("/summary")
 
     @PostMapping("/purpose")
     public ResponseEntity<ResultResponse> createPurpose(@RequestBody @Valid PurposeCreateRequest purposeCreateRequest) {
@@ -193,13 +196,11 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_INCOME_GET_SUCCESS, trainerIncomeGetResponse));
     }
 
-    // @GetMapping("/trainer/income/monthly")
 
     /**
      * 테스트용 api
      */
     @GetMapping("/main")
-
     public String mainTest() {
         return "메인 페이지 입니다!";
     }
@@ -217,7 +218,6 @@ public class AccountController {
 
     @GetMapping("rollback-signup")
     public String removeRole() {
-
         return accountService.removeRoleAndMonthlyPtPrice();
     }
 

@@ -1,6 +1,7 @@
 package com.madeyepeople.pocketpt.domain.account.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.madeyepeople.pocketpt.domain.account.dto.request.AccountUpdateRequest;
 import com.madeyepeople.pocketpt.domain.historicalData.entity.HistoricalData;
 import com.madeyepeople.pocketpt.domain.chattingMessageBookmark.entity.ChattingMessageBookmark;
 import com.madeyepeople.pocketpt.domain.account.constant.RoleEnumConverter;
@@ -17,7 +18,7 @@ import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+import java.util.Optional;
 
 
 @Entity
@@ -151,5 +152,11 @@ public class Account extends BaseEntity {
     public Account deleteAccountRole() {
         this.accountRole = null;
         return this;
+    }
+
+    public void updateByAccountUpdateRequest(AccountUpdateRequest accountUpdateRequest) {
+        Optional<String> introduceOptional = Optional.ofNullable(accountUpdateRequest.getIntroduce());
+
+        introduceOptional.ifPresent(value -> this.introduce = value);
     }
 }

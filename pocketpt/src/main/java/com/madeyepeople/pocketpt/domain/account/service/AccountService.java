@@ -104,7 +104,7 @@ public class AccountService {
         // 트레이너일 경우
         if (account.getAccountRole() == Role.TRAINER) {
             // 월별 PT 단가가 필수로 입력되어야 함.
-            if (commonRegistrationRequest.getMonthlyPtPriceList().isEmpty()) {
+            if (commonRegistrationRequest.getMonthlyPtPriceList() == null || commonRegistrationRequest.getMonthlyPtPriceList().isEmpty()) {
                 throw new BusinessException(ErrorCode.TRAINER_MONTHLY_PT_PRICE_ERROR, CustomExceptionMessage.TRAINER_MUST_HAVE_MONTHLY_PT_PRICE.getMessage());
             // 중복되는 개월수가 없어야함.
             } else if (trainerMonthlyPtPriceUtil.hasDuplicatePeriodByDto(commonRegistrationRequest.getMonthlyPtPriceList())) {
@@ -444,5 +444,14 @@ public class AccountService {
     public String flushRedis() {
         redisUtil.flushAll();
         return "flushed";
+    }
+
+    public AccountUpdateResponse updateIntroduce(AccountUpdateRequest accountUpdateRequest) {
+        Account account = securityUtil.getLoginAccountEntity();
+        account.updateByAccountUpdateRequest(accountUpdateRequest);
+        Account updatedAccount = accountRepository.save(account);
+        return AccountUpdateResponse.builder()
+                .introduce(updatedAccount.getIntroduce())
+                .build();
     }
 }
