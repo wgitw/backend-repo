@@ -159,4 +159,9 @@ public class Account extends BaseEntity {
 
         introduceOptional.ifPresent(value -> this.introduce = value);
     }
+
+    public void updateByProfilePictureUrl(String fileUrl) {
+        Optional<String> fileUrlOptional = Optional.ofNullable(fileUrl);
+        fileUrlOptional.ifPresent(value -> this.profilePictureUrl = value);
+    }
 }

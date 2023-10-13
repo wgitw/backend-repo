@@ -28,7 +28,7 @@ import com.madeyepeople.pocketpt.domain.ptMatching.repository.PtMatchingReposito
 import com.madeyepeople.pocketpt.global.error.ErrorCode;
 import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
-import com.madeyepeople.pocketpt.global.error.exception.authorizationException.InvalidAccessTokenException;
+import com.madeyepeople.pocketpt.global.s3.S3FileService;
 import com.madeyepeople.pocketpt.global.util.RedisUtil;
 import com.madeyepeople.pocketpt.global.util.SecurityUtil;
 import com.madeyepeople.pocketpt.global.util.UniqueCodeGenerator;
@@ -37,11 +37,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -69,6 +69,7 @@ public class AccountService {
     private final ToPurposeDto toPurposeDto;
     private final ToProfileGetResponse toProfileGetResponse;
 
+    private final S3FileService s3FileService;
     private final JwtUtil jwtUtil;
     private final RedisUtil redisUtil;
     private final SecurityUtil securityUtil;
@@ -446,12 +447,24 @@ public class AccountService {
         return "flushed";
     }
 
+    @Transactional
     public AccountUpdateResponse updateIntroduce(AccountUpdateRequest accountUpdateRequest) {
         Account account = securityUtil.getLoginAccountEntity();
         account.updateByAccountUpdateRequest(accountUpdateRequest);
         Account updatedAccount = accountRepository.save(account);
         return AccountUpdateResponse.builder()
                 .introduce(updatedAccount.getIntroduce())
+                .build();
+    }
+
+    @Transactional
+    public AccountUpdateResponse updateProfilePicture(AccountProfilePictureUpdateRequest accountProfilePictureUpdateRequest) {
+        Account account = securityUtil.getLoginAccountEntity();
+        String fileUrl = s3FileService.uploadFile("profile/" + account.getAccountId() + "/", accountProfilePictureUpdateRequest.getFile());
+        account.updateByProfilePictureUrl(fileUrl);
+        Account updatedAccount = accountRepository.save(account);
+        return AccountUpdateResponse.builder()
+                .profileImageUrl(updatedAccount.getProfilePictureUrl())
                 .build();
     }
 }

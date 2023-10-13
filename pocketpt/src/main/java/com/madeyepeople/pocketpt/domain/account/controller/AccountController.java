@@ -18,7 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.xml.transform.Result;
 import java.util.List;
 
 
@@ -75,10 +77,19 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_GET_SUCCESS, accountDetailGetResponse));
     }
 
+    // 내 정보 수정
     @PatchMapping("/detail")
     public ResponseEntity<ResultResponse> updateAccount(@RequestBody @Valid AccountUpdateRequest accountUpdateRequest) {
         AccountUpdateResponse accountUpdateResponse = accountService.updateIntroduce(accountUpdateRequest);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_INTRODUCE_UPDATE_SUCCESS, accountUpdateResponse));
+    }
+
+    // 내 프로필사진 수정
+    @PatchMapping("/detail/profile-picture")
+    public ResponseEntity<ResultResponse> updateProfilePicture(@ModelAttribute AccountProfilePictureUpdateRequest accountProfilePictureUpdateRequest) {
+
+        AccountUpdateResponse accountUpdateResponse = accountService.updateProfilePicture(accountProfilePictureUpdateRequest);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PROFILE_PICTURE_UPDATE_SUCCESS, accountUpdateResponse));
     }
 
     // 상대방 프로필 정보 조회
