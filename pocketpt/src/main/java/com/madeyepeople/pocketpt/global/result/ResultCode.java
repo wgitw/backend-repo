@@ -32,6 +32,7 @@ public enum ResultCode {
     ACCOUNT_LOGOUT_SUCCESS("A020", "로그아웃 성공"),
     ACCOUNT_WITHDRAWAL_SUCCESS("A021", "회원 탈퇴 성공"),
     ACCOUNT_INTRODUCE_UPDATE_SUCCESS("A022", "한줄 소개 수정 성공"),
+    ACCOUNT_PROFILE_PICTURE_UPDATE_SUCCESS("A023", "프로필 사진 수정 성공"),
 
     // ptMatching
     PT_REGISTRATION_CREATE_SUCCESS("PM001", "PT 요청 성공"),
