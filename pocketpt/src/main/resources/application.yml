@@ -1,6 +1,6 @@
 spring:
   profiles:
-    default: ${SPRING_PROFILES_ACTIVE}
+    default: prod
     group:
 #      local:
 #        - local
