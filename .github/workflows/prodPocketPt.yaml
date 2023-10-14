@@ -53,10 +53,6 @@ jobs:
           script: |
             echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > private_key.pem
             chmod 600 private_key.pem
-            
-            # Copy docker-compose.yml to EC2 instance
-            scp -o StrictHostKeyChecking=no -i private_key.pem docker-compose.prod.yml ubuntu@10.0.120.24:/home/ubuntu/docker-compose.yml
-
             ssh -i private_key.pem ubuntu@10.0.120.24 <<EOF1
               echo "Connected to private1 EC2 instance(120)"
               sudo docker login -u "${{ secrets.PROD_DOCKERHUB_USERNAME }}" -p "${{ secrets.PROD_DOCKERHUB_TOKEN }}"
