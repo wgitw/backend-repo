@@ -25,7 +25,7 @@ jobs:
         run: cd pocketpt && ./gradlew build
         shell: bash
         
-      - name: copy 'docker-compose.prod.yml' to EC2 instances
+      - name: copy 'docker-compose.prod.yml' to public EC2(110) instance
         uses: appleboy/scp-action@v0.1.4
         with:
           host: 43.201.94.99
@@ -34,7 +34,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           source: "docker-compose.prod.yml"
           target: "/home/ubuntu"
-        
+
       # - name: Configure AWS credentials
       #   uses: aws-actions/configure-aws-credentials@5fd3084fc36e372ff1fff382a39b10d03659f355
       #   with:
@@ -62,7 +62,12 @@ jobs:
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           script: |
             echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > private_key.pem
-            chmod 600 private_key.pem            
+            chmod 600 private_key.pem
+
+            scp -o StrictHostKeyChecking=no -i private_key.pem docker-compose.prod.yml ubuntu@10.0.120.24:/home/ubuntu/docker-compose.yml
+            scp -o StrictHostKeyChecking=no -i private_key.pem docker-compose.prod.yml ubuntu@10.0.220.234:/home/ubuntu/docker-compose.yml
+            rm docker-compose.prod.yml
+            
             ssh -i private_key.pem ubuntu@10.0.120.24 <<EOF1
               echo "Connected to private1 EC2 instance(120)"
               sudo docker login -u "${{ secrets.PROD_DOCKERHUB_USERNAME }}" -p "${{ secrets.PROD_DOCKERHUB_TOKEN }}"
@@ -73,7 +78,7 @@ jobs:
               echo "Success Docker Compose Down"
               echo "${{ secrets.ENV_PROD_FILE }}" > .env.prod
               echo "Success Copy '.env.prod' in Instance(120)"
-              echo "${{ secrets.DOCKER_COMPOSE_PROD_YAML }}" > docker-compose.yml
+              # echo "${{ secrets.DOCKER_COMPOSE_PROD_YAML }}" > docker-compose.yml
               echo "Success Copy 'docker-compose.yml' in Instance(120)"
               sudo docker compose up -d
               echo "Success Docker Compose up"
@@ -89,7 +94,7 @@ jobs:
               echo "Success Docker Compose Down"
               echo "${{ secrets.ENV_PROD_FILE }}" > .env.prod
               echo "Success Copy '.env.prod' in Instance(220)"
-              echo "${{ secrets.DOCKER_COMPOSE_PROD_YAML }}" > docker-compose.yml
+              # echo "${{ secrets.DOCKER_COMPOSE_PROD_YAML }}" > docker-compose.yml
               echo "Success Copy 'docker-compose.yml' in Instance(220)"
               sudo docker compose up -d
               echo "Success Docker Compose up"
