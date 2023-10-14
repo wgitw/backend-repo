@@ -33,7 +33,7 @@ jobs:
           port: 22
           key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
           source: "docker-compose.prod.yml"
-          target: "/home/ubuntu/docker-compose.yml"
+          target: "/home/ubuntu"
         
       # - name: Configure AWS credentials
       #   uses: aws-actions/configure-aws-credentials@5fd3084fc36e372ff1fff382a39b10d03659f355
