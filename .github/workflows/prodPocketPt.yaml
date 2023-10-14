@@ -25,7 +25,7 @@ jobs:
         run: cd pocketpt && ./gradlew build
         shell: bash
         
-      - name: copy 'docker-compose.prod.yml' to public EC2(110) instance
+      - name: Copy 'docker-compose.prod.yml' to public EC2(110) instance
         uses: appleboy/scp-action@v0.1.4
         with:
           host: 43.201.94.99
@@ -48,13 +48,13 @@ jobs:
           username: ${{ secrets.PROD_DOCKERHUB_USERNAME }}
           password: ${{ secrets.PROD_DOCKERHUB_TOKEN }}
 
-      - name: build docker file and setting deploy files
+      - name: Build docker file and setting deploy files
         run: |
           cd pocketpt
           docker build -t ${{ secrets.PROD_DOCKERHUB_USERNAME }}/prod-pocket-pt:latest .
           docker push ${{ secrets.PROD_DOCKERHUB_USERNAME }}/prod-pocket-pt:latest
 
-      - name: Connect to EC2 using SSH Key
+      - name: Connect to public EC2(110) using SSH Key
         uses: appleboy/ssh-action@master
         with:
           host: 43.201.94.99
