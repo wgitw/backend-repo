@@ -59,6 +59,10 @@ jobs:
               echo "Success Docket Login"
               sudo docker pull ${{ secrets.PROD_DOCKERHUB_USERNAME }}/prod-pocket-pt:latest
               echo "Success Docket Image Pull"
+              sudo docker compose down
+              echo "Success Docket Compose Down"
+              sudo docker compose up -d
+              echo "Success Docket Compose up"
               exit
             EOF1
             ssh -i private_key.pem ubuntu@10.0.220.234 <<EOF2
@@ -67,6 +71,10 @@ jobs:
               echo "Success Docket Login"
               sudo docker pull ${{ secrets.PROD_DOCKERHUB_USERNAME }}/prod-pocket-pt:latest
               echo "Success Docket Image Pull"
+              sudo docker compose down
+              echo "Success Docket Compose Down"
+              sudo docker compose up -d
+              echo "Success Docket Compose up"
               exit
             EOF2
             rm -f private_key.pem
