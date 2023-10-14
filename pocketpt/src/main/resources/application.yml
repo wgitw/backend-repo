@@ -1,6 +1,6 @@
 spring:
   profiles:
-    default: docker
+    default: ${SPRING_PROFILES_ACTIVE}
     group:
 #      local:
 #        - local

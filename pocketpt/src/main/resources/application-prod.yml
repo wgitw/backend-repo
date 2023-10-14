@@ -26,7 +26,7 @@ spring:
         jdbc:
           time_zone: Asia/Seoul
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO}
 
   output:
     ansi:
@@ -72,7 +72,7 @@ spring:
     redis:
       host: ${SPRING_REDIS_HOST}
       port: ${SPRING_REDIS_PORT}
-      password: ${SPRING_REDIS_PASSWORD}
+#      password: ${SPRING_REDIS_PASSWORD}
       timeout: 10000
       lettuce:
         pool:
