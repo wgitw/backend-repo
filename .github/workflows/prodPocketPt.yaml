@@ -78,7 +78,6 @@ jobs:
               echo "Success Docker Compose Down"
               echo "${{ secrets.ENV_PROD_FILE }}" > .env.prod
               echo "Success Copy '.env.prod' in Instance(120)"
-              echo "Success Copy 'docker-compose.yml' in Instance(120)"
               sudo docker compose up -d
               echo "Success Docker Compose up"
               exit
@@ -93,7 +92,6 @@ jobs:
               echo "Success Docker Compose Down"
               echo "${{ secrets.ENV_PROD_FILE }}" > .env.prod
               echo "Success Copy '.env.prod' in Instance(220)"
-              echo "Success Copy 'docker-compose.yml' in Instance(220)"
               sudo docker compose up -d
               echo "Success Docker Compose up"
               exit
