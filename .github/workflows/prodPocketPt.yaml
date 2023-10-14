@@ -25,6 +25,16 @@ jobs:
         run: cd pocketpt && ./gradlew build
         shell: bash
         
+      - name: copy 'docker-compose.prod.yml' to EC2 instances
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: 43.201.94.99
+          username: ubuntu
+          port: 22
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          source: "docker-compose.prod.yml"
+          target: "/home/ubuntu/docker-compose.yml"
+        
       # - name: Configure AWS credentials
       #   uses: aws-actions/configure-aws-credentials@5fd3084fc36e372ff1fff382a39b10d03659f355
       #   with:
