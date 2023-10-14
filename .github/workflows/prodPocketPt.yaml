@@ -54,27 +54,31 @@ jobs:
             echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > private_key.pem
             chmod 600 private_key.pem
             ssh -i private_key.pem ubuntu@10.0.120.24 <<EOF1
-              echo "Connected to private1 EC2 instance"
+              echo "Connected to private1 EC2 instance(120)"
               sudo docker login -u "${{ secrets.PROD_DOCKERHUB_USERNAME }}" -p "${{ secrets.PROD_DOCKERHUB_TOKEN }}"
-              echo "Success Docket Login"
+              echo "Success Docker Login"
               sudo docker pull ${{ secrets.PROD_DOCKERHUB_USERNAME }}/prod-pocket-pt:latest
-              echo "Success Docket Image Pull"
+              echo "Success Docker Image Pull"
               sudo docker compose down
-              echo "Success Docket Compose Down"
+              echo "Success Docker Compose Down"
+              echo "${{ secrets.ENV_PROD_FILE }}" > .env.prod
+              echo "Success Copy '.env.prod' in Instance(120)"
               sudo docker compose up -d
-              echo "Success Docket Compose up"
+              echo "Success Docker Compose up"
               exit
             EOF1
             ssh -i private_key.pem ubuntu@10.0.220.234 <<EOF2
-              echo "Connected to private2 EC2 instance"
+              echo "Connected to private2 EC2 instance(220)"
               sudo docker login -u "${{ secrets.PROD_DOCKERHUB_USERNAME }}" -p "${{ secrets.PROD_DOCKERHUB_TOKEN }}"
-              echo "Success Docket Login"
+              echo "Success Docker Login"
               sudo docker pull ${{ secrets.PROD_DOCKERHUB_USERNAME }}/prod-pocket-pt:latest
-              echo "Success Docket Image Pull"
+              echo "Success Docker Image Pull"
               sudo docker compose down
-              echo "Success Docket Compose Down"
+              echo "Success Docker Compose Down"
+              echo "${{ secrets.ENV_PROD_FILE }}" > .env.prod
+              echo "Success Copy '.env.prod' in Instance(220)"
               sudo docker compose up -d
-              echo "Success Docket Compose up"
+              echo "Success Docker Compose up"
               exit
             EOF2
             rm -f private_key.pem
