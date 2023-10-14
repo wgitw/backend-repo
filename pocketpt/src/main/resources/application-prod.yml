@@ -17,7 +17,7 @@ spring:
     database: mysql
     #    defer-datasource-initialization: true
     database-platform: org.hibernate.dialect.MySQL8Dialect
-    generate-ddl: true
+    generate-ddl: false
     show-sql: true # TODO: 변경할 것
     properties:
       hibernate:
