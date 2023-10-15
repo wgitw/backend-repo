@@ -1,7 +1,7 @@
 spring:
   config:
     active:
-      on-profile: docker
+      on-profile: dev
   servlet:
     multipart:
       max-file-size: 1GB

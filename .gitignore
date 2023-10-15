@@ -39,7 +39,7 @@ out/
 .idea
 
 ### environment variables ###
-.env.docker
+.env.dev
 .env.swp
 .env.prod
 .env
