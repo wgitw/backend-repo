@@ -2,6 +2,10 @@ spring:
   config:
     active:
       on-profile: dev
+
+  application:
+    name: pocketpt
+
   servlet:
     multipart:
       max-file-size: 1GB
@@ -16,13 +20,13 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    url: ${SPRING_DATASOURCE_URL}
-    user: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
-    locations: classpath:db/migration
+#  flyway:
+#    enabled: true
+#    baseline-on-migrate: true
+#    url: ${SPRING_DATASOURCE_URL}
+#    user: ${SPRING_DATASOURCE_USERNAME}
+#    password: ${SPRING_DATASOURCE_PASSWORD}
+#    locations: classpath:db/migration
 
   jpa:
     database: mysql
@@ -128,3 +132,20 @@ app:
     authorizedRedirectUris:
       - http://localhost:8000/main
       - https://frontend.pocketpt.shop/main
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, info, metrics
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+        application: ${spring.application.name}
