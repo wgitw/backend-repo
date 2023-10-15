@@ -2,7 +2,7 @@
 
 ## Execution: Dev Mode
 1. 실행 버전
-실행은 Release tag의 v1.0.0에서 진행합니다.
+실행은 develop branch에서 진행합니다.
 2. 실행 환경
 도커 환경에서 실행되도록 만든 개발환경입니다.
 아래 내용을 실행하기 전, 도커 deamon이 local 환경에 세팅되어 있는지 확인해주세요.
@@ -71,3 +71,21 @@ SPRING_REDIS_PORT=6379
 SPRING_REDIS_PASSWORD=${YOUR_SPRING_REDIS_PASSWORD}
 
 ```
+
+## Monitoring
+1. 실행 버전(실행 환경과 동일)
+실행은 develop branch에서 진행합니다.
+2. 실행 환경(실행 환경과 동일)
+도커 환경에서 실행되도록 만든 개발환경입니다.
+아래 내용을 실행하기 전, 도커 deamon이 local 환경에 세팅되어 있는지 확인해주세요.
+
+### Run command
+실행 환경에서 'docker-compose -f docker-compose.dev.yml up --build' 이후에 새로운 terminal을 띄워서 진행하세요.
+```
+docker-compose -f docker-compose.monitoring.yml up --build
+```
+
+### Check
+1. http://loaclhost:3000 로 grafana에 접속합니다.
+2. id: admin, password: admin으로 로그인합니다.
+3. dashboard 메뉴에 접속하여 원하는 dashboard를 선택한 후 모니터링을 진행합니다.
