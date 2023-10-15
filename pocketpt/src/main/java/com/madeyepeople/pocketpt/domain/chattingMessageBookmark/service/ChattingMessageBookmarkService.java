@@ -64,7 +64,7 @@ public class ChattingMessageBookmarkService {
         );
 
         // [3] 메시지 유효성 검사
-        ChattingMessage chattingMessage = chattingMessageRepository.findByIdAndRoomIdAndAccountIdAndIsDeletedFalse(roomId, accountId, chattingMessageId).orElseThrow(
+        ChattingMessage chattingMessage = chattingMessageRepository.findByIdAndRoomIdAndIsDeletedFalse(roomId, chattingMessageId).orElseThrow(
                 () -> new BusinessException(ErrorCode.CHATTING_MESSAGE_NOT_FOUND, CustomExceptionMessage.CHATTING_MESSAGE_NOT_FOUND.getMessage())
         );
 
