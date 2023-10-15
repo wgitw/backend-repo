@@ -25,7 +25,7 @@ public interface ChattingMessageRepository extends JpaRepository<ChattingMessage
             """, nativeQuery = true)
     Optional<ChattingMessage> findLatestChattingMessageByRoom(Long chattingRoom);
 
-    // 삭제되지 않은 메시지
+    // 삭제되지 않은 나의 메시지
     @Query(value=
             """
                 SELECT *
@@ -36,6 +36,17 @@ public interface ChattingMessageRepository extends JpaRepository<ChattingMessage
                     AND is_deleted = FALSE
             """, nativeQuery = true)
     Optional<ChattingMessage> findByIdAndRoomIdAndAccountIdAndIsDeletedFalse(Long chattingRoom, Long account, Long chattingMessage);
+
+    // 삭제되지 않은 메시지
+    @Query(value=
+            """
+                SELECT *
+                FROM chatting_message m
+                WHERE m.chatting_room = :chattingRoom
+                    AND m.chatting_message_id = :chattingMessage
+                    AND is_deleted = FALSE
+            """, nativeQuery = true)
+    Optional<ChattingMessage> findByIdAndRoomIdAndIsDeletedFalse(Long chattingRoom, Long chattingMessage);
 
     // 채팅방의 메시지 총개수
     @Query(value =
