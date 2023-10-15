@@ -38,6 +38,11 @@ dependencies {
 	// flyway 데이터베이스 마이그레이션 도구
 	implementation 'org.flywaydb:flyway-mysql'
 
+	// 서버 정보 모니터링
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	// prometheus 의존성 추가
+	implementation 'io.micrometer:micrometer-registry-prometheus'
+
 	implementation 'org.webjars:stomp-websocket:2.3.4'
 	implementation 'org.webjars:webjars-locator-core'
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'

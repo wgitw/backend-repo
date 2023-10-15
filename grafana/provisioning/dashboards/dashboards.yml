@@ -1,0 +1,15 @@
+apiVersion: 1
+
+providers:
+  - name: dashboards # 이 이름은 임의로 지정할 수 있습니다.
+    orgId: 1
+    folder: ''
+    type: file
+    disableDeletion: false
+    editable: true
+    updateIntervalSeconds: 30
+    options:
+      path: /etc/grafana/provisioning/dashboards  # JSON 대시보드 파일이 있는 경로를 지정합니다.
+    dashboards:
+      default:
+        - 4701_rev1.json
