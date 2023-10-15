@@ -1,6 +1,6 @@
 # Backend Installation
 
-## Execution: Dev Mode
+## Server Execution: Dev Mode
 1. 실행 버전
 실행은 develop branch에서 진행합니다.
 2. 실행 환경
@@ -72,7 +72,7 @@ SPRING_REDIS_PASSWORD=${YOUR_SPRING_REDIS_PASSWORD}
 
 ```
 
-## Monitoring
+## Monitoring Execution: Dev Mode
 1. 실행 버전(실행 환경과 동일)
 실행은 develop branch에서 진행합니다.
 2. 실행 환경(실행 환경과 동일)
