@@ -86,6 +86,6 @@ docker-compose -f docker-compose.monitoring.yml up --build
 ```
 
 ### Check
-1. http://loaclhost:3000 로 grafana에 접속합니다.
+1. http://localhost:3000 로 grafana에 접속합니다.
 2. id: admin, password: admin으로 로그인합니다.
 3. dashboard 메뉴에 접속하여 원하는 dashboard를 선택한 후 모니터링을 진행합니다.
