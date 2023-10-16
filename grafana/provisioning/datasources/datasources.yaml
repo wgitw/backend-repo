@@ -1,0 +1,12 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    orgId: 1
+    url: http://prometheus:9090  # 이는 Prometheus 서버의 주소입니다. Docker Compose 네트워크 내에서 해당 이름으로 접근 가능해야 합니다.
+    isDefault: true
+    editable: false
+    version: 1
+    uid: prometheusdatasource
