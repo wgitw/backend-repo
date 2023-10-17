@@ -12,4 +12,4 @@ providers:
       path: /etc/grafana/provisioning/dashboards  # JSON 대시보드 파일이 있는 경로를 지정합니다.
     dashboards:
       default:
-        - 4701_rev1.json
+        - 4701_rev10.json
