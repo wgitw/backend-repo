@@ -30,6 +30,7 @@ public enum CustomExceptionMessage {
     PURPOSE_NOT_FOUND("해당 purposeId를 가진 purpose는 없습니다."),
     PURPOSE_ACCOUNT_ID_IS_NOT_MATCHED("해당 purpose의 accountId가 로그인된 사용자의 accountId와 일치하지 않습니다."),
     PHYSICAL_INFO_ALREADY_EXISTS("해당 날짜의 physicalInfo가 이미 존재합니다."),
+    PHYSICAL_INFO_GET_REQUESTER_IS_NOT_VALID("로그인한 사용자가 조회하려는 사용자와 일치하지 않거나 PT 진행중이 아닙니다."),
 
     // pt matching
     TRAINER_ACCOUNT_ID_NOT_FOUND("해당 trainerAccountId를 가진 trainer는 없습니다."),

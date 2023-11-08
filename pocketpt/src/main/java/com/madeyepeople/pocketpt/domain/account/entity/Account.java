@@ -63,6 +63,9 @@ public class Account extends BaseEntity {
 
     @OneToMany(mappedBy = "account")
     private List<Purpose> purposeList;
+
+    @OneToMany(mappedBy = "account")
+    private List<PhysicalInfo> physicalInfoList;
   
     @Convert(converter = RoleEnumConverter.class)
     @Column(name = "account_role")

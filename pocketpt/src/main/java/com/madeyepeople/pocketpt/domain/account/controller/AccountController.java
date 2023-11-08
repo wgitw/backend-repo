@@ -89,13 +89,6 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PROFILE_PICTURE_UPDATE_SUCCESS, accountUpdateResponse));
     }
 
-    // 체성분 정보 등록
-    @PostMapping("/physical-info")
-    public ResponseEntity<ResultResponse> createPhysicalInfo(@RequestBody PhysicalInfoCreateRequest physicalInfoCreateRequest) {
-        PhysicalInfoDto physicalInfoDto = accountService.createPhysicalInfo(physicalInfoCreateRequest);
-        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PHYSICAL_INFO_CREATE_SUCCESS, physicalInfoDto));
-    }
-
     // 상대방 프로필 정보 조회
     @GetMapping("/profile/{accountId}")
     public ResponseEntity<ResultResponse> getProfile(@PathVariable Long accountId) {
@@ -110,6 +103,7 @@ public class AccountController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PT_PRICE_GET_SUCCESS, monthlyPtPriceGetResponse));
     }
 
+    // 목표 CRUD
     @PostMapping("/purpose")
     public ResponseEntity<ResultResponse> createPurpose(@RequestBody @Valid PurposeCreateRequest purposeCreateRequest) {
         PurposeDto purposeDto = accountService.createPurpose(purposeCreateRequest);
@@ -133,6 +127,19 @@ public class AccountController {
     public ResponseEntity<ResultResponse> deletePurpose(@PathVariable Long purposeId) {
         String deleteSuccessMessage = accountService.deletePurpose(purposeId);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PURPOSE_DELETE_SUCCESS, deleteSuccessMessage));
+    }
+
+    // 체성분 정보 CRUD
+    @PostMapping("/physical-info")
+    public ResponseEntity<ResultResponse> createPhysicalInfo(@RequestBody PhysicalInfoCreateRequest physicalInfoCreateRequest) {
+        PhysicalInfoDto physicalInfoDto = accountService.createPhysicalInfo(physicalInfoCreateRequest);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PHYSICAL_INFO_CREATE_SUCCESS, physicalInfoDto));
+    }
+
+    @GetMapping("/physical-info/{accountId}")
+    public ResponseEntity<ResultResponse> getPhysicalInfo(@PathVariable Long accountId) {
+        List<PhysicalInfoDto> physicalInfoDtoList = accountService.getPhysicalInfo(accountId);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PHYSICAL_INFO_GET_SUCCESS, physicalInfoDtoList));
     }
 
 

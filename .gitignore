@@ -48,7 +48,7 @@ out/
 pocketpt/local.properties
 
 ### DB volumes ###
-#db
+db
 
 ### Mac ###
 .DS_Store

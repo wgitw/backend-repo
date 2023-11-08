@@ -191,4 +191,19 @@ public class PtMatchingService {
 
         return ResultResponse.of(ResultCode.PT_MATCHING_REJECT_SUCCESS, toPtMatchingSummary.fromPtMatchingEntity(savedPtMatching, trainer.getAccountId()));
     }
+
+    // targetAccount가 loginAccount의 회원이고 status=ACTIVE 인지 확인하는 함수
+    public boolean isTheirPtMatchingStatusActive(Account loginAccount, Account targetAccount) {
+
+        // targetAccount가 loginAccount의 회원이고 status=ACTIVE 인지 확인
+        Optional<PtMatching> ptMatchingOptional = ptMatchingRepository.findByTrainerAccountIdAndTraineeAccountIdAndStatusAndIsDeletedFalse(
+                loginAccount.getAccountId(), targetAccount.getAccountId(), PtStatus.ACTIVE
+        );
+
+        if (!ptMatchingOptional.isPresent()) {
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -16,6 +16,7 @@ import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
 import com.madeyepeople.pocketpt.domain.ptMatching.mapper.ToPtMatchingSummary;
 import com.madeyepeople.pocketpt.domain.ptMatching.repository.PtMatchingRepository;
+import com.madeyepeople.pocketpt.domain.ptMatching.service.PtMatchingService;
 import com.madeyepeople.pocketpt.global.error.ErrorCode;
 import com.madeyepeople.pocketpt.global.error.exception.BusinessException;
 import com.madeyepeople.pocketpt.global.error.exception.CustomExceptionMessage;
@@ -41,6 +42,8 @@ public class AccountService {
     private final FixedPlatformFeePolicy fixedPlatformFeePolicy;
     private final RelativePlatformFeePolicy relativePlatformFeePolicy;
 
+    private final PtMatchingService ptMatchingService;
+
     private final AccountRepository accountRepository;
     private final PtMatchingRepository ptMatchingRepository;
     private final MonthlyPtPriceRepository monthlyPtPriceRepository;
@@ -61,6 +64,7 @@ public class AccountService {
     private final ToProfileGetResponse toProfileGetResponse;
     private final ToPhysicalInfoDto toPhysicalInfoDto;
     private final ToPhysicalInfoEntity toPhysicalInfoEntity;
+    private final ToPhysicalInfoDtoList toPhysicalInfoDtoList;
 
     private final S3FileService s3FileService;
     private final JwtUtil jwtUtil;
@@ -473,5 +477,22 @@ public class AccountService {
         PhysicalInfo physicalInfo = physicalInfoRepository.save(toPhysicalInfoEntity.of(account, physicalInfoCreateRequest));
 
         return toPhysicalInfoDto.of(physicalInfo);
+    }
+
+    public List<PhysicalInfoDto> getPhysicalInfo(Long accountId) {
+        Account loginAccount = securityUtil.getLoginAccountEntity();
+        Account targetAccount = accountRepository.findById(accountId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ACCOUNT_NOT_FOUND, CustomExceptionMessage.ACCOUNT_NOT_FOUND.getMessage()));
+
+        // targetAccount가 로그인한 account가 아니라면(본인꺼 조회가 아니라면), loginAccount가 targetAccount와 PT 매칭 status=ACTIVE 이어야 함.
+        if (!loginAccount.getAccountId().equals(targetAccount.getAccountId())) {
+            if (!ptMatchingService.isTheirPtMatchingStatusActive(loginAccount, targetAccount)) {
+                throw new BusinessException(ErrorCode.PHYSICAL_INFO_ERROR, CustomExceptionMessage.PHYSICAL_INFO_GET_REQUESTER_IS_NOT_VALID.getMessage());
+            }
+        }
+
+        List<PhysicalInfo> physicalInfoList = physicalInfoRepository.findAllByAccountAccountIdAndIsDeletedFalseOrderByDateAsc(accountId);
+
+        return toPhysicalInfoDtoList.of(physicalInfoList);
     }
 }
