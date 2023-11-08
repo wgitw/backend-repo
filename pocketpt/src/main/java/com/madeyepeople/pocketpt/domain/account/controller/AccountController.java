@@ -1,9 +1,6 @@
 package com.madeyepeople.pocketpt.domain.account.controller;
 
-import com.madeyepeople.pocketpt.domain.account.dto.CareerDto;
-import com.madeyepeople.pocketpt.domain.account.dto.CareerUpdateDto;
-import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
-import com.madeyepeople.pocketpt.domain.account.dto.PurposeDto;
+import com.madeyepeople.pocketpt.domain.account.dto.*;
 import com.madeyepeople.pocketpt.domain.account.dto.request.*;
 import com.madeyepeople.pocketpt.domain.account.dto.response.*;
 import com.madeyepeople.pocketpt.domain.account.service.AccountService;
@@ -90,6 +87,13 @@ public class AccountController {
 
         AccountUpdateResponse accountUpdateResponse = accountService.updateProfilePicture(accountProfilePictureUpdateRequest);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PROFILE_PICTURE_UPDATE_SUCCESS, accountUpdateResponse));
+    }
+
+    // 체성분 정보 등록
+    @PostMapping("/physical-info")
+    public ResponseEntity<ResultResponse> createPhysicalInfo(@RequestBody PhysicalInfoCreateRequest physicalInfoCreateRequest) {
+        PhysicalInfoDto physicalInfoDto = accountService.createPhysicalInfo(physicalInfoCreateRequest);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PHYSICAL_INFO_CREATE_SUCCESS, physicalInfoDto));
     }
 
     // 상대방 프로필 정보 조회

@@ -29,6 +29,7 @@ public enum CustomExceptionMessage {
     ACCOUNT_PURPOSE_COUNT_IS_FULL("해당 사용자의 목표 개수가 이미 최대치(" + ServiceLogicConstant.MAXIMUM_NUMBER_OF_PURPOSE + "개)입니다."),
     PURPOSE_NOT_FOUND("해당 purposeId를 가진 purpose는 없습니다."),
     PURPOSE_ACCOUNT_ID_IS_NOT_MATCHED("해당 purpose의 accountId가 로그인된 사용자의 accountId와 일치하지 않습니다."),
+    PHYSICAL_INFO_ALREADY_EXISTS("해당 날짜의 physicalInfo가 이미 존재합니다."),
 
     // pt matching
     TRAINER_ACCOUNT_ID_NOT_FOUND("해당 trainerAccountId를 가진 trainer는 없습니다."),

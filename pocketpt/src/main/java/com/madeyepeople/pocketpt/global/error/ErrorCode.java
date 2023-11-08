@@ -24,6 +24,7 @@ public enum ErrorCode {
     TRAINER_CAREER_ERROR(HttpStatus.NOT_ACCEPTABLE, "EA004", "트레이너 이력 관련 오류"),
     TRAINER_MONTHLY_PT_PRICE_ERROR(HttpStatus.NOT_ACCEPTABLE, "EA005", "트레이너 월별 단가 관련 오류"),
     ACCOUNT_PURPOSE_ERROR(HttpStatus.NOT_ACCEPTABLE, "EA006", "목표 관련 오류"),
+    PHYSICAL_INFO_ERROR(HttpStatus.NOT_ACCEPTABLE, "EA007", "신체정보 관련 오류"),
 
 
     // PtMatching

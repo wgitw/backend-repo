@@ -1,21 +1,12 @@
 package com.madeyepeople.pocketpt.domain.account.service;
 
 import com.madeyepeople.pocketpt.domain.account.constant.Role;
-import com.madeyepeople.pocketpt.domain.account.dto.CareerDto;
-import com.madeyepeople.pocketpt.domain.account.dto.CareerUpdateDto;
-import com.madeyepeople.pocketpt.domain.account.dto.MonthlyPtPriceDto;
-import com.madeyepeople.pocketpt.domain.account.dto.PurposeDto;
+import com.madeyepeople.pocketpt.domain.account.dto.*;
 import com.madeyepeople.pocketpt.domain.account.dto.request.*;
 import com.madeyepeople.pocketpt.domain.account.dto.response.*;
-import com.madeyepeople.pocketpt.domain.account.entity.Account;
-import com.madeyepeople.pocketpt.domain.account.entity.Career;
-import com.madeyepeople.pocketpt.domain.account.entity.MonthlyPtPrice;
-import com.madeyepeople.pocketpt.domain.account.entity.Purpose;
+import com.madeyepeople.pocketpt.domain.account.entity.*;
 import com.madeyepeople.pocketpt.domain.account.mapper.*;
-import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
-import com.madeyepeople.pocketpt.domain.account.repository.CareerRepository;
-import com.madeyepeople.pocketpt.domain.account.repository.MonthlyPtPriceRepository;
-import com.madeyepeople.pocketpt.domain.account.repository.PurposeRepository;
+import com.madeyepeople.pocketpt.domain.account.repository.*;
 import com.madeyepeople.pocketpt.domain.account.social.JwtUtil;
 import com.madeyepeople.pocketpt.domain.account.util.TrainerMonthlyPtPriceUtil;
 import com.madeyepeople.pocketpt.domain.admin.constant.ServiceLogicConstant;
@@ -37,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -56,6 +46,7 @@ public class AccountService {
     private final MonthlyPtPriceRepository monthlyPtPriceRepository;
     private final CareerRepository careerRepository;
     private final PurposeRepository purposeRepository;
+    private final PhysicalInfoRepository physicalInfoRepository;
 
     private final ToRegistrationResponse toRegistrationResponse;
     private final ToAccountGetResponse toAccountGetResponse;
@@ -68,6 +59,8 @@ public class AccountService {
     private final ToPurposeEntity toPurposeEntity;
     private final ToPurposeDto toPurposeDto;
     private final ToProfileGetResponse toProfileGetResponse;
+    private final ToPhysicalInfoDto toPhysicalInfoDto;
+    private final ToPhysicalInfoEntity toPhysicalInfoEntity;
 
     private final S3FileService s3FileService;
     private final JwtUtil jwtUtil;
@@ -466,5 +459,19 @@ public class AccountService {
         return AccountUpdateResponse.builder()
                 .profileImageUrl(updatedAccount.getProfilePictureUrl())
                 .build();
+    }
+
+    @Transactional
+    public PhysicalInfoDto createPhysicalInfo(PhysicalInfoCreateRequest physicalInfoCreateRequest) {
+        Account account = securityUtil.getLoginAccountEntity();
+
+        // (accountId, date)가 unique 한지 확인
+        if (physicalInfoRepository.existsByAccountAccountIdAndDate(account.getAccountId(), physicalInfoCreateRequest.getDate())) {
+            throw new BusinessException(ErrorCode.PHYSICAL_INFO_ERROR, CustomExceptionMessage.PHYSICAL_INFO_ALREADY_EXISTS.getMessage());
+        }
+
+        PhysicalInfo physicalInfo = physicalInfoRepository.save(toPhysicalInfoEntity.of(account, physicalInfoCreateRequest));
+
+        return toPhysicalInfoDto.of(physicalInfo);
     }
 }
