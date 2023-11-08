@@ -14,6 +14,7 @@ public class PtMatchingSummary {
     private String startDate;
     private String expiredDate;
     private String rejectReason;
+    private String trainerMemo;
 
     // account info
     private Long accountId;

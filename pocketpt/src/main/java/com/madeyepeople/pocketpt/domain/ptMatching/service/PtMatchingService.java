@@ -6,9 +6,11 @@ import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
 import com.madeyepeople.pocketpt.domain.chattingRoom.service.ChattingRoomService;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.PtMatchingSummary;
+import com.madeyepeople.pocketpt.domain.ptMatching.dto.TrainerPtMemoDto;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PaymentAmountGetRequest;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PtRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PtRejectionRequest;
+import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.TrainerPtMemoCreateRequest;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.response.PtRegistrationAcceptResponse;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.response.PtRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
@@ -205,5 +207,29 @@ public class PtMatchingService {
         }
 
         return true;
+    }
+
+    public TrainerPtMemoDto createTrainerPtMemo(Long ptMatchingId, TrainerPtMemoCreateRequest trainerPtMemoCreateRequest) {
+        Account trainer = securityUtil.getLoginTrainerEntity();
+
+        PtMatching ptMatching = ptMatchingRepository.findByPtMatchingIdAndIsDeletedFalse(ptMatchingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_NOT_FOUND.getMessage()));
+
+        // pt matching의 trainerId가 로그인한 계정의 accountId와 일치하는지 확인
+        if (!ptMatching.getTrainer().getAccountId().equals(trainer.getAccountId())) {
+            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_TRAINER_ID_IS_NOT_MATCHED.getMessage());
+        }
+
+        // 중복 생성 방지
+        if (ptMatching.getMemo() != null) {
+            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_MEMO_ALREADY_EXIST.getMessage());
+        }
+
+        PtMatching savedPtMatching = ptMatchingRepository.save(ptMatching.updateMemo(trainerPtMemoCreateRequest.getMemo()));
+
+        return TrainerPtMemoDto.builder()
+                .ptMatchingId(savedPtMatching.getPtMatchingId())
+                .memo(savedPtMatching.getMemo())
+                .build();
     }
 }

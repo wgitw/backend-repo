@@ -35,6 +35,7 @@ public enum ResultCode {
     ACCOUNT_PROFILE_PICTURE_UPDATE_SUCCESS("A023", "프로필 사진 수정 성공"),
     ACCOUNT_PHYSICAL_INFO_CREATE_SUCCESS("A024", "신체 정보 생성 성공"),
     ACCOUNT_PHYSICAL_INFO_GET_SUCCESS("A025", "신체 정보 조회 성공"),
+    ACCOUNT_PHYSICAL_INFO_UPDATE_SUCCESS("A026", "신체 정보 수정 성공"),
 
     // ptMatching
     PT_REGISTRATION_CREATE_SUCCESS("PM001", "PT 요청 성공"),
@@ -42,6 +43,7 @@ public enum ResultCode {
     PT_MATCHING_ACCEPT_SUCCESS("PM003", "PT 매칭 수락 성공"),
     PT_MATCHING_PAYMENT_AMOUNT_GET_SUCCESS("PM004", "예상 결제 금액 조회 성공"),
     PT_MATCHING_REJECT_SUCCESS("PM005", "요청된 PT 거절 성공"),
+    PT_MATCHING_MEMO_CREATE_SUCCESS("PM006", "PT 메모 생성 성공"),
 
     // group
     GROUP_CREATE_SUCCESS("G001", "그룹 생성 성공"),

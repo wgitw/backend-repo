@@ -40,10 +40,11 @@ public enum CustomExceptionMessage {
     AUTHENTICATED_USER_IS_NOT_TRAINER("인가된 사용자는 trainer가 아닙니다."),
     PT_MATCHING_NOT_FOUND("해당 PT 매칭 ID가 존재하지 않습니다."),
     PT_MATCHING_STATUS_IS_NOT_PENDING("해당 PT 매칭의 상태가 pending이 아닙니다."),
-    PT_MATCHING_TRAINER_ID_IS_NOT_MATCHED("해당 PT 매칭의 trainerId가 로그인된 사용자의 accountId와 일치하지 않습니다. 즉, 다른 trainer의 PT를 수락하려고 하고 있습니다."),
+    PT_MATCHING_TRAINER_ID_IS_NOT_MATCHED("해당 PT 매칭의 trainerId가 로그인된 사용자의 accountId와 일치하지 않습니다. 즉, 다른 trainer의 PT를 조작하려 합니다."),
     ACCOUNT_ID_NOT_EXIST_IN_PT_MATCHING("해당 PT 매칭에 해당 accountId가 존재하지 않습니다."),
     PT_MATCHING_REQUEST_ALREADY_EXIST("이미 trainer와 trainee 사이 status = pending인 PT 매칭 요청이 존재합니다."),
     PT_MATCHING_BAD_REQUEST("해당 trainer와 trainee의 PT 매칭 정보가 없거나, pt matching의 status가 active가 아닙니다."),
+    PT_MATCHING_MEMO_ALREADY_EXIST("해당 PT 매칭에 이미 메모가 존재합니다."),
 
     // chatting room
     CHATTING_ROOM_NOT_FOUND("해당 채팅방이 존재하지 않습니다."),

@@ -15,9 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.xml.transform.Result;
 import java.util.List;
 
 
@@ -141,6 +139,13 @@ public class AccountController {
         List<PhysicalInfoDto> physicalInfoDtoList = accountService.getPhysicalInfo(accountId);
         return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PHYSICAL_INFO_GET_SUCCESS, physicalInfoDtoList));
     }
+
+//    @PatchMapping("/physical-info/{physicalInfoId}")
+//    public ResponseEntity<ResultResponse> updatePhysicalInfo(@PathVariable Long physicalInfoId,
+//                                                             @RequestBody PhysicalInfoUpdateRequest physicalInfoUpdateRequest) {
+//        PhysicalInfoDto physicalInfoDto = accountService.updatePhysicalInfo(physicalInfoId, physicalInfoUpdateRequest);
+//        return ResponseEntity.ok(ResultResponse.of(ResultCode.ACCOUNT_PHYSICAL_INFO_UPDATE_SUCCESS, physicalInfoDto));
+//    }
 
 
     /**

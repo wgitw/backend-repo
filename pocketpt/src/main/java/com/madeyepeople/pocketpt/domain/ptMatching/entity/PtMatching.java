@@ -1,7 +1,6 @@
 package com.madeyepeople.pocketpt.domain.ptMatching.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.global.common.BaseEntity;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatusEnumConverter;
@@ -12,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 
 import java.util.Date;
@@ -58,6 +56,8 @@ public class PtMatching extends BaseEntity {
 
     private String rejectReason;
 
+    private String memo;
+
     @Builder
     public PtMatching(Account trainer, Account trainee, Integer subscriptionPeriod, PtStatus status, Integer paymentAmount, Date startDate) {
         this.trainer = trainer;
@@ -76,6 +76,11 @@ public class PtMatching extends BaseEntity {
 
     public PtMatching updateRejectReason(String rejectReason) {
         this.rejectReason = rejectReason;
+        return this;
+    }
+
+    public PtMatching updateMemo(String memo) {
+        this.memo = memo;
         return this;
     }
 

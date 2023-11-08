@@ -495,4 +495,24 @@ public class AccountService {
 
         return toPhysicalInfoDtoList.of(physicalInfoList);
     }
+
+    // TODO: 신체 정보 수정 API
+//    @Transactional
+//    public PhysicalInfoDto updatePhysicalInfo(Long physicalInfoId, PhysicalInfoUpdateRequest physicalInfoUpdateRequest) {
+//        Account account = securityUtil.getLoginAccountEntity();
+//
+//        // 해당 physicalInfoId가 존재하지 않을 때
+//        PhysicalInfo physicalInfo = physicalInfoRepository.findByPhysicalInfoIdAndIsDeletedFalse(physicalInfoId)
+//                .orElseThrow(() -> new BusinessException(ErrorCode.PHYSICAL_INFO_ERROR, CustomExceptionMessage.PHYSICAL_INFO_NOT_FOUND.getMessage()));
+//
+//        // 해당 physicalInfo의 accountId와 로그인한 account의 id가 다를 때
+//        if (!physicalInfo.getAccount().getAccountId().equals(account.getAccountId())) {
+//            throw new BusinessException(ErrorCode.PHYSICAL_INFO_ERROR, CustomExceptionMessage.PHYSICAL_INFO_ACCOUNT_ID_IS_NOT_MATCHED.getMessage());
+//        }
+//
+//        physicalInfo.updateByPhysicalInfoUpdateRequest(physicalInfoUpdateRequest);
+//        PhysicalInfo saved = physicalInfoRepository.save(physicalInfo);
+//
+//        return toPhysicalInfoDto.of(saved);
+//    }
 }

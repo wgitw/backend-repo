@@ -1,8 +1,10 @@
 package com.madeyepeople.pocketpt.domain.ptMatching.controller;
 
+import com.madeyepeople.pocketpt.domain.ptMatching.dto.TrainerPtMemoDto;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PaymentAmountGetRequest;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PtRegistrationRequest;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.PtRejectionRequest;
+import com.madeyepeople.pocketpt.domain.ptMatching.dto.request.TrainerPtMemoCreateRequest;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.response.PtRegistrationResponse;
 import com.madeyepeople.pocketpt.domain.ptMatching.service.PtMatchingService;
 import com.madeyepeople.pocketpt.global.result.ResultCode;
@@ -59,6 +61,14 @@ public class PtMatchingController {
                                                            @RequestBody PtRejectionRequest ptRejectionRequest) {
         ResultResponse resultResponse = ptMatchingService.rejectPtMatching(ptMatchingId, ptRejectionRequest);
         return ResponseEntity.ok(resultResponse);
+    }
+
+    // PT 메모 생성 (trainer only)
+    @PostMapping("/trainer/memo/{ptMatchingId}")
+    public ResponseEntity<ResultResponse> createTrainerPtMemo(@PathVariable Long ptMatchingId,
+                                                              @RequestBody TrainerPtMemoCreateRequest trainerPtMemoCreateRequest) {
+        TrainerPtMemoDto trainerPtMemoDto = ptMatchingService.createTrainerPtMemo(ptMatchingId, trainerPtMemoCreateRequest);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.PT_MATCHING_MEMO_CREATE_SUCCESS, trainerPtMemoDto));
     }
 
     // TODO: 기존 PT 매칭 연장 (trainer only)
