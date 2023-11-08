@@ -12,12 +12,12 @@ create table physical_info (
     weight float(23),
     account_id bigint,
     primary key (physical_info_id)
-) engine=InnoDB
+) engine=InnoDB;
 
 alter table physical_info
     add constraint FK5j0s164qqdkhu58ye4mxjox5e
     foreign key (account_id)
-    references account (account_id)
+    references account (account_id);
 
 alter table physical_info
-    add constraint physical_info_uk unique (account_id, date)
+    add constraint physical_info_uk unique (account_id, date);
