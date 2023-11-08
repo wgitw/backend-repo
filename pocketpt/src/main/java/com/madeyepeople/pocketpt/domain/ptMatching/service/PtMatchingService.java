@@ -221,11 +221,6 @@ public class PtMatchingService {
             throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_TRAINER_ID_IS_NOT_MATCHED.getMessage());
         }
 
-        // 중복 생성 방지
-        if (ptMatching.getMemo() != null) {
-            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_MEMO_ALREADY_EXIST.getMessage());
-        }
-
         PtMatching savedPtMatching = ptMatchingRepository.save(ptMatching.updateMemo(trainerPtMemoCreateRequest.getMemo()));
 
         return TrainerPtMemoDto.builder()

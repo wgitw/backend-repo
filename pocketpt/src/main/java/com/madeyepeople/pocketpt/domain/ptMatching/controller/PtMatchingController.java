@@ -63,8 +63,8 @@ public class PtMatchingController {
         return ResponseEntity.ok(resultResponse);
     }
 
-    // PT 메모 생성 (trainer only)
-    @PostMapping("/trainer/memo/{ptMatchingId}")
+    // PT 메모 생성, 수정 (trainer only)
+    @PatchMapping("/trainer/memo/{ptMatchingId}")
     public ResponseEntity<ResultResponse> createTrainerPtMemo(@PathVariable Long ptMatchingId,
                                                               @RequestBody TrainerPtMemoCreateRequest trainerPtMemoCreateRequest) {
         TrainerPtMemoDto trainerPtMemoDto = ptMatchingService.createTrainerPtMemo(ptMatchingId, trainerPtMemoCreateRequest);
