@@ -209,6 +209,7 @@ public class PtMatchingService {
         return true;
     }
 
+    @Transactional
     public TrainerPtMemoDto createTrainerPtMemo(Long ptMatchingId, TrainerPtMemoCreateRequest trainerPtMemoCreateRequest) {
         Account trainer = securityUtil.getLoginTrainerEntity();
 
@@ -230,6 +231,23 @@ public class PtMatchingService {
         return TrainerPtMemoDto.builder()
                 .ptMatchingId(savedPtMatching.getPtMatchingId())
                 .memo(savedPtMatching.getMemo())
+                .build();
+    }
+
+    public TrainerPtMemoDto getTrainerPtMemo(Long ptMatchingId) {
+        Account trainer = securityUtil.getLoginTrainerEntity();
+
+        PtMatching ptMatching = ptMatchingRepository.findByPtMatchingIdAndIsDeletedFalse(ptMatchingId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_NOT_FOUND.getMessage()));
+
+        // pt matching의 trainerId가 로그인한 계정의 accountId와 일치하는지 확인
+        if (!ptMatching.getTrainer().getAccountId().equals(trainer.getAccountId())) {
+            throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_TRAINER_ID_IS_NOT_MATCHED.getMessage());
+        }
+
+        return TrainerPtMemoDto.builder()
+                .ptMatchingId(ptMatching.getPtMatchingId())
+                .memo(ptMatching.getMemo())
                 .build();
     }
 }

@@ -44,6 +44,7 @@ public enum ResultCode {
     PT_MATCHING_PAYMENT_AMOUNT_GET_SUCCESS("PM004", "예상 결제 금액 조회 성공"),
     PT_MATCHING_REJECT_SUCCESS("PM005", "요청된 PT 거절 성공"),
     PT_MATCHING_MEMO_CREATE_SUCCESS("PM006", "PT 메모 생성 성공"),
+    PT_MATCHING_MEMO_GET_SUCCESS("PM007", "PT 메모 조회 성공"),
 
     // group
     GROUP_CREATE_SUCCESS("G001", "그룹 생성 성공"),

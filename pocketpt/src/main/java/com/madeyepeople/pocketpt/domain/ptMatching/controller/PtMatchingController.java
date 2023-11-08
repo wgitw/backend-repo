@@ -71,6 +71,13 @@ public class PtMatchingController {
         return ResponseEntity.ok(ResultResponse.of(ResultCode.PT_MATCHING_MEMO_CREATE_SUCCESS, trainerPtMemoDto));
     }
 
+    // PT 메모 조회 (trainer only)
+    @GetMapping("/trainer/memo/{ptMatchingId}")
+    public ResponseEntity<ResultResponse> getTrainerPtMemo(@PathVariable Long ptMatchingId) {
+        TrainerPtMemoDto trainerPtMemoDto = ptMatchingService.getTrainerPtMemo(ptMatchingId);
+        return ResponseEntity.ok(ResultResponse.of(ResultCode.PT_MATCHING_MEMO_GET_SUCCESS, trainerPtMemoDto));
+    }
+
     // TODO: 기존 PT 매칭 연장 (trainer only)
 //    @PatchMapping
 }
