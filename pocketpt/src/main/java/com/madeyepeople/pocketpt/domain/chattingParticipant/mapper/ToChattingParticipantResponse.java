@@ -10,7 +10,7 @@ public class ToChattingParticipantResponse {
     public ChattingParticipantResponse toChattingRoomCreateResponse(ChattingParticipant chattingParticipant) {
         return ChattingParticipantResponse.builder()
                 .accountId(chattingParticipant.getAccount().getAccountId())
-                .accountNickName(chattingParticipant.getAccount().getNickname())
+                .accountNickName(chattingParticipant.getAccount().getName())
                 .accountProfilePictureUrl(chattingParticipant.getAccount().getProfilePictureUrl())
                 .isHost(chattingParticipant.getIsHost())
                 .createdAt(chattingParticipant.getCreatedAt())
@@ -20,7 +20,7 @@ public class ToChattingParticipantResponse {
     public ChattingParticipantResponse toChattingParticipantCreateResponse(ChattingParticipant chattingParticipant) {
         return ChattingParticipantResponse.builder()
                 .accountId(chattingParticipant.getAccount().getAccountId())
-                .accountNickName(chattingParticipant.getAccount().getNickname())
+                .accountNickName(chattingParticipant.getAccount().getName())
                 .accountProfilePictureUrl(chattingParticipant.getAccount().getProfilePictureUrl())
                 .isHost(chattingParticipant.getIsHost())
                 .isDeleted(chattingParticipant.getIsDeleted())
