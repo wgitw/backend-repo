@@ -99,7 +99,7 @@ public class ChattingRoomService {
         chattingParticipantResponseList.add(chattingParticipantResponse);
 
         // [3] Response 만들기
-        ChattingRoomResponse chattingRoomResponse = toChattingRoomResponse.toChattingRoomCreateResponse(savedChattingRoom, chattingParticipantResponseList, participantAccount.getNickname());
+        ChattingRoomResponse chattingRoomResponse = toChattingRoomResponse.toChattingRoomCreateResponse(savedChattingRoom, chattingParticipantResponseList, participantAccount.getName());
 
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_CREATE_SUCCESS, chattingRoomResponse);
 
@@ -140,7 +140,7 @@ public class ChattingRoomService {
         chattingParticipantResponseList.add(chattingParticipantResponse);
 
         // [3] Response 만들기
-        ChattingRoomResponse chattingRoomResponse = toChattingRoomResponse.toChattingRoomCreateResponse(savedChattingRoom, chattingParticipantResponseList, traineeAccount.getNickname());
+        ChattingRoomResponse chattingRoomResponse = toChattingRoomResponse.toChattingRoomCreateResponse(savedChattingRoom, chattingParticipantResponseList, traineeAccount.getName());
 
         ResultResponse resultResponse = new ResultResponse(ResultCode.CHATTING_ROOM_CREATE_SUCCESS, chattingRoomResponse);
 
@@ -242,7 +242,7 @@ public class ChattingRoomService {
                     notViewCount = c.getNotViewCount();
                 } else {
                     ChattingParticipantResponse chattingParticipantResponse = toChattingParticipantResponse.toChattingParticipantCreateResponse(c);
-                    roomName += c.getAccount().getNickname();
+                    roomName += c.getAccount().getName();
                     chattingParticipantResponseList.add(chattingParticipantResponse);
                 }
             }
@@ -439,7 +439,7 @@ public class ChattingRoomService {
                     notViewCount = c.getNotViewCount();
                 } else {
                     ChattingParticipantResponse chattingParticipantResponse = toChattingParticipantResponse.toChattingParticipantCreateResponse(c);
-                    roomName += c.getAccount().getNickname();
+                    roomName += c.getAccount().getName();
                     chattingParticipantResponseList.add(chattingParticipantResponse);
                 }
             }
