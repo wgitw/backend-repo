@@ -23,7 +23,7 @@ import java.util.Optional;
 
 @Entity
 @Getter
-@ToString(exclude = {"chattingParticipantList", "chattingMessageBookmarkList", "ptMatchingListOfTrainer", "ptMatchingListOfTrainee", "monthlyPtPriceList", "careerList", "purposeList"})
+@ToString(exclude = {"chattingParticipantList", "chattingMessageBookmarkList", "ptMatchingListOfTrainer", "ptMatchingListOfTrainee", "monthlyPtPriceList", "careerList", "purposeList", "physicalInfoList"})
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLDelete(sql = "UPDATE account SET email = '', name = '탈퇴한 회원', phone_number = '', profile_picture_url = '', identification_code = null, is_deleted = true WHERE account_id = ?")
