@@ -68,10 +68,13 @@ public class PtMatchingService {
         Account trainee = securityUtil.getLoginAccountEntity();
 
         // 중복 PT 등록 예외 처리 : trainer, trainee, status = PENDING 인 row는 유일
-        Optional<PtMatching> ptMatchingOptional = ptMatchingRepository.findByTrainerAccountIdAndTraineeAccountIdAndStatusAndIsDeletedFalse(
+        Optional<PtMatching> pendedPtMatching = ptMatchingRepository.findByTrainerAccountIdAndTraineeAccountIdAndStatusAndIsDeletedFalse(
                 ptRegistrationRequest.getTrainerAccountId(), trainee.getAccountId(), PtStatus.PENDING
         );
-        if (ptMatchingOptional.isPresent()) {
+        Optional<PtMatching> activePtMatching = ptMatchingRepository.findByTrainerAccountIdAndTraineeAccountIdAndStatusAndIsDeletedFalse(
+                ptRegistrationRequest.getTrainerAccountId(), trainee.getAccountId(), PtStatus.ACTIVE
+        );
+        if (pendedPtMatching.isPresent() || activePtMatching.isPresent()) {
             throw new BusinessException(ErrorCode.PT_MATCHING_ERROR, CustomExceptionMessage.PT_MATCHING_REQUEST_ALREADY_EXIST.getMessage());
         }
 
