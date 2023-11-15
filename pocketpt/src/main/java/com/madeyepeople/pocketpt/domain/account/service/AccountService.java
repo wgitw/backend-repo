@@ -101,6 +101,7 @@ public class AccountService {
 
         // 트레이너일 경우
         if (account.getAccountRole() == Role.TRAINER) {
+            // TODO: 0개월 0원 같은 invalid한 period, price에 대한 validation 필요
             // 월별 PT 단가가 필수로 입력되어야 함.
             if (commonRegistrationRequest.getMonthlyPtPriceList() == null || commonRegistrationRequest.getMonthlyPtPriceList().isEmpty()) {
                 throw new BusinessException(ErrorCode.TRAINER_MONTHLY_PT_PRICE_ERROR, CustomExceptionMessage.TRAINER_MUST_HAVE_MONTHLY_PT_PRICE.getMessage());
