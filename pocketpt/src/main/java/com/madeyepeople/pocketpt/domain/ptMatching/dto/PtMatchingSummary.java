@@ -2,12 +2,15 @@ package com.madeyepeople.pocketpt.domain.ptMatching.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Builder
+@Setter
 public class PtMatchingSummary {
     // ptMatching info
     private Long ptMatchingId;
+    private Long chattingRoomId;
     private String status;
     private Integer subscriptionPeriod;
     private Integer paymentAmount;

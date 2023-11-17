@@ -3,6 +3,8 @@ package com.madeyepeople.pocketpt.domain.ptMatching.service;
 import com.madeyepeople.pocketpt.domain.account.constant.Role;
 import com.madeyepeople.pocketpt.domain.account.entity.Account;
 import com.madeyepeople.pocketpt.domain.account.repository.AccountRepository;
+import com.madeyepeople.pocketpt.domain.chattingParticipant.dto.response.ChattingParticipantResponse;
+import com.madeyepeople.pocketpt.domain.chattingRoom.dto.response.ChattingRoomGetResponse;
 import com.madeyepeople.pocketpt.domain.chattingRoom.service.ChattingRoomService;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import com.madeyepeople.pocketpt.domain.ptMatching.dto.PtMatchingSummary;
@@ -35,10 +37,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -120,6 +119,22 @@ public class PtMatchingService {
 
         // 내 accountId를 이용해 PtMatching 정보들 중, 상대방 정보만 추출
         List<PtMatchingSummary> ptMatchingSummaryList = toPtMatchingListResponse.fromPtMatchingEntityList(ptMatchingList, account.getAccountId());
+
+        // chatting room id list 받아오기
+        List<ChattingRoomGetResponse> chattingRoomGetResponseList = (List) chattingRoomService.getChattingRoomListByUser(account.getAccountId()).getData();
+        HashMap<Long, Long> accountIdToChattingRoomIdMap = new HashMap<>();
+
+        // (accountId : ChattingRoomId) Map 생성
+        for (ChattingRoomGetResponse chattingRoomGetResponse : chattingRoomGetResponseList) {
+            Long chattingRoomId = chattingRoomGetResponse.getChattingRoomId();
+
+            for (ChattingParticipantResponse participant : chattingRoomGetResponse.getChattingParticipantResponseList()) {
+                Long accountId = participant.getAccountId();
+                accountIdToChattingRoomIdMap.put(accountId, chattingRoomId);
+            }
+        }
+
+        ptMatchingSummaryList = toPtMatchingListResponse.addChattingRoomId(ptMatchingSummaryList, accountIdToChattingRoomIdMap);
 
         return ResultResponse.of(ResultCode.PT_MATCHING_LIST_GET_SUCCESS, ptMatchingSummaryList);
     }
