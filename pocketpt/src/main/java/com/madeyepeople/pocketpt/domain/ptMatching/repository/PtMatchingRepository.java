@@ -15,6 +15,7 @@ public interface PtMatchingRepository extends JpaRepository<PtMatching, Long> {
     Optional<PtMatching> findByPtMatchingIdAndIsDeletedFalse(Long ptMatchingId);
 
     // 트레이너, 트레이니 계정으로 매칭 조회
+    // 채팅방 ID까지 조회해야 함
     List<PtMatching> findAllByTrainerAccountIdAndIsDeletedFalseOrderByCreatedAtDesc(Long trainerAccountId);
     List<PtMatching> findAllByTraineeAccountIdAndIsDeletedFalseOrderByCreatedAtDesc(Long traineeAccountId);
     List<PtMatching> findAllByTrainerAccountIdAndIsDeletedFalseAndStatusOrderByCreatedAtDesc(Long trainerAccountId, PtStatus status);
