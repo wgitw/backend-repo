@@ -117,6 +117,10 @@ public class Account extends BaseEntity {
     @JsonIgnore
     private String password;
 
+    @PrePersist
+    public void prePersist() {
+        this.totalSales = this.totalSales == null ? 0 : this.totalSales;
+    }
 
     @Builder
     public Account(Long oauth2Id, Role accountRole, String email, String provider, String name, String phoneNumber, String nickname, String oauthAccessToken, String password, String profilePictureUrl) {
