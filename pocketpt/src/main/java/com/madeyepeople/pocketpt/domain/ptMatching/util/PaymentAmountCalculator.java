@@ -16,6 +16,9 @@ public class PaymentAmountCalculator {
             targetIndex += 1;
         }
 
-        return monthlyPtPrices.get(targetIndex - 1).getPrice() * subscriptionPeriod;
+        int targetPrice = monthlyPtPrices.get(targetIndex - 1).getPrice();
+        int targetMonth = monthlyPtPrices.get(targetIndex - 1).getPeriod();
+
+        return ((int)(targetPrice / targetMonth)) * subscriptionPeriod;
     }
 }
