@@ -206,6 +206,7 @@ public class ChattingRoomService {
     }
 
     // 채팅방 리스트 - 메시지순으로 전체 조회
+    // 회원한테는 안보이고, 트레이너한테는 보이게
     @Transactional
     public ResultResponse getChattingRoomListByUser(Long accountId) {
         log.info("=======================");
@@ -224,10 +225,15 @@ public class ChattingRoomService {
         for(ChattingParticipant chattingParticipant:chattingParticipantList) {
             ChattingRoom chattingRoom = chattingParticipant.getChattingRoom();
 
-            // [3-1] 상단고정 채팅방인지 확인
+            // [3-1] 삭제된 채팅방이면 건너뛰기
+            if(chattingRoom.getIsDeleted()) {
+                continue;
+            }
+
+            // [3-2] 상단고정 채팅방인지 확인
             Optional<TopChattingRoom> foundTopChattingRoom = topChattingRoomRepository.findByChattingRoomAndAccountAndIsDeletedFalse(chattingRoom, account);
 
-            // [3-2] 상단고정 채팅방이면 건너뛰기
+            // [3-3] 상단고정 채팅방이면 건너뛰기
             if(foundTopChattingRoom.isPresent()) {
                 continue;
             }
@@ -235,7 +241,7 @@ public class ChattingRoomService {
             String roomName = "";
             int notViewCount = 0;
 
-            // [3-3] room 정보에 포함되어 있는 participant list 정보 담기 - 본인 제외
+            // [3-4] room 정보에 포함되어 있는 participant list 정보 담기 - 본인 제외
             List<ChattingParticipantResponse> chattingParticipantResponseList = new ArrayList<>();
             for(ChattingParticipant c: chattingRoom.getChattingParticipantList()) {
                 if(accountId.equals(c.getAccount().getAccountId())) {
@@ -247,7 +253,7 @@ public class ChattingRoomService {
                 }
             }
 
-            // [3-4] 최신 메시지 정보 가져오기
+            // [3-5] 최신 메시지 정보 가져오기
             Optional<ChattingMessage> chattingMessage = chattingMessageRepository.findLatestChattingMessageByRoom(chattingRoom.getChattingRoomId());
             ChattingRoomGetResponse chattingRoomGetResponse;
             if(chattingMessage.isPresent()) { // 채팅 내용이 존재하는 경우

@@ -12,6 +12,10 @@ import com.madeyepeople.pocketpt.domain.account.util.TrainerMonthlyPtPriceUtil;
 import com.madeyepeople.pocketpt.domain.admin.constant.ServiceLogicConstant;
 import com.madeyepeople.pocketpt.domain.admin.service.FixedPlatformFeePolicy;
 import com.madeyepeople.pocketpt.domain.admin.service.RelativePlatformFeePolicy;
+import com.madeyepeople.pocketpt.domain.chattingParticipant.entity.ChattingParticipant;
+import com.madeyepeople.pocketpt.domain.chattingParticipant.repository.ChattingParticipantRepository;
+import com.madeyepeople.pocketpt.domain.chattingRoom.entity.ChattingRoom;
+import com.madeyepeople.pocketpt.domain.chattingRoom.repository.ChattingRoomRepository;
 import com.madeyepeople.pocketpt.domain.ptMatching.constant.PtStatus;
 import com.madeyepeople.pocketpt.domain.ptMatching.entity.PtMatching;
 import com.madeyepeople.pocketpt.domain.ptMatching.mapper.ToPtMatchingSummary;
@@ -24,9 +28,12 @@ import com.madeyepeople.pocketpt.global.s3.S3FileService;
 import com.madeyepeople.pocketpt.global.util.RedisUtil;
 import com.madeyepeople.pocketpt.global.util.SecurityUtil;
 import com.madeyepeople.pocketpt.global.util.UniqueCodeGenerator;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +57,8 @@ public class AccountService {
     private final CareerRepository careerRepository;
     private final PurposeRepository purposeRepository;
     private final PhysicalInfoRepository physicalInfoRepository;
+    private final ChattingRoomRepository chattingRoomRepository;
+    private final ChattingParticipantRepository chattingParticipantRepository;
 
     private final ToRegistrationResponse toRegistrationResponse;
     private final ToAccountGetResponse toAccountGetResponse;
@@ -138,8 +147,31 @@ public class AccountService {
         Account account = securityUtil.getLoginAccountEntity();
         String accessToken = httpServletRequest.getHeader("Authorization").substring(7);
 
+        // 채팅 정보 삭제
+        // [1] chattingParticipant에서 해당 회원이 참여하고 있는 채팅방 리스트 가져오기
+        List<ChattingParticipant> foundChattingParticipantList = account.getChattingParticipantList();
+
+        // [2] 채팅방 삭제 및 채팅방에 포함되어 있는 채팅참여자 정보 삭제
+        for (ChattingParticipant chattingParticipant : foundChattingParticipantList) {
+            // [2-1] 채팅참여자의 채팅방 정보 가져오기
+            ChattingRoom chattingRoom = chattingParticipant.getChattingRoom();
+
+            // [2-2] 채팅방에 속한 참여자 리스트 가져오기
+            List<ChattingParticipant> chattingParticipantList = chattingParticipantRepository.findByChattingRoomAndIsDeletedFalse(chattingRoom);
+
+            // [2-3] 채팅방에 속한 참여자들의 isDeleted를 true로 변경
+            for (ChattingParticipant c : chattingParticipantList) {
+                c.setIsDeleted(true);
+                chattingParticipantRepository.save(c);
+            }
+
+            // [2-4] 채팅방 삭제
+            chattingRoom.setIsDeleted(true);
+            chattingRoomRepository.save(chattingRoom);
+        }
+
         redisUtil.set(accessToken, "withdrawal", jwtUtil.getExpiration(accessToken) + 1000);
-        accountRepository.delete(account);
+        accountRepository.deleteByAccountId(account.getAccountId());
 
         return WithdrawalResponse.builder()
                 .accountId(account.getAccountId())
