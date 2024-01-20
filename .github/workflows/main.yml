@@ -28,8 +28,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@5fd3084fc36e372ff1fff382a39b10d03659f355
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_V2 }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_V2 }}
           aws-region: ap-northeast-2
 
       - name: Login to Docker Hub
@@ -50,7 +50,7 @@ jobs:
         with:
           host: 3.38.250.97
           username: ubuntu
-          key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          key: ${{ secrets.EC2_SSH_PRIVATE_KEY_V2 }}
           script: |
             docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_TOKEN }}"
             docker pull studygit/pocketpt:latest
