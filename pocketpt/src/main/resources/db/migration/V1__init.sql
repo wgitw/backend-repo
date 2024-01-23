@@ -26,19 +26,19 @@ create table account (
     provider varchar(255),
     recommender_code varchar(255),
     primary key (account_id)
-) engine=InnoDB
+) engine=InnoDB;
 
-CREATE TABLE career (
-    is_deleted TINYINT(1) DEFAULT 0 NOT NULL,
-    account_id BIGINT,
-    career_id BIGINT NOT NULL AUTO_INCREMENT,
-    created_at DATETIME(6),
-    updated_at DATETIME(6),
-    `date` VARCHAR(255),
-    title VARCHAR(255),
-    `type` VARCHAR(255),
-    PRIMARY KEY (career_id)
-) ENGINE=InnoDB;
+create table career (
+    is_deleted boolean default false not null,
+    account_id bigint,
+    career_id bigint not null auto_increment,
+    created_at datetime(6),
+    updated_at datetime(6),
+    date varchar(255),
+    title varchar(255),
+    type varchar(255),
+    primary key (career_id)
+) engine=InnoDB;
 
 create table chatting_message (
     is_deleted boolean default false not null,
@@ -52,7 +52,7 @@ create table chatting_message (
     content varchar(255),
     file_url TEXT,
     primary key (chatting_message_id)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table chatting_message_bookmark (
     is_deleted boolean default false not null,
@@ -62,7 +62,7 @@ create table chatting_message_bookmark (
     created_at datetime(6),
     updated_at datetime(6),
     primary key (account_id, chatting_message_id, chatting_room_id)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table chatting_participant (
     is_deleted boolean default false not null,
@@ -76,7 +76,7 @@ create table chatting_participant (
     updated_at datetime(6),
     simp_session_id varchar(255),
     primary key (account_id, chatting_room_id)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table chatting_room (
     is_deleted boolean default false not null,
@@ -88,7 +88,7 @@ create table chatting_room (
     updated_at datetime(6),
     room_name varchar(255),
     primary key (chatting_room_id)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table historical_data (
     is_deleted boolean default false not null,
@@ -101,7 +101,7 @@ create table historical_data (
     scope varchar(255),
     title varchar(255),
     primary key (historical_data_id)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table historical_data_file (
     is_deleted boolean default false not null,
@@ -112,7 +112,7 @@ create table historical_data_file (
     file_url varchar(255),
     scope varchar(255),
     primary key (historical_data_file_id)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table monthly_pt_price (
     is_deleted boolean default false not null,
@@ -123,7 +123,7 @@ create table monthly_pt_price (
     monthly_pt_price_id bigint not null auto_increment,
     updated_at datetime(6),
     primary key (monthly_pt_price_id)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table pt_matching (
     is_deleted boolean default false not null,
@@ -142,7 +142,7 @@ create table pt_matching (
     reject_reason varchar(255),
     status varchar(255),
     primary key (pt_matching_id)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table purpose (
     is_deleted boolean default false not null,
@@ -154,7 +154,7 @@ create table purpose (
     content varchar(255),
     title varchar(255),
     primary key (purpose_id)
-) engine=InnoDB
+) engine=InnoDB;
 
 create table top_chatting_room (
     is_deleted boolean default false not null,
@@ -163,77 +163,77 @@ create table top_chatting_room (
     created_at datetime(6),
     updated_at datetime(6),
     primary key (account_id, chatting_room_id)
-) engine=InnoDB
+) engine=InnoDB;
 
 alter table account
-   add constraint UK_83mc3wdw5cs7otc48exl2g9oa unique (identification_code)
+   add constraint UK_83mc3wdw5cs7otc48exl2g9oa unique (identification_code);
 
 alter table career
    add constraint FKjsolsxeh4qap0ga7sidb5ol70
    foreign key (account_id)
-   references account (account_id)
+   references account (account_id);
 
 alter table chatting_message_bookmark
    add constraint FK401m1640clwl9coknhu8utwms
    foreign key (account_id)
-   references account (account_id)
+   references account (account_id);
 
 alter table chatting_message_bookmark
    add constraint FK2xr546hkhv3nt4tvm8qx9ais9
    foreign key (chatting_message_id)
-   references chatting_message (chatting_message_id)
+   references chatting_message (chatting_message_id);
 
 alter table chatting_message_bookmark
    add constraint FKf2pp5gljs27gb65ry9g5cn8as
    foreign key (chatting_room_id)
-   references chatting_room (chatting_room_id)
+   references chatting_room (chatting_room_id);
 
 alter table chatting_participant
    add constraint FKo72wxi8iuobqia3ib16l7wngw
    foreign key (account_id)
-   references account (account_id)
+   references account (account_id);
 
 alter table chatting_participant
    add constraint FK7qrx8qm8j9udnlvryi0obyy02
    foreign key (chatting_room_id)
-   references chatting_room (chatting_room_id)
+   references chatting_room (chatting_room_id);
 
 alter table historical_data
    add constraint FKa9y3h19bvcclpixx3ogr3c7nb
    foreign key (account_id)
-   references account (account_id)
+   references account (account_id);
 
 alter table historical_data_file
    add constraint FKeara218058068op1wpf8err2t
    foreign key (historical_data_id)
-   references historical_data (historical_data_id)
+   references historical_data (historical_data_id);
 
 alter table monthly_pt_price
    add constraint FKlgvwurtxja3r9bsxf5b9bflwd
    foreign key (account_id)
-   references account (account_id)
+   references account (account_id);
 
 alter table pt_matching
    add constraint FK2uqsyc1k5sfhxs2wekbqppmgg
    foreign key (trainee_account_id)
-   references account (account_id)
+   references account (account_id);
 
 alter table pt_matching
    add constraint FKeohpalxemt7bjhd7jurrxprxi
    foreign key (trainer_account_id)
-   references account (account_id)
+   references account (account_id);
 
 alter table purpose
    add constraint FKj3p0cuhk14r0u44okaiyqdw7g
    foreign key (account_id)
-   references account (account_id)
+   references account (account_id);
 
 alter table top_chatting_room
    add constraint FKnvm80wb2hv5eed2f5soafe73q
    foreign key (account_id)
-   references account (account_id)
+   references account (account_id);
 
 alter table top_chatting_room
    add constraint FK50uww0n32n3cce3myx4g27lib
    foreign key (chatting_room_id)
-   references chatting_room (chatting_room_id)
+   references chatting_room (chatting_room_id);
