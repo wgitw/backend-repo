@@ -1,2 +1,2 @@
 alter table pt_matching
-    add column memo varchar(255)
+    add column memo varchar(255);
