@@ -28,17 +28,17 @@ create table account (
     primary key (account_id)
 ) engine=InnoDB
 
-create table career (
-    is_deleted boolean default false not null,
-    account_id bigint,
-    career_id bigint not null auto_increment,
-    created_at datetime(6),
-    updated_at datetime(6),
-    date varchar(255),
-    title varchar(255),
-    type varchar(255),
-    primary key (career_id)
-) engine=InnoDB
+CREATE TABLE career (
+    is_deleted TINYINT(1) DEFAULT 0 NOT NULL,
+    account_id BIGINT,
+    career_id BIGINT NOT NULL AUTO_INCREMENT,
+    created_at DATETIME(6),
+    updated_at DATETIME(6),
+    `date` VARCHAR(255),
+    title VARCHAR(255),
+    `type` VARCHAR(255),
+    PRIMARY KEY (career_id)
+) ENGINE=InnoDB;
 
 create table chatting_message (
     is_deleted boolean default false not null,
