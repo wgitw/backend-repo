@@ -25,11 +25,11 @@ jobs:
         shell: bash
           
       - name: Make zip file
-        run: zip -qq -r ./$GITHUB_SHA.zip ./pocketpt/build/libs/pocketpt-0.0.1-SNAPSHOT.jar
+        run: zip -qq -r build.zip ./pocketpt/build/libs/pocketpt-0.0.1-SNAPSHOT.jar
         shell: bash
             
       - name: save report as pipeline artifact
         uses: actions/upload-artifact@v3
         with:
-          name: $GITHUB_SHA.zip
+          name: build.zip
           path: .
