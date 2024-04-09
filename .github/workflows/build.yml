@@ -2,9 +2,6 @@ name: build
 
 on: [workflow_dispatch]
 
-env:
-  S3_BUCKET_NAME: pocket-pt
-
 jobs:
   live-deploy:
     runs-on: ubuntu-latest
